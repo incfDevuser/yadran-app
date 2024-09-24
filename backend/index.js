@@ -2,6 +2,7 @@
 import express from "express";
 import dotenv from "dotenv";
 import pool from "./config/db.js";
+import cors from 'cors'
 //Importar las rutas
 import jurisdiccionesRoutes from "./routes/jurisdicciones.routes.js";
 import zonasRoutes from "./routes/zonas.routes.js";
@@ -12,6 +13,8 @@ import basesRoutes from "./routes/bases.routes.js";
 
 import vehiculosRoutes from "./routes/vehiculos.routes.js";
 import rutasRoutes from "./routes/rutas.routes.js";
+import proveedoresRoutes from './routes/proveedores.routes.js'
+import trayectosRoutes from './routes/trayectos.routes.js'
 //Definiciones y variables globales
 dotenv.config();
 pool;
@@ -20,6 +23,10 @@ const app = express();
 
 //Middlewares
 app.use(express.json());
+app.use(cors({
+  origin:"http://localhost:5173",
+  credentials:true,
+}))
 //Rutas para las jurisdicciones
 app.use("/api/jurisdicciones", jurisdiccionesRoutes);
 //Rutas para las zonas
@@ -36,6 +43,10 @@ app.use("/api/bases", basesRoutes);
 app.use("/api/vehiculos", vehiculosRoutes);
 //Rutas para los vehiculos
 app.use("/api/rutas", rutasRoutes);
+//Rutas para los proveedores
+app.use("/api/proveedores", proveedoresRoutes);
+//Rutas para los trayectos
+app.use("/api/trayectos", trayectosRoutes);
 
 app.listen(port, () => {
   console.log(`Servidor escuchando en el puerto ${port}`);

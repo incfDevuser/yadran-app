@@ -1,10 +1,11 @@
 import { VehiculosModel } from "../../models/Vehiculos/VehiculosModel.js";
 
+// Obtener todos los vehículos
 const obtenerVehiculos = async (req, res) => {
   try {
     const vehiculos = await VehiculosModel.obtenerVehiculos();
     res.status(200).json({
-      message: "Vehículos obtenidos",
+      message: "Vehículos obtenidos exitosamente",
       vehiculos,
     });
   } catch (error) {
@@ -15,6 +16,7 @@ const obtenerVehiculos = async (req, res) => {
   }
 };
 
+// Obtener un vehículo específico por su ID
 const obtenerVehiculo = async (req, res) => {
   const { id } = req.params;
   try {
@@ -36,9 +38,10 @@ const obtenerVehiculo = async (req, res) => {
   }
 };
 
+// Crear un nuevo vehículo y asignarlo a un proveedor
 const crearVehiculo = async (req, res) => {
   const {
-    proveedor,
+    proveedor_id, 
     num_tripulantes,
     tipo_vehiculo,
     tipo_servicio,
@@ -51,7 +54,7 @@ const crearVehiculo = async (req, res) => {
 
   try {
     const vehiculo = {
-      proveedor,
+      proveedor_id,
       num_tripulantes,
       tipo_vehiculo,
       tipo_servicio,
@@ -63,7 +66,7 @@ const crearVehiculo = async (req, res) => {
     };
     const nuevoVehiculo = await VehiculosModel.crearVehiculo(vehiculo);
     res.status(201).json({
-      message: "Vehículo creado exitosamente",
+      message: "Vehículo creado exitosamente y asignado al proveedor",
       nuevoVehiculo,
     });
   } catch (error) {
@@ -74,34 +77,23 @@ const crearVehiculo = async (req, res) => {
   }
 };
 
+// Actualizar un vehículo existente y asignarlo a un proveedor
 const actualizarVehiculo = async (req, res) => {
-  const { id } = req.params;
-  const data = req.body;
-
-  try {
-    const vehiculoActualizado = await VehiculosModel.actualizarVehiculo(
-      id,
-      data
-    );
-    res.status(200).json({
-      message: "Vehículo actualizado",
-      vehiculoActualizado,
-    });
-  } catch (error) {
-    res.status(500).json({
-      message: "Error al actualizar el vehículo",
-      error: error.message,
-    });
-  }
 };
 
+// Eliminar un vehículo
 const eliminarVehiculo = async (req, res) => {
   const { id } = req.params;
 
   try {
     const vehiculoEliminado = await VehiculosModel.eliminarVehiculo(id);
+    if (!vehiculoEliminado) {
+      return res.status(404).json({
+        message: "Vehículo no encontrado",
+      });
+    }
     res.status(200).json({
-      message: "Vehículo eliminado",
+      message: "Vehículo eliminado exitosamente",
       vehiculoEliminado,
     });
   } catch (error) {
@@ -111,6 +103,7 @@ const eliminarVehiculo = async (req, res) => {
     });
   }
 };
+
 export const VehiculosController = {
   obtenerVehiculos,
   obtenerVehiculo,

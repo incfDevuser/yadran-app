@@ -106,51 +106,17 @@ const eliminarRuta = async (req, res) => {
     });
   }
 };
-const obtenerRutasConVehiculos = async (req, res) => {
+
+const obtenerRutasConTrayectos = async (req, res) => {
   try {
-    const rutas = await RutasModel.obtenerRutasConVehiculos();
+    const rutas = await RutasModel.obtenerRutasConTrayectos();
     res.status(200).json({
-      message: "Rutas obtenidas con vehículos asociados",
+      message: "Rutas obtenidas con trayectos",
       rutas,
     });
   } catch (error) {
     res.status(500).json({
-      message: "Error al obtener rutas con vehículos",
-      error: error.message,
-    });
-  }
-};
-const obtenerRutaConVehiculos = async (req, res) => {
-  const { id } = req.params;
-  try {
-    const ruta = await RutasModel.obtenerRutaConVehiculos(id);
-    if (!ruta) {
-      return res.status(404).json({
-        message: "Ruta no encontrada",
-      });
-    }
-    res.status(200).json({
-      message: "Ruta encontrada con vehículos",
-      ruta,
-    });
-  } catch (error) {
-    res.status(500).json({
-      message: "Error al obtener la ruta con vehículos",
-      error: error.message,
-    });
-  }
-};
-const asociarVehiculoARuta = async (req, res) => {
-  const { ruta_id, vehiculo_id } = req.body;
-  try {
-    const asociacion = await RutasModel.asociarVehiculoARuta(ruta_id, vehiculo_id);
-    res.status(201).json({
-      message: "Vehículo asociado a la ruta exitosamente",
-      asociacion,
-    });
-  } catch (error) {
-    res.status(500).json({
-      message: "Error al asociar el vehículo con la ruta",
+      message: "Error al obtener rutas con trayectos",
       error: error.message,
     });
   }
@@ -162,7 +128,5 @@ export const RutasController = {
   crearRuta,
   actualizarRuta,
   eliminarRuta,
-  obtenerRutasConVehiculos,
-  obtenerRutaConVehiculos,
-  asociarVehiculoARuta
+  obtenerRutasConTrayectos
 };

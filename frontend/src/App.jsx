@@ -13,16 +13,20 @@ import {
 } from "./pages";
 import AdminPanel from "./pages/Admin/adminpanel";
 //Importaciones componentes de Admin Page
-import AdminUserList from './pages/Admin/AdminUserList';
+import AdminUserList from "./pages/Admin/AdminUserList";
 import AdminRoutes from "./pages/Admin/AdminRoutes";
 import AdminReportes from "./pages/Admin/AdminReportes";
 import AdminProveedores from "./pages/Admin/AdminProveedores";
 import AdminDashboard from "./pages/Admin/AdminDashboard";
 import AdminConfiguracion from "./pages/Admin/AdminConfiguracion";
 import Trips from "./pages/Flight/Trips";
-import MisCentros from "./pages/MisCentros";  // Importa la nueva página
+import MisCentros from "./pages/MisCentros"; // Importa la nueva página
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+//Importar el contexto de los proveedores
+import { ProveedoresProvider } from "./Context/ProveedoresContext";
+import { RutasProvider } from "./Context/RoutesContext";
+import { TrayectosProvider } from "./Context/TrayectosContext";
 
 const App = () => {
   return (
@@ -39,18 +43,33 @@ const App = () => {
           <Route path="/payment" element={<Payment />} />
           <Route path="/confirm" element={<Confirm />} />
           <Route path="/trips" element={<Trips />} /> {/* Nueva ruta */}
-          <Route path="/mis-centros" element={<MisCentros />} />  {/* Nueva ruta para Mis Centros */}
-          <Route path="/admin" element={<AdminPanel />} />  {/* Nueva ruta */}
+          <Route path="/mis-centros" element={<MisCentros />} />{" "}
+          {/* Nueva ruta para Mis Centros */}
+          <Route path="/admin" element={<AdminPanel />} /> {/* Nueva ruta */}
           {/*  Rutas para el panel de administrador */}
           <Route path="/adminUserList" element={<AdminUserList />} />
-          <Route path="/adminRoutes" element={<AdminRoutes />} />
+          <Route
+            path="/adminRoutes"
+            element={
+              <RutasProvider>
+                <TrayectosProvider>
+                  <AdminRoutes />
+                </TrayectosProvider>
+              </RutasProvider>
+            }
+          />
           <Route path="/adminReportes" element={<AdminReportes />} />
-          <Route path="/adminProveedores" element={<AdminProveedores />} />
+          {/* Envolver en una ruta al contexto, envolviendo al provider de proveedores al componente donde se ocupa */}
+          <Route
+            path="/adminProveedores"
+            element={
+              <ProveedoresProvider>
+                <AdminProveedores />
+              </ProveedoresProvider>
+            }
+          />
           <Route path="/adminDashboard" element={<AdminDashboard />} />
           <Route path="/adminConfiguracion" element={<AdminConfiguracion />} />
-
-
-          
         </Routes>
         <Footer />
         <ToastContainer
@@ -71,6 +90,3 @@ const App = () => {
 };
 
 export default App;
-
-
-

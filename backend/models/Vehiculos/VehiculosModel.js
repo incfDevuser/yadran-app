@@ -1,4 +1,4 @@
-import pool from '../../config/db.js'
+import pool from "../../config/db.js";
 
 const obtenerVehiculos = async () => {
   try {
@@ -23,7 +23,7 @@ const obtenerVehiculo = async (id) => {
 };
 
 const crearVehiculo = async ({
-  proveedor,
+  proveedor_id,
   num_tripulantes,
   tipo_vehiculo,
   tipo_servicio,
@@ -36,15 +36,21 @@ const crearVehiculo = async ({
   try {
     const query = `
       INSERT INTO vehiculos (
-        proveedor, num_tripulantes, tipo_vehiculo, tipo_servicio,
+        proveedor_id, num_tripulantes, tipo_vehiculo, tipo_servicio,
         capacidad_total, capacidad_operacional, estado,
         documentacion_ok, velocidad_promedio
       ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING *
     `;
     const values = [
-      proveedor, num_tripulantes, tipo_vehiculo, tipo_servicio,
-      capacidad_total, capacidad_operacional, estado,
-      documentacion_ok, velocidad_promedio
+      proveedor_id,
+      num_tripulantes,
+      tipo_vehiculo,
+      tipo_servicio,
+      capacidad_total,
+      capacidad_operacional,
+      estado,
+      documentacion_ok,
+      velocidad_promedio,
     ];
     const response = await pool.query(query, values);
     return response.rows[0];
@@ -55,32 +61,6 @@ const crearVehiculo = async ({
 };
 
 const actualizarVehiculo = async (id, data) => {
-  try {
-    const {
-      proveedor, num_tripulantes, tipo_vehiculo, tipo_servicio,
-      capacidad_total, capacidad_operacional, estado,
-      documentacion_ok, velocidad_promedio
-    } = data;
-
-    const query = `
-      UPDATE vehiculos SET
-        proveedor = $1, num_tripulantes = $2, tipo_vehiculo = $3, tipo_servicio = $4,
-        capacidad_total = $5, capacidad_operacional = $6, estado = $7,
-        documentacion_ok = $8, velocidad_promedio = $9
-      WHERE id = $10 RETURNING *
-    `;
-    const values = [
-      proveedor, num_tripulantes, tipo_vehiculo, tipo_servicio,
-      capacidad_total, capacidad_operacional, estado,
-      documentacion_ok, velocidad_promedio, id
-    ];
-
-    const response = await pool.query(query, values);
-    return response.rows[0];
-  } catch (error) {
-    console.error(error);
-    throw new Error("Hubo un error al actualizar el vehículo");
-  }
 };
 
 const eliminarVehiculo = async (id) => {
