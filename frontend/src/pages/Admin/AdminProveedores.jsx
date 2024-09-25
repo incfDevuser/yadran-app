@@ -141,7 +141,7 @@ const AdminProveedores = () => {
         {/* Modal para crear nuevo proveedor */}
         {isCreateModalOpen && (
           <div className="fixed inset-0 bg-gray-500 bg-opacity-75 flex items-center justify-center z-50">
-            <div className="bg-white p-8 rounded shadow-lg max-w-lg w-full">
+            <div className="bg-white p-8 rounded shadow-lg max-w-lg w-full max-h-[80vh] overflow-y-auto">
               <h2 className="text-xl font-bold mb-4">
                 Agregar Nuevo Proveedor
               </h2>

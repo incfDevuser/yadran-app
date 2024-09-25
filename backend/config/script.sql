@@ -44,18 +44,6 @@ create table ponton(
 	habitabilidad_interna varchar(225),
 	habitabilidad_externa varchar(225)
 );
---Luego se crea la tabla de centro, verificar primero si la ruta es hacia el centro o hacia otro lado
-create table centro(
-	id serial primary key,
-	nombre_centro varchar(100) not null,
-	fecha_apertura_productiva date,
-	fecha_cierre_productivo date,
-	jefe_centro varchar(50),
-	etapa_ciclo_cultivo text,
-	estructura text default 'Estructura 1'
-	ponton_id integer references ponton(id) on delete cascade,
-	--ruta_id integer references rutas(id) on delete cascade
-);
 --Luego se crea la tabla base
 create table base(
 	id serial primary key,
@@ -81,10 +69,29 @@ create table aeropuerto(
 	jurisdiccion_id integer references jurisdiccion(id) on delete cascade,
 	estado varchar (100) not null default 'Abierto'
 );
+--Tabla de proveedores
+create table proveedores(
+	id serial primary key,
+	nombre_proveedor varchar(100) not null,
+	rut varchar(100) not null,
+	encargado varchar(100) not null,
+	contacto varchar(100) not null,
+	email_encargado varchar(100) not null,
+	telefono_encargado varchar(11) not null,
+	representante_interno varchar(100),
+	estado varchar(100),
+	tipo_servicio varchar(100) not null,
+	ciclo_cultivo varchar(100),
+	tarea_realizar varchar(100),
+	fecha_termino_servicio date,
+	frencuencia_servicio varchar(100),
+	descripcion_servicio varchar(100),
+	cantidad_usuarios_autorizados integer
+)
 --Luego la tabla vehiculos
 create table vehiculos(
 	id serial primary key,
-	proveedor varchar(225) not null,
+	proveedor_id integer references proveedor(id) on delete cascade,
 	num_tripulantes integer not null,
 	tipo_vehiculo varchar(225) not null,
 	tipo_servicio varchar(225) not null,
@@ -94,6 +101,8 @@ create table vehiculos(
 	documentacion_ok boolean default true,
 	velocidad_promedio numeric(10, 2) not null
 );
+
+
 --Luego la tabla rutas, primero consultar si es que la ruta va asociada al centro.
 create table rutas(
 	id serial primary key,
@@ -115,5 +124,18 @@ CREATE TABLE trayectos (
     duracion_estimada INTERVAL,
     orden INTEGER NOT NULL,
 	estado varchar(50) default 'Pendiente',
-    created_at TIMESTAMPTZ DEFAULT NOW()
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+	vehiculo_id integer references vehiculos(id) on delete cascade
+);
+--Luego se crea la tabla de centro
+create table centro(
+	id serial primary key,
+	nombre_centro varchar(100) not null,
+	fecha_apertura_productiva date,
+	fecha_cierre_productivo date,
+	jefe_centro varchar(50),
+	etapa_ciclo_cultivo text,
+	estructura text default 'Estructura 1',
+	ponton_id integer references ponton(id) on delete cascade,
+	ruta_id integer references rutas(id) on delete cascade
 );

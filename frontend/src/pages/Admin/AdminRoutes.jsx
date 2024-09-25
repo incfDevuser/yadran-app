@@ -16,7 +16,7 @@ const AdminRoutes = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedRuta, setSelectedRuta] = useState(null);
   const [isCreateModalOpen, setIsCreateModelOpen] = useState(false);
-  const [ isTrayectoModalOpen, setIsTrayectoModalOpen ] =useState(false)
+  const [isTrayectoModalOpen, setIsTrayectoModalOpen] = useState(false);
 
   //Estado para crear el nuevo proveedor
   const [nuevaRuta, setNuevaRuta] = useState({
@@ -28,6 +28,16 @@ const AdminRoutes = () => {
     tiempo_estimado: 120,
     mov_interno: true,
     fecha_agendamiento: "",
+  });
+  //Estado para crear una nueva ruta
+  const [trayecto, setTrayecto] = useState({
+    ruta_id: "",
+    origen: "",
+    destino: "",
+    duracion_estimada: "00:00:00",
+    orden: 1,
+    estado: "Pendiente",
+    vehiculo_id: "",
   });
   //Eliminar una ruta
   const handleDelete = async (id) => {
@@ -62,7 +72,7 @@ const AdminRoutes = () => {
       [e.target.name]: e.target.value,
     });
   };
-  //Crear el proveedor
+  //Crear la ruta
   const handleCreateRuta = async (e) => {
     e.preventDefault();
     try {
@@ -73,6 +83,29 @@ const AdminRoutes = () => {
     }
   };
   //Modals para los trayectos
+  const openTrayectoModal = (rutaId) => {
+    setIsTrayectoModalOpen(true);
+    setTrayecto({ ...trayecto, ruta_id: rutaId });
+  };
+  const closeTrayectoModal = () => {
+    setIsTrayectoModalOpen(false);
+  };
+  const handleTrayectoChange = (e) => {
+    setTrayecto({
+      ...trayecto,
+      [e.target.name]: e.target.value,
+    });
+  };
+
+  const handleCreateTrayecto = async (e) => {
+    e.preventDefault();
+    try {
+      await crearTrayecto(trayecto);
+      closeTrayectoModal();
+    } catch (error) {
+      console.error("Error al crear el trayecto", error);
+    }
+  };
 
   return (
     <div className="flex w-full h-full mt-11">
@@ -141,7 +174,10 @@ const AdminRoutes = () => {
                         <BsInfoSquare />
                       </button>
                       {/* BOTON PARA ASIGNAR UN TRAYECTO */}
-                      <button className="text-yellow-700 px-3 py-1 rounded">
+                      <button
+                        className="text-yellow-700 px-3 py-1 rounded"
+                        onClick={() => openTrayectoModal(ruta.id)} // Pasa la ruta_id correcta
+                      >
                         <IoAddCircleOutline />
                       </button>
                     </div>
@@ -155,7 +191,7 @@ const AdminRoutes = () => {
         {/* MODAL PARA CREAR UNA NUEVA RUTA */}
         {isCreateModalOpen && (
           <div className="fixed inset-0 bg-gray-500 bg-opacity-75 flex items-center justify-center z-50">
-            <div className="bg-white p-8 rounded shadow-lg max-w-lg w-full">
+            <div className="bg-white p-8 rounded shadow-lg max-w-lg w-full max-h-[80vh] overflow-y-auto">
               <h2 className="text-xl font-bold mb-4">Crear Nueva Ruta</h2>
               <form onSubmit={handleCreateRuta}>
                 {/* Campo de Nombre de la Ruta */}
@@ -290,6 +326,95 @@ const AdminRoutes = () => {
           </div>
         )}
 
+        {/* Modal para añadir trayecto */}
+        {isTrayectoModalOpen && (
+          <div className="fixed inset-0 bg-gray-500 bg-opacity-75 flex items-center justify-center z-50">
+            <div className="bg-white p-8 rounded shadow-lg max-w-lg w-full">
+              <h2 className="text-xl font-bold mb-4">Añadir Trayecto</h2>
+              <form onSubmit={handleCreateTrayecto}>
+                <div className="mb-4">
+                  <label className="block text-gray-700">Origen</label>
+                  <input
+                    type="text"
+                    name="origen"
+                    value={trayecto.origen}
+                    onChange={handleTrayectoChange}
+                    className="w-full p-2 border rounded-md"
+                    required
+                  />
+                </div>
+
+                <div className="mb-4">
+                  <label className="block text-gray-700">Destino</label>
+                  <input
+                    type="text"
+                    name="destino"
+                    value={trayecto.destino}
+                    onChange={handleTrayectoChange}
+                    className="w-full p-2 border rounded-md"
+                    required
+                  />
+                </div>
+
+                <div className="mb-4">
+                  <label className="block text-gray-700">
+                    Duración Estimada
+                  </label>
+                  <input
+                    type="time"
+                    name="duracion_estimada"
+                    value={trayecto.duracion_estimada}
+                    onChange={handleTrayectoChange}
+                    className="w-full p-2 border rounded-md"
+                    required
+                  />
+                </div>
+
+                <div className="mb-4">
+                  <label className="block text-gray-700">Orden</label>
+                  <input
+                    type="number"
+                    name="orden"
+                    value={trayecto.orden}
+                    onChange={handleTrayectoChange}
+                    className="w-full p-2 border rounded-md"
+                    required
+                  />
+                </div>
+
+                <div className="mb-4">
+                  <label className="block text-gray-700">
+                    Vehículo Asociado
+                  </label>
+                  <input
+                    type="number"
+                    name="vehiculo_id"
+                    value={trayecto.vehiculo_id}
+                    onChange={handleTrayectoChange}
+                    className="w-full p-2 border rounded-md"
+                    required
+                  />
+                </div>
+
+                <div className="flex justify-end">
+                  <button
+                    type="button"
+                    onClick={closeTrayectoModal}
+                    className="bg-gray-500 text-white px-4 py-2 rounded mr-2"
+                  >
+                    Cancelar
+                  </button>
+                  <button
+                    type="submit"
+                    className="bg-blue-500 text-white px-4 py-2 rounded"
+                  >
+                    Guardar Trayecto
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        )}
         {/* MODAL PARA MOSTRAR LA INFORMACION DE LA RUTA */}
         {isModalOpen && selectedRuta && (
           <div className="fixed inset-0 bg-gray-500 bg-opacity-75 flex items-center justify-center z-50">

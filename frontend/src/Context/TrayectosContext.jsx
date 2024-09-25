@@ -32,7 +32,7 @@ export const TrayectosProvider = ({ children }) => {
   const crearTrayecto = async (nuevoTrayecto) => {
     try {
       const response = await axios.post(
-        `htt://localhost:5000/api/trayectos/create`,
+        `http://localhost:5000/api/trayectos/create`,
         nuevoTrayecto
       );
       if (response.status === 201) {
