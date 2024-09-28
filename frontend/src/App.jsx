@@ -35,6 +35,8 @@ import { ConcesionesProvider } from "./Context/ConcesionesContext";
 import { PontonesProvider } from "./Context/PontonesContext";
 import { CentrosProvider } from "./Context/CentrosContext";
 import { BasesProvider } from "./Context/BasesContext";
+import { AeropuertosProvider } from "./Context/AeropuertosContext";
+import { PuertosProvider } from "./Context/PuertosContext";
 
 const App = () => {
   return (
@@ -87,7 +89,11 @@ const App = () => {
                     <PontonesProvider>
                       <CentrosProvider>
                         <BasesProvider>
-                          <AdminDashboard />
+                          <AeropuertosProvider>
+                            <PuertosProvider>
+                              <AdminDashboard />
+                            </PuertosProvider>
+                          </AeropuertosProvider>
                         </BasesProvider>
                       </CentrosProvider>
                     </PontonesProvider>
