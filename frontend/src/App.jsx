@@ -19,6 +19,7 @@ import AdminReportes from "./pages/Admin/AdminReportes";
 import AdminProveedores from "./pages/Admin/AdminProveedores";
 import AdminDashboard from "./pages/Admin/AdminDashboard";
 import AdminConfiguracion from "./pages/Admin/AdminConfiguracion";
+import AdminVehiculos from "./pages/Admin/AdminVehiculos";
 import Trips from "./pages/Flight/Trips";
 import MisCentros from "./pages/MisCentros"; // Importa la nueva página
 import { ToastContainer } from "react-toastify";
@@ -27,6 +28,8 @@ import "react-toastify/dist/ReactToastify.css";
 import { ProveedoresProvider } from "./Context/ProveedoresContext";
 import { RutasProvider } from "./Context/RoutesContext";
 import { TrayectosProvider } from "./Context/TrayectosContext";
+import { VehiculosProvider } from "./Context/VehiculosContext";
+import { JurisdiccionProvider } from "./Context/JurisdiccionContext";
 
 const App = () => {
   return (
@@ -53,7 +56,9 @@ const App = () => {
             element={
               <RutasProvider>
                 <TrayectosProvider>
-                  <AdminRoutes />
+                  <VehiculosProvider>
+                    <AdminRoutes />
+                  </VehiculosProvider>
                 </TrayectosProvider>
               </RutasProvider>
             }
@@ -68,8 +73,25 @@ const App = () => {
               </ProveedoresProvider>
             }
           />
-          <Route path="/adminDashboard" element={<AdminDashboard />} />
+          <Route
+            path="/adminDashboard"
+            element={
+              <JurisdiccionProvider>
+                <AdminDashboard />
+              </JurisdiccionProvider>
+            }
+          />
           <Route path="/adminConfiguracion" element={<AdminConfiguracion />} />
+          <Route
+            path="/adminVehiculos"
+            element={
+              <VehiculosProvider>
+                <ProveedoresProvider>
+                  <AdminVehiculos />
+                </ProveedoresProvider>
+              </VehiculosProvider>
+            }
+          />
         </Routes>
         <Footer />
         <ToastContainer

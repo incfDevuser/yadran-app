@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import AdminAside from "./AdminAside";
 import { useRutas } from "../../Context/RoutesContext";
 import { useTrayectos } from "../../Context/TrayectosContext";
+import { useVehiculos } from "../../Context/VehiculosContext";
 //Iconos
 import { IoTrashOutline } from "react-icons/io5";
 import { HiPencilSquare } from "react-icons/hi2";
@@ -13,6 +14,7 @@ import { IoAddCircleOutline } from "react-icons/io5";
 const AdminRoutes = () => {
   const { rutas, eliminarRuta, crearRuta } = useRutas();
   const { crearTrayecto } = useTrayectos();
+  const { vehiculos, loading: loadingVehiculos } = useVehiculos();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedRuta, setSelectedRuta] = useState(null);
   const [isCreateModalOpen, setIsCreateModelOpen] = useState(false);
@@ -386,14 +388,24 @@ const AdminRoutes = () => {
                   <label className="block text-gray-700">
                     Vehículo Asociado
                   </label>
-                  <input
-                    type="number"
-                    name="vehiculo_id"
-                    value={trayecto.vehiculo_id}
-                    onChange={handleTrayectoChange}
-                    className="w-full p-2 border rounded-md"
-                    required
-                  />
+                  {loadingVehiculos ? (
+                    <p>Cargando Vehiculos</p>
+                  ) : (
+                    <select
+                      name="vehiculo_id"
+                      value={trayecto.vehiculo_id}
+                      onChange={handleTrayectoChange}
+                      className="w-full border border-gray-300 p-2 rounded"
+                      required
+                    >
+                      <option value="">Selecciona un vehiculo</option>
+                      {vehiculos.map((vehiculo)=>(
+                        <option key={vehiculo.id} value={vehiculo.id}>
+                          {vehiculo.tipo_vehiculo}
+                        </option>
+                      ))}
+                    </select>
+                  )}
                 </div>
 
                 <div className="flex justify-end">

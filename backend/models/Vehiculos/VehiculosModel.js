@@ -2,7 +2,11 @@ import pool from "../../config/db.js";
 
 const obtenerVehiculos = async () => {
   try {
-    const query = "SELECT * FROM vehiculos";
+    const query = `
+      SELECT v.*, p.nombre_proveedor
+      FROM vehiculos v
+      JOIN proveedores p ON v.proveedor_id = p.id
+    `;
     const response = await pool.query(query);
     return response.rows;
   } catch (error) {
@@ -13,7 +17,12 @@ const obtenerVehiculos = async () => {
 
 const obtenerVehiculo = async (id) => {
   try {
-    const query = "SELECT * FROM vehiculos WHERE id = $1";
+    const query = `
+    SELECT v.*, p.nombre_proveedor
+    FROM vehiculos v
+    JOIN proveedores p ON v.proveedor_id = p.id
+    WHERE v.id = $1
+  `;
     const response = await pool.query(query, [id]);
     return response.rows[0];
   } catch (error) {

@@ -39,7 +39,7 @@ export const TrayectosProvider = ({ children }) => {
         //Actualizar la lista de rutas
         setTrayectos([...trayectos, response.data]);
       } else {
-        console.error("Error al crear el trayecti", response.data);
+        console.error("Error al crear el trayecto", response.data);
         throw new Error(response.data.message || "Error al crear el trayecto");
       }
     } catch (error) {
