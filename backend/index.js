@@ -10,11 +10,13 @@ import concesionesRoutes from "./routes/concesion.routes.js";
 import pontonesRoutes from "./routes/pontones.routes.js";
 import centrosoutes from "./routes/centros.routes.js";
 import basesRoutes from "./routes/bases.routes.js";
-
 import vehiculosRoutes from "./routes/vehiculos.routes.js";
 import rutasRoutes from "./routes/rutas.routes.js";
 import proveedoresRoutes from './routes/proveedores.routes.js'
 import trayectosRoutes from './routes/trayectos.routes.js'
+import puertoRoutes from './routes/puertos.routes.js'
+import aeropuertosRoutes from './routes/aeropuertos.routes.js'
+
 //Definiciones y variables globales
 dotenv.config();
 pool;
@@ -47,6 +49,10 @@ app.use("/api/rutas", rutasRoutes);
 app.use("/api/proveedores", proveedoresRoutes);
 //Rutas para los trayectos
 app.use("/api/trayectos", trayectosRoutes);
+//Rutas para los puertos
+app.use("/api/puertos", puertoRoutes);
+//Rutas para los aeropuertos
+app.use("/api/aeropuertos", aeropuertosRoutes);
 
 app.listen(port, () => {
   console.log(`Servidor escuchando en el puerto ${port}`);

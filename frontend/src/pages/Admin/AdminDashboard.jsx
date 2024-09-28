@@ -1,10 +1,28 @@
 import React from "react";
 import AdminAside from "./AdminAside";
-import { FaArrowRight } from "react-icons/fa";
 import { useJurisdiccion } from "../../Context/JurisdiccionContext";
+import { useZonas } from "../../Context/ZonasContext";
+import { useConcesion } from "../../Context/ConcesionesContext";
+import { usePontones } from "../../Context/PontonesContext";
+import { useCentros } from "../../Context/CentrosContext";
+import { useBases } from "../../Context/BasesContext";
+//Iconos
+import { GoLaw } from "react-icons/go";
+import { HiOutlineDotsHorizontal } from "react-icons/hi";
+import { LuRadar } from "react-icons/lu";
+import { FaHandsHelping } from "react-icons/fa";
+import { IoFish } from "react-icons/io5";
+import { HiMiniHomeModern } from "react-icons/hi2";
+import { MdHouseboat } from "react-icons/md";
+
 
 const AdminDashboard = () => {
   const { jurisdicciones } = useJurisdiccion();
+  const { zonas } = useZonas();
+  const { concesiones } = useConcesion();
+  const { pontones } = usePontones();
+  const { centros } = useCentros();
+  const { bases } = useBases();
   return (
     <div className="flex w-full h-full mt-11">
       <AdminAside />
@@ -15,79 +33,106 @@ const AdminDashboard = () => {
           {/* Administrar mis centros */}
           <div className="flex flex-col justify-center gap-7">
             <h1 className="font-bold text-2xl">Administrar mis Centros</h1>
-            
-            <div className="flex flex-wrap gap-7 justify-center items-center">
+
+            <div className="flex flex-wrap gap-7 justify-start items-center">
               {/* Jurisidicciones */}
-              <div className="shadow-md rounded-lg p-4 w-[200px] h-[200px]">
-                <p>Jurisdicciones</p>
-                <div className="flex items-center gap-2">
-                  <p>Ver Mas</p>
-                  <FaArrowRight />
+              <div className="shadow-md rounded-2xl p-4 w-[250px] h-[150px] flex flex-col justify-evenly mt-2">
+                <div className="flex justify-between items-center">
+                  <div className="flex justify-center items-center gap-2">
+                    <GoLaw className="shadow rounded-full p-1 text-2xl text-amber-700" />
+                    <p className="font-semibold">Jurisdicciones</p>
+                  </div>
+                  <HiOutlineDotsHorizontal />
+                </div>
+                {/* Contador de jurisdicciones */}
+                <div>
+                  <p className="text-2xl font-bold">{jurisdicciones.length}</p>
+                  <p className="text-sm text-gray-600">
+                    Jurisdicciones Totales
+                  </p>
                 </div>
               </div>
 
               {/* Zonas */}
-              <div className="shadow-md rounded-lg p-4 w-[200px] h-[200px]">
-                <p>Zonas</p>
-                <div className="flex items-center gap-2">
-                  <p>Ver Mas</p>
-                  <FaArrowRight />
+              <div className="shadow-md rounded-2xl p-4 w-[250px] h-[150px] flex flex-col justify-evenly mt-2">
+                <div className="flex justify-between items-center">
+                  <div className="flex justify-center items-center gap-2">
+                    <LuRadar className="shadow rounded-full p-1 text-2xl text-blue-700" />
+                    <p className="font-semibold">Zonas</p>
+                  </div>
+                  <HiOutlineDotsHorizontal />
+                </div>
+                {/* Contador de Zonas */}
+                <div>
+                  <p className="text-2xl font-bold">{zonas.length}</p>
+                  <p className="text-sm text-gray-600">Zonas Totales</p>
                 </div>
               </div>
 
               {/* Concesiones */}
-              <div className="shadow-md rounded-lg p-4 w-[200px] h-[200px]">
-                <p>Concesiones</p>
-                <div className="flex items-center gap-2">
-                  <p>Ver Mas</p>
-                  <FaArrowRight />
+              <div className="shadow-md rounded-2xl p-4 w-[250px] h-[150px] flex flex-col justify-evenly mt-2">
+                <div className="flex justify-between items-center">
+                  <div className="flex justify-center items-center gap-2">
+                    <FaHandsHelping className="shadow rounded-full p-1 text-2xl text-pink-300" />
+                    <p className="font-semibold">Concesiones</p>
+                  </div>
+                  <HiOutlineDotsHorizontal />
+                </div>
+                {/* Contador de Concesiones */}
+                <div>
+                  <p className="text-2xl font-bold">{concesiones.length}</p>
+                  <p className="text-sm text-gray-600">Concesiones Totales</p>
                 </div>
               </div>
 
-              {/* Ponton */}
-              <div className="shadow-md rounded-lg p-4 w-[200px] h-[200px]">
-                <p>Pontones</p>
-                <div className="flex items-center gap-2">
-                  <p>Ver Mas</p>
-                  <FaArrowRight />
+              {/* Pontones */}
+              <div className="shadow-md rounded-2xl p-4 w-[250px] h-[150px] flex flex-col justify-evenly mt-2">
+                <div className="flex justify-between items-center">
+                  <div className="flex justify-center items-center gap-2">
+                    <IoFish className="shadow rounded-full p-1 text-2xl text-blue-300" />
+                    <p className="font-semibold">Pontones</p>
+                  </div>
+                  <HiOutlineDotsHorizontal />
+                </div>
+                {/* Contador de Pontones */}
+                <div>
+                  <p className="text-2xl font-bold">{pontones.length}</p>
+                  <p className="text-sm text-gray-600">Pontones Totales</p>
                 </div>
               </div>
 
-              {/* Centro */}
-              <div className="shadow-md rounded-lg p-4 w-[200px] h-[200px]">
-                <p>Centros</p>
-                <div className="flex items-center gap-2">
-                  <p>Ver Mas</p>
-                  <FaArrowRight />
+              {/* Centros */}
+              <div className="shadow-md rounded-2xl p-4 w-[250px] h-[150px] flex flex-col justify-evenly mt-2">
+                <div className="flex justify-between items-center">
+                  <div className="flex justify-center items-center gap-2">
+                    <HiMiniHomeModern className="shadow rounded-full p-1 text-2xl text-black" />
+                    <p className="font-semibold">Centros</p>
+                  </div>
+                  <HiOutlineDotsHorizontal />
+                </div>
+                {/* Contador de Centros */}
+                <div>
+                  <p className="text-2xl font-bold">{centros.length}</p>
+                  <p className="text-sm text-gray-600">Centros Totales</p>
                 </div>
               </div>
 
               {/* Bases */}
-              <div className="shadow-md rounded-lg p-4 w-[200px] h-[200px]">
-                <p>Bases</p>
-                <div className="flex items-center gap-2">
-                  <p>Ver Mas</p>
-                  <FaArrowRight />
+              <div className="shadow-md rounded-2xl p-4 w-[250px] h-[150px] flex flex-col justify-evenly mt-2">
+                <div className="flex justify-between items-center">
+                  <div className="flex justify-center items-center gap-2">
+                    <MdHouseboat className="shadow rounded-full p-1 text-2xl text-amber-950" />
+                    <p className="font-semibold">Bases</p>
+                  </div>
+                  <HiOutlineDotsHorizontal />
+                </div>
+                {/* Contador de Bases */}
+                <div>
+                  <p className="text-2xl font-bold">{bases.length}</p>
+                  <p className="text-sm text-gray-600">Bases Totales</p>
                 </div>
               </div>
 
-              {/* Puertos */}
-              <div className="shadow-md rounded-lg p-4 w-[200px] h-[200px]">
-                <p>Puertos</p>
-                <div className="flex items-center gap-2">
-                  <p>Ver Mas</p>
-                  <FaArrowRight />
-                </div>
-              </div>
-
-              {/* Aeropuerto */}
-              <div className="shadow-md rounded-lg p-4 w-[200px] h-[200px]">
-                <p>Aeropuertos</p>
-                <div className="flex items-center gap-2">
-                  <p>Ver Mas</p>
-                  <FaArrowRight />
-                </div>
-              </div>
             </div>
           </div>
         </div>

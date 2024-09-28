@@ -30,6 +30,11 @@ import { RutasProvider } from "./Context/RoutesContext";
 import { TrayectosProvider } from "./Context/TrayectosContext";
 import { VehiculosProvider } from "./Context/VehiculosContext";
 import { JurisdiccionProvider } from "./Context/JurisdiccionContext";
+import { ZonasProvider } from "./Context/ZonasContext";
+import { ConcesionesProvider } from "./Context/ConcesionesContext";
+import { PontonesProvider } from "./Context/PontonesContext";
+import { CentrosProvider } from "./Context/CentrosContext";
+import { BasesProvider } from "./Context/BasesContext";
 
 const App = () => {
   return (
@@ -77,7 +82,17 @@ const App = () => {
             path="/adminDashboard"
             element={
               <JurisdiccionProvider>
-                <AdminDashboard />
+                <ZonasProvider>
+                  <ConcesionesProvider>
+                    <PontonesProvider>
+                      <CentrosProvider>
+                        <BasesProvider>
+                          <AdminDashboard />
+                        </BasesProvider>
+                      </CentrosProvider>
+                    </PontonesProvider>
+                  </ConcesionesProvider>
+                </ZonasProvider>
               </JurisdiccionProvider>
             }
           />

@@ -15,7 +15,8 @@ export const JurisdiccionProvider = ({ children }) => {
         const response = await axios.get(
           `http://localhost:5000/api/jurisdicciones/`
         );
-        const data = response.data.juriscciones;
+        const data = response.data.jurisdicciones;
+        console.log(data)
         setJurisdicciones(data);
       } catch (error) {
         setError(error.message || "Hubo un error al cargar las jurisdicciones");
