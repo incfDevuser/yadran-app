@@ -3,7 +3,11 @@ import pool from "../config/db.js";
 //Obtener todos los pontones
 const obtenerPontones = async () => {
   try {
-    const query = "SELECT * FROM ponton";
+    const query = `
+    SELECT p.*, c.nombre_concesion AS nombre_concesion
+    FROM ponton p
+    LEFT JOIN concesion c ON p.concesion_id = c.id
+    `;
     const response = await pool.query(query);
     return response.rows;
   } catch (error) {
@@ -14,7 +18,12 @@ const obtenerPontones = async () => {
 //Obtener el ponton mediante el ID
 const obtenerPonton = async (id) => {
   try {
-    const query = "SELECT * FROM ponton WHERE id = $1";
+    const query = `
+    SELECT p.*, c.nombre_concesion AS nombre_concesion
+    FROM ponton p
+    LEFT JOIN concesion c ON p.concesion_id = c.id
+    WHERE p.id = $1
+    `;
     const response = await pool.query(query, [id]);
     return response.rows[0];
   } catch (error) {

@@ -1,7 +1,11 @@
 import pool from "../config/db.js";
 const obtenerAeropuertos = async () => {
   try {
-    const query = "SELECT * FROM aeropuerto";
+    const query = `
+    SELECT a.*, j.nombre_jurisdiccion AS nombre_jurisdiccion
+    FROM aeropuerto a
+    LEFT JOIN jurisdiccion j ON a.jurisdiccion_id = j.id
+    `;
     const response = await pool.query(query);
     return response.rows;
   } catch (error) {
@@ -11,7 +15,12 @@ const obtenerAeropuertos = async () => {
 };
 const obtenerAeropuerto = async (id) => {
   try {
-    const query = "SELECT * FROM aeropuerto WHERE id = $1";
+    const query = `
+     SELECT a.*, j.nombre_jurisdiccion AS nombre_jurisdiccion
+    FROM aeropuerto a
+    LEFT JOIN jurisdiccion j ON a.jurisdiccion_id = j.id
+    WHERE a.id = $1
+    `;
     const response = await pool.query(query, [id]);
     return response.rows[0];
   } catch (error) {

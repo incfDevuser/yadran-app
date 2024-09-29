@@ -2,7 +2,11 @@ import pool from "../config/db.js";
 
 const obtenerConcesiones = async () => {
   try {
-    const query = "SELECT * FROM concesion";
+    const query = `
+    SELECT c.*, z.nombre_zona AS nombre_zona 
+    FROM concesion c 
+    LEFT JOIN zonas z ON c.zona_id = z.id
+    `;
     const response = await pool.query(query);
     return response.rows;
   } catch (error) {
@@ -12,7 +16,12 @@ const obtenerConcesiones = async () => {
 };
 const obtenerConcesion = async (id) => {
   try {
-    const query = "SELECT * FROM concesion WHERE id = $1";
+    const query = `
+      SELECT c.*, z.nombre_zona AS nombre_zona
+      FROM concesion c
+      LEFT JOIN zonas z ON c.zona_id = z.id
+      WHERE c.id = $1
+    `;
     const response = await pool.query(query, [id]);
     return response.rows[0];
   } catch (error) {
@@ -20,11 +29,11 @@ const obtenerConcesion = async (id) => {
     throw new Error("Hubo un error con la operacion obtenerConcesion");
   }
 };
-const crearConcesion = async ({ nombre_concesion,vigencia, zona_id }) => {
+const crearConcesion = async ({ nombre_concesion, vigencia, zona_id }) => {
   try {
     const query =
       "INSERT INTO concesion(nombre_concesion,vigencia, zona_id) VALUES($1, $2, $3) RETURNING *";
-    const values = [nombre_concesion,vigencia, zona_id];
+    const values = [nombre_concesion, vigencia, zona_id];
     const response = await pool.query(query, values);
     return response.rows[0];
   } catch (error) {
@@ -44,7 +53,7 @@ const eliminarConcesion = async (id) => {
   } catch (error) {
     console.error(error);
     throw new Error("Hubo un error con la operacion eliminarConcesion");
-  } 
+  }
 };
 
 export const ConcesionesModel = {

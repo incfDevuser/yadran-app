@@ -2,7 +2,11 @@ import pool from "../config/db.js";
 
 const obtenerCentros = async () => {
   try {
-    const query = "SELECT * FROM centro";
+    const query = `
+    SELECT c.*, p.nombre_ponton as nombre_ponton
+    FROM centro c
+    LEFT JOIN ponton p ON c.ponton_id = p.id
+    `;
     const response = await pool.query(query);
     return response.rows;
   } catch (error) {
@@ -26,7 +30,8 @@ const crearCentro = async ({
   fecha_cierre_productivo,
   jefe_centro,
   etapa_ciclo_cultivo,
-  estructuras,
+  estructura,
+  ponton_id
 }) => {
   try {
     const query = `
@@ -36,14 +41,15 @@ const crearCentro = async ({
   fecha_cierre_productivo,
   jefe_centro,
   etapa_ciclo_cultivo,
-  estructuras) VALUES($1, $2, $3, $4, $5, $6)`;
+  estructura, ponton_id) VALUES($1, $2, $3, $4, $5, $6, $7)`;
     const values = [
       nombre_centro,
       fecha_apertura_productiva,
       fecha_cierre_productivo,
       jefe_centro,
       etapa_ciclo_cultivo,
-      estructuras,
+      estructura,
+      ponton_id
     ];
     const response = await pool.query(query, values);
     return response.rows[0];

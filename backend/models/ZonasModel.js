@@ -3,9 +3,9 @@ import pool from "../config/db.js";
 const obtenerZonas = async () => {
   try {
     const query = `
-      SELECT z.*, r.nombre_ruta 
+      SELECT z.*, j.nombre_jurisdiccion AS nombre_jurisdiccion
       FROM zonas z
-      LEFT JOIN rutas r ON z.ruta_id = r.id
+      LEFT JOIN jurisdiccion j ON z.jurisdiccion_id = j.id
     `;
     const response = await pool.query(query);
     return response.rows;
@@ -18,9 +18,9 @@ const obtenerZonas = async () => {
 const obtenerZona = async (id) => {
   try {
     const query = `
-      SELECT z.*, r.nombre_ruta
+      SELECT z.*, j.nombre_jurisdiccion AS nombre_jurisdiccion
       FROM zonas z
-      LEFT JOIN rutas r ON z.ruta_id = r.id
+      LEFT JOIN jurisdiccion j ON z.jurisdiccion_id = j.id
       WHERE z.id = $1
     `;
     const response = await pool.query(query, [id]);
@@ -30,6 +30,7 @@ const obtenerZona = async (id) => {
     throw new Error("Error con la operación obtenerZona");
   }
 };
+
 const crearZona = async ({
   nombre_zona,
   ubicacion_geografica,

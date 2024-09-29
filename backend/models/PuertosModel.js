@@ -2,7 +2,11 @@ import pool from "../config/db.js";
 
 const obtenerPuertos = async () => {
   try {
-    const query = "SELECT * FROM puerto";
+    const query = `
+    SELECT p.*, j.nombre_jurisdiccion AS nombre_jurisdiccion
+    FROM puerto p
+    LEFT JOIN jurisdiccion j ON p.jurisdiccion_id = j.id
+    `;
     const response = await pool.query(query);
     return response.rows;
   } catch (error) {
@@ -13,7 +17,12 @@ const obtenerPuertos = async () => {
 
 const obtenerPuerto = async (id) => {
   try {
-    const query = "SELECT * FROM puerto WHERE id = $1";
+    const query = `
+    SELECT p.*, j.nombre_jurisdiccion AS nombre_jurisdiccion
+    FROM puerto p
+    LEFT JOIN jurisdiccion j ON p.jurisdiccion_id = j.id
+    WHERE p.id = $1
+    `;
     const response = await pool.query(query, [id]);
     return response.rows[0];
   } catch (error) {
