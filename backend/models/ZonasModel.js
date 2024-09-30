@@ -40,8 +40,7 @@ const crearZona = async ({
   fecha_cierre,
   jurisdiccion_id,
   estado_zona,
-  descripcion,
-  ruta_id,
+  descripcion
 }) => {
   try {
     const query = `
@@ -54,9 +53,8 @@ const crearZona = async ({
         fecha_cierre,
         jurisdiccion_id,
         estado_zona,
-        descripcion,
-        ruta_id
-      ) VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) RETURNING *
+        descripcion
+      ) VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING *
     `;
     const values = [
       nombre_zona,
@@ -67,8 +65,7 @@ const crearZona = async ({
       fecha_cierre,
       jurisdiccion_id,
       estado_zona,
-      descripcion,
-      ruta_id,
+      descripcion
     ];
     const response = await pool.query(query, values);
     return response.rows[0];
@@ -78,47 +75,6 @@ const crearZona = async ({
   }
 };
 const actualizarZona = async (id, data) => {
-  try {
-    const {
-      nombre_zona,
-      ubicacion_geografica,
-      pais,
-      region,
-      fecha_apertura,
-      fecha_cierre,
-      jurisdiccion_id,
-      estado_zona,
-      descripcion,
-      ruta_id,
-    } = data;
-
-    const query = `
-      UPDATE zonas SET
-        nombre_zona = $1, ubicacion_geografica = $2, pais = $3, region = $4,
-        fecha_apertura = $5, fecha_cierre = $6, jurisdiccion_id = $7, estado_zona = $8,
-        descripcion = $9, ruta_id = $10
-      WHERE id = $11 RETURNING *
-    `;
-    const values = [
-      nombre_zona,
-      ubicacion_geografica,
-      pais,
-      region,
-      fecha_apertura,
-      fecha_cierre,
-      jurisdiccion_id,
-      estado_zona,
-      descripcion,
-      ruta_id,
-      id,
-    ];
-
-    const response = await pool.query(query, values);
-    return response.rows[0];
-  } catch (error) {
-    console.error(error);
-    throw new Error("Hubo un error con la operación actualizarZona");
-  }
 };
 const eliminarZona = async (id) => {
   try {

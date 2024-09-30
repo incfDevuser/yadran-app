@@ -18,7 +18,7 @@ const CreateJurisdiccionModal = ({ isOpen, onClose }) => {
     tipo_embarcacion: "",
     contacto: "",
     integracion: "",
-    fecha_ultima_modificacion: fechaActual(), // Valor de ejemplo hasta que se tenga la relación con usuarios
+    fecha_ultima_modificacion: fechaActual(),
   });
 
   // Maneja cambios en el formulario
@@ -31,10 +31,8 @@ const CreateJurisdiccionModal = ({ isOpen, onClose }) => {
   };
 
   const handleCreate = async () => {
-    console.log("Datos a enviar:", nuevaJurisdiccion);
     try {
       await crearJurisdiccion(nuevaJurisdiccion);
-      console.log("Jurisdicción creada correctamente");
       onClose();
     } catch (error) {
       console.error("Error al crear jurisdicción:", error);
@@ -42,10 +40,6 @@ const CreateJurisdiccionModal = ({ isOpen, onClose }) => {
   };
 
   if (!isOpen) return null;
-  if (isOpen) {
-    console.log("Modal abierto");
-  }
-
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
       <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-md  max-h-[80vh] overflow-y-auto">
