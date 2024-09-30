@@ -14,7 +14,7 @@ const CreateZonaModal = ({ isOpen, onClose }) => {
     region: "",
     fecha_apertura: "",
     fecha_cierre: "",
-    jurisdiccion_id: "",
+    jurisdiccion_id: 0,
     estado_zona: "",
     descripcion: "",
   });
