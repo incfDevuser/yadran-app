@@ -19,6 +19,7 @@ import { MdHouseboat } from "react-icons/md";
 import { MdLocalAirport } from "react-icons/md";
 // Otros
 import Modal from "../Modals/Modal";
+import CreateJurisdiccionModal from "../Modals/CreateJurisdiccionModal";
 
 const DashboardInformation = () => {
   const { jurisdicciones } = useJurisdiccion();
@@ -40,9 +41,10 @@ const DashboardInformation = () => {
   const [isAeropuertosModalOpen, setIsAeropuertosModalOpen] = useState(false);
   const [isPuertosModalOpen, setIsPuertosModalOpen] = useState(false);
 
-  // Estado para controlar qué menú está abierto
-  const [selectedEntity, setSelectedEntity] = useState(null);
+  //Modals de creacion
+  const [createJurisdiccionModal, setCreateJurisdiccionModal] = useState(false);
 
+  const [selectedEntity, setSelectedEntity] = useState(null);
   const toggleMenu = (entity) => {
     if (selectedEntity === entity) {
       setSelectedEntity(null);
@@ -89,7 +91,8 @@ const DashboardInformation = () => {
                   <button
                     className="block text-gray-700 px-4 py-2 hover:bg-gray-100"
                     onClick={() => {
-                      console.log("Crear nueva Jurisdicción");
+                      console.log("Abriendo modal de creación de jurisdicción");
+                      setCreateJurisdiccionModal(true);
                       setSelectedEntity(null);
                     }}
                   >
@@ -396,6 +399,10 @@ const DashboardInformation = () => {
         title="Jurisdicciones"
         data={jurisdicciones}
         entityType="jurisdiccion"
+      />
+      <CreateJurisdiccionModal
+        isOpen={createJurisdiccionModal}
+        onClose={() => setCreateJurisdiccionModal(false)}
       />
 
       <Modal

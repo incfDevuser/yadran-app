@@ -30,8 +30,7 @@ const crearJurisdiccion = async ({
   tipo_embarcacion,
   contacto,
   integracion,
-  fecha_ultima_modificacion,
-  usuario_modificador,
+  fecha_ultima_modificacion
 }) => {
   try {
     const query = `
@@ -43,9 +42,8 @@ const crearJurisdiccion = async ({
         tipo_embarcacion, 
         contacto, 
         integracion,
-        fecha_ultima_modificacion, 
-        usuario_modificador
-      ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+        fecha_ultima_modificacion
+      ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
       RETURNING *;
     `;
 
@@ -57,8 +55,7 @@ const crearJurisdiccion = async ({
       tipo_embarcacion,
       contacto,
       integracion,
-      fecha_ultima_modificacion,
-      usuario_modificador,
+      fecha_ultima_modificacion
     ];
 
     const result = await pool.query(query, values);

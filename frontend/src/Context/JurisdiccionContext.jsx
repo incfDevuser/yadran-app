@@ -26,8 +26,24 @@ export const JurisdiccionProvider = ({ children }) => {
     };
     obtenerJurisdicciones();
   }, []);
+  const crearJurisdiccion = async(nuevaJurisdiccion)=>{
+    setLoading(true)
+    try {
+      const response = await axios.post(`http://localhost:5000/api/jurisdicciones/create`, nuevaJurisdiccion)
+      if(response.status === 201){
+        //Actualizar la lista de jurisdicciones
+        setJurisdicciones([...jurisdicciones, response.data])
+      }else{
+        console.error("Error al crear la jurisdiccion", response.data);
+        throw new Error(response.data.message || "Error al crear la jurisdiccion");
+      }
+    } catch (error) {
+      console.error("Hubo un error al crear el vehiculo:", error.message)
+      throw error
+    }
+  };
   return (
-    <JurisdiccionContext.Provider value={{ jurisdicciones, loading, error }}>
+    <JurisdiccionContext.Provider value={{ jurisdicciones, loading, error, crearJurisdiccion }}>
       {children}
     </JurisdiccionContext.Provider>
   );
