@@ -22,6 +22,7 @@ import Modal from "../Modals/Modal";
 import CreateJurisdiccionModal from "../Modals/CreateJurisdiccionModal";
 import CreateZonaModal from "../Modals/CreateZonaModal";
 import CreateConcesionModal from "../Modals/CreateConcesionModal";
+import CreatePontonModal from "../Modals/CreatePontonModal";
 
 const DashboardInformation = () => {
   const { jurisdicciones } = useJurisdiccion();
@@ -45,8 +46,9 @@ const DashboardInformation = () => {
 
   //Modals de creacion
   const [createJurisdiccionModal, setCreateJurisdiccionModal] = useState(false);
-  const [createZonaModal, setCreateZonaModal] = useState(false)
-  const [createConcesionModal, setCreateConcecionModal] = useState(false)
+  const [createZonaModal, setCreateZonaModal] = useState(false);
+  const [createConcesionModal, setCreateConcecionModal] = useState(false);
+  const [createPontonModal, setCreatePontonModal] = useState(false);
 
   const [selectedEntity, setSelectedEntity] = useState(null);
   const toggleMenu = (entity) => {
@@ -60,7 +62,9 @@ const DashboardInformation = () => {
   return (
     <div>
       <main className="flex-1 p-5">
-        <h1 className="text-2xl font-bold text-gray-700">Configuraciones por area de nogocio</h1>
+        <h1 className="text-2xl font-bold text-gray-700">
+          Configuraciones por area de nogocio
+        </h1>
 
         <div className="mt-1">
           <div className="flex flex-wrap justify-between items-center">
@@ -225,11 +229,12 @@ const DashboardInformation = () => {
                   <button
                     className="block text-gray-700 px-4 py-2 hover:bg-gray-100"
                     onClick={() => {
-                      console.log("Crear nuevo Pontón");
+                      console.log("Abriendo modal de creación de jurisdicción");
+                      setCreatePontonModal(true);
                       setSelectedEntity(null);
                     }}
                   >
-                    Crear nuevo
+                    Crear nueva
                   </button>
                 </div>
               )}
@@ -427,8 +432,8 @@ const DashboardInformation = () => {
         entityType="zona"
       />
       <CreateZonaModal
-      isOpen={createZonaModal}
-      onClose={()=> setCreateZonaModal(false)}
+        isOpen={createZonaModal}
+        onClose={() => setCreateZonaModal(false)}
       />
       <Modal
         isOpen={isConcesionModalOpen}
@@ -438,8 +443,8 @@ const DashboardInformation = () => {
         entityType="concesion"
       />
       <CreateConcesionModal
-      isOpen={createConcesionModal}
-      onClose={()=> setCreateConcecionModal(false)}
+        isOpen={createConcesionModal}
+        onClose={() => setCreateConcecionModal(false)}
       />
       <Modal
         isOpen={isPontonesModalOpen}
@@ -447,6 +452,10 @@ const DashboardInformation = () => {
         title="Pontones"
         data={pontones}
         entityType="ponton"
+      />
+      <CreatePontonModal
+        isOpen={createPontonModal}
+        onClose={() => setCreatePontonModal(false)}
       />
 
       <Modal
