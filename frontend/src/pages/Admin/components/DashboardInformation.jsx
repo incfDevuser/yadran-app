@@ -56,12 +56,12 @@ const DashboardInformation = () => {
   return (
     <div>
       <main className="flex-1 p-5">
-        <h1 className="text-2xl font-bold text-gray-700">Dashboard</h1>
+        <h1 className="text-2xl font-bold text-gray-700">Configuraciones por area de nogocio</h1>
 
-        <div className="mt-8">
-          <div className="flex flex-wrap gap-7 justify-start items-center">
+        <div className="mt-1">
+          <div className="flex flex-wrap justify-between items-center">
             {/* Jurisdicciones */}
-            <div className="shadow-md rounded-2xl p-4 w-[250px] h-[150px] flex flex-col justify-evenly mt-2">
+            <div className="shadow-md rounded-2xl p-4 w-[250px] h-[190px] flex flex-col justify-evenly mt-2">
               <div className="flex justify-between items-center">
                 <div className="flex justify-center items-center gap-2">
                   <GoLaw className="shadow rounded-full p-1 text-2xl text-amber-700" />
@@ -75,6 +75,7 @@ const DashboardInformation = () => {
               <div>
                 <p className="text-2xl font-bold">{jurisdicciones.length}</p>
                 <p className="text-sm text-gray-600">Jurisdicciones Totales</p>
+                <p>Visualiza o crea una nueva Jurisdiccion</p>
               </div>
 
               {selectedEntity === "jurisdiccion" && (
@@ -103,7 +104,7 @@ const DashboardInformation = () => {
             </div>
 
             {/* Zonas */}
-            <div className="shadow-md rounded-2xl p-4 w-[250px] h-[150px] flex flex-col justify-evenly mt-2">
+            <div className="shadow-md rounded-2xl p-4 w-[250px] h-[190px] flex flex-col justify-evenly mt-2">
               <div className="flex justify-between items-center">
                 <div className="flex justify-center items-center gap-2">
                   <LuRadar className="shadow rounded-full p-1 text-2xl text-blue-900" />
@@ -117,6 +118,7 @@ const DashboardInformation = () => {
               <div>
                 <p className="text-2xl font-bold">{zonas.length}</p>
                 <p className="text-sm text-gray-600">Zonas Totales</p>
+                <p>Visualiza o crea una nueva Zona</p>
               </div>
 
               {selectedEntity === "zonas" && (
@@ -144,7 +146,7 @@ const DashboardInformation = () => {
             </div>
 
             {/* Concesiones */}
-            <div className="shadow-md rounded-2xl p-4 w-[250px] h-[150px] flex flex-col justify-evenly mt-2">
+            <div className="shadow-md rounded-2xl p-4 w-[250px] h-[190px] flex flex-col justify-evenly mt-2">
               <div className="flex justify-between items-center">
                 <div className="flex justify-center items-center gap-2">
                   <FaHandsHelping className="shadow rounded-full p-1 text-2xl text-pink-300" />
@@ -158,6 +160,7 @@ const DashboardInformation = () => {
               <div>
                 <p className="text-2xl font-bold">{concesiones.length}</p>
                 <p className="text-sm text-gray-600">Concesiones Totales</p>
+                <p>Visualiza o crea una nueva Concesion</p>
               </div>
 
               {selectedEntity === "concesion" && (
@@ -185,7 +188,7 @@ const DashboardInformation = () => {
             </div>
 
             {/* Pontones */}
-            <div className="shadow-md rounded-2xl p-4 w-[250px] h-[150px] flex flex-col justify-evenly mt-2">
+            <div className="shadow-md rounded-2xl p-4 w-[250px] h-[190px] flex flex-col justify-evenly mt-2">
               <div className="flex justify-between items-center">
                 <div className="flex justify-center items-center gap-2">
                   <IoFish className="shadow rounded-full p-1 text-2xl text-blue-300" />
@@ -199,6 +202,7 @@ const DashboardInformation = () => {
               <div>
                 <p className="text-2xl font-bold">{pontones.length}</p>
                 <p className="text-sm text-gray-600">Pontones Totales</p>
+                <p>Visualiza o crea una nuevo Ponton</p>
               </div>
 
               {selectedEntity === "pontones" && (
@@ -226,7 +230,7 @@ const DashboardInformation = () => {
             </div>
 
             {/* Centros */}
-            <div className="shadow-md rounded-2xl p-4 w-[250px] h-[150px] flex flex-col justify-evenly mt-2">
+            <div className="shadow-md rounded-2xl p-4 w-[250px] h-[190px] flex flex-col justify-evenly mt-2">
               <div className="flex justify-between items-center">
                 <div className="flex justify-center items-center gap-2">
                   <HiMiniHomeModern className="shadow rounded-full p-1 text-2xl text-black" />
@@ -240,6 +244,7 @@ const DashboardInformation = () => {
               <div>
                 <p className="text-2xl font-bold">{centros.length}</p>
                 <p className="text-sm text-gray-600">Centros Totales</p>
+                <p>Visualiza o crea una nuevo Centro</p>
               </div>
 
               {selectedEntity === "centros" && (
@@ -267,7 +272,7 @@ const DashboardInformation = () => {
             </div>
 
             {/* Bases */}
-            <div className="shadow-md rounded-2xl p-4 w-[250px] h-[150px] flex flex-col justify-evenly mt-2">
+            <div className="shadow-md rounded-2xl p-4 w-[250px] h-[190px] flex flex-col justify-evenly mt-2">
               <div className="flex justify-between items-center">
                 <div className="flex justify-center items-center gap-2">
                   <MdHouseboat className="shadow rounded-full p-1 text-2xl text-amber-950" />
@@ -281,6 +286,7 @@ const DashboardInformation = () => {
               <div>
                 <p className="text-2xl font-bold">{bases.length}</p>
                 <p className="text-sm text-gray-600">Bases Totales</p>
+                <p>Visualiza o crea una nueva Base</p>
               </div>
 
               {selectedEntity === "bases" && (
@@ -308,7 +314,7 @@ const DashboardInformation = () => {
             </div>
 
             {/* Aeropuertos */}
-            <div className="shadow-md rounded-2xl p-4 w-[250px] h-[150px] flex flex-col justify-evenly mt-2">
+            <div className="shadow-md rounded-2xl p-4 w-[250px] h-[190px] flex flex-col justify-evenly mt-2">
               <div className="flex justify-between items-center">
                 <div className="flex justify-center items-center gap-2">
                   <MdLocalAirport className="shadow rounded-full p-1 text-2xl text-gray-600" />
@@ -322,6 +328,7 @@ const DashboardInformation = () => {
               <div>
                 <p className="text-2xl font-bold">{aeropuertos.length}</p>
                 <p className="text-sm text-gray-600">Aeropuertos Totales</p>
+                <p>Visualiza o crea una nuevo Aeropuerto</p>
               </div>
 
               {selectedEntity === "aeropuertos" && (
@@ -349,7 +356,7 @@ const DashboardInformation = () => {
             </div>
 
             {/* Puertos */}
-            <div className="shadow-md rounded-2xl p-4 w-[250px] h-[150px] flex flex-col justify-evenly mt-2">
+            <div className="shadow-md rounded-2xl p-4 w-[250px] h-[190px] flex flex-col justify-evenly mt-2">
               <div className="flex justify-between items-center">
                 <div className="flex justify-center items-center gap-2">
                   <MdDirectionsBoatFilled className="shadow rounded-full p-1 text-2xl text-blue-700" />
@@ -363,6 +370,7 @@ const DashboardInformation = () => {
               <div>
                 <p className="text-2xl font-bold">{puertos.length}</p>
                 <p className="text-sm text-gray-600">Puertos Totales</p>
+                <p>Visualiza o crea una nuevo Puerto</p>
               </div>
 
               {selectedEntity === "puertos" && (
