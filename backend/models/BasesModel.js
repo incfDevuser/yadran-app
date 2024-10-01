@@ -29,11 +29,11 @@ const obtenerBase = async (id) => {
     throw new Error("Hubo un error con la operacion obtenerBase");
   }
 };
-const crearBase = async ({ nombre_base, jefe_base }) => {
+const crearBase = async ({ nombre_base, jefe_base,ponton_id }) => {
   try {
     const query =
-      "INSERT INTO base(nombre_base, jefe_base) VALUES($1, $2) RETURNING*";
-    const values = [nombre_base, jefe_base];
+      "INSERT INTO base(nombre_base, jefe_base, ponton_id) VALUES($1, $2, $3) RETURNING*";
+    const values = [nombre_base, jefe_base,ponton_id ];
     const response = await pool.query(query, values);
     return response.rows[0];
   } catch (error) {

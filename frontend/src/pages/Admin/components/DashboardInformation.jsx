@@ -23,6 +23,10 @@ import CreateJurisdiccionModal from "../Modals/CreateJurisdiccionModal";
 import CreateZonaModal from "../Modals/CreateZonaModal";
 import CreateConcesionModal from "../Modals/CreateConcesionModal";
 import CreatePontonModal from "../Modals/CreatePontonModal";
+import CreateCentroModal from "../Modals/CreateCentroModal";
+import CreateBaseModal from "../Modals/CreateBaseModal";
+import CreateAeropuertoModal from "../Modals/CreateAeropuertoModal";
+import CreatePuertoModal from "../Modals/CreatePuertoModal";
 
 const DashboardInformation = () => {
   const { jurisdicciones } = useJurisdiccion();
@@ -49,6 +53,10 @@ const DashboardInformation = () => {
   const [createZonaModal, setCreateZonaModal] = useState(false);
   const [createConcesionModal, setCreateConcecionModal] = useState(false);
   const [createPontonModal, setCreatePontonModal] = useState(false);
+  const [createCentroModal, setCreateCentroModal] = useState(false);
+  const [createBaseModal, setCreateBaseModal] = useState(false);
+  const [createAeropuertoModal, setCreateAeropuertoModal] = useState(false);
+  const [createPuertoModal, setCreatePuertoModal] = useState(false);
 
   const [selectedEntity, setSelectedEntity] = useState(null);
   const toggleMenu = (entity) => {
@@ -100,7 +108,6 @@ const DashboardInformation = () => {
                   <button
                     className="block text-gray-700 px-4 py-2 hover:bg-gray-100"
                     onClick={() => {
-                      console.log("Abriendo modal de creación de jurisdicción");
                       setCreateJurisdiccionModal(true);
                       setSelectedEntity(null);
                     }}
@@ -143,7 +150,6 @@ const DashboardInformation = () => {
                   <button
                     className="block text-gray-700 px-4 py-2 hover:bg-gray-100"
                     onClick={() => {
-                      console.log("Abriendo modal de creación de jurisdicción");
                       setCreateZonaModal(true);
                       setSelectedEntity(null);
                     }}
@@ -186,7 +192,6 @@ const DashboardInformation = () => {
                   <button
                     className="block text-gray-700 px-4 py-2 hover:bg-gray-100"
                     onClick={() => {
-                      console.log("Abriendo modal de creación de jurisdicción");
                       setCreateConcecionModal(true);
                       setSelectedEntity(null);
                     }}
@@ -229,7 +234,6 @@ const DashboardInformation = () => {
                   <button
                     className="block text-gray-700 px-4 py-2 hover:bg-gray-100"
                     onClick={() => {
-                      console.log("Abriendo modal de creación de jurisdicción");
                       setCreatePontonModal(true);
                       setSelectedEntity(null);
                     }}
@@ -272,11 +276,11 @@ const DashboardInformation = () => {
                   <button
                     className="block text-gray-700 px-4 py-2 hover:bg-gray-100"
                     onClick={() => {
-                      console.log("Crear nuevo Centro");
+                      setCreateCentroModal(true);
                       setSelectedEntity(null);
                     }}
                   >
-                    Crear nuevo
+                    Crear nueva
                   </button>
                 </div>
               )}
@@ -314,7 +318,7 @@ const DashboardInformation = () => {
                   <button
                     className="block text-gray-700 px-4 py-2 hover:bg-gray-100"
                     onClick={() => {
-                      console.log("Crear nueva Base");
+                      setCreateBaseModal(true);
                       setSelectedEntity(null);
                     }}
                   >
@@ -356,11 +360,11 @@ const DashboardInformation = () => {
                   <button
                     className="block text-gray-700 px-4 py-2 hover:bg-gray-100"
                     onClick={() => {
-                      console.log("Crear nuevo Aeropuerto");
+                      setCreateAeropuertoModal(true);
                       setSelectedEntity(null);
                     }}
                   >
-                    Crear nuevo
+                    Crear nueva
                   </button>
                 </div>
               )}
@@ -398,11 +402,11 @@ const DashboardInformation = () => {
                   <button
                     className="block text-gray-700 px-4 py-2 hover:bg-gray-100"
                     onClick={() => {
-                      console.log("Crear nuevo Puerto");
+                      setCreatePuertoModal(true);
                       setSelectedEntity(null);
                     }}
                   >
-                    Crear nuevo
+                    Crear nueva
                   </button>
                 </div>
               )}
@@ -465,7 +469,10 @@ const DashboardInformation = () => {
         data={centros}
         entityType="centro"
       />
-
+      <CreateCentroModal
+        isOpen={createCentroModal}
+        onClose={() => setCreateCentroModal(false)}
+      />
       <Modal
         isOpen={isBasesModalOpen}
         onClose={() => setIsBasesModalOpen(false)}
@@ -473,13 +480,20 @@ const DashboardInformation = () => {
         data={bases}
         entityType="base"
       />
-
+      <CreateBaseModal
+        isOpen={createBaseModal}
+        onClose={() => setCreateBaseModal(false)}
+      />
       <Modal
         isOpen={isAeropuertosModalOpen}
         onClose={() => setIsAeropuertosModalOpen(false)}
         title="Aeropuertos"
         data={aeropuertos}
         entityType="aeropuerto"
+      />
+      <CreateAeropuertoModal
+        isOpen={createAeropuertoModal}
+        onClose={() => setCreateAeropuertoModal(false)}
       />
 
       <Modal
@@ -488,6 +502,10 @@ const DashboardInformation = () => {
         title="Puertos"
         data={puertos}
         entityType="puerto"
+      />
+      <CreatePuertoModal
+        isOpen={createPuertoModal}
+        onClose={() => setCreatePuertoModal(false)}
       />
     </div>
   );

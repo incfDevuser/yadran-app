@@ -35,10 +35,11 @@ const obtenerBase = async (req, res) => {
   }
 };
 const crearBase = async (req, res) => {
-  const { nombre_base, jefe_base } = req.body;
+  const { nombre_base, jefe_base, ponton_id } = req.body;
   const base = {
     nombre_base,
     jefe_base,
+    ponton_id,
   };
   try {
     const nuevaBase = await BasesModel.crearBase(base);

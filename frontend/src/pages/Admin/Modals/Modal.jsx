@@ -57,7 +57,6 @@ const Modal = ({ isOpen, onClose, title, data, entityType }) => {
       case "centro":
         return (
           <div key={item.id} className="bg-gray-100 p-3 rounded-md shadow-sm">
-            <h3 className="font-bold">ID: {item.id}</h3>
             <p>Nombre: {item.nombre_centro}</p>
             <p>Apertura Productiva: {item.fecha_apertura_productiva || "No disponible"}</p>
             <p>Cierre Productivo: {item.fecha_cierre_productivo || "No disponible"}</p>
@@ -70,9 +69,9 @@ const Modal = ({ isOpen, onClose, title, data, entityType }) => {
       case "base":
         return (
           <div key={item.id} className="bg-gray-100 p-3 rounded-md shadow-sm">
-            <h3 className="font-bold">ID: {item.id}</h3>
             <p>Nombre: {item.nombre_base}</p>
             <p>Jefe de Base: {item.jefe_base || "No disponible"}</p>
+            <p>Ponton Asociado: {item.nombre_ponton || "No disponible"}</p>
           </div>
         );
       case "aeropuerto":

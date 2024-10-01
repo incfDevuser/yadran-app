@@ -83,7 +83,7 @@ const CreatePontonModal = ({ isOpen, onClose }) => {
                 <option value="">Selecciona una Concesion</option>
                 {concesiones.map((concesion) => (
                   <option key={concesion.id} value={concesion.id}>
-                    {concesion.nombre_jurisdiccion}
+                    {concesion.nombre_concesion}
                   </option>
                 ))}
               </select>

@@ -16,7 +16,7 @@ export const AeropuertosProvider = ({ children }) => {
           `http://localhost:5000/api/aeropuertos/`
         );
         const data = response.data.aeropuertos;
-        console.log(data)
+        console.log(data);
         setAeropuertos(data);
       } catch (error) {
         setError(error.message || "Hubo un error al cargar las bases");
@@ -26,8 +26,29 @@ export const AeropuertosProvider = ({ children }) => {
     };
     obtenerAeropuertos();
   }, []);
+  const crearAeropuerto = async (nuevoAeropuerto) => {
+    try {
+      const response = await axios.post(
+        "http://localhost:5000/api/aeropuertos/create",
+        nuevoAeropuerto
+      );
+      if (response.status === 201) {
+        //ACTUALIZAR LA LISTA
+        setAeropuertos([...aeropuertos, response.data]);
+        return response.data;
+      } else {
+        console.error("Error al crear el aeropuerto", response.data);
+        throw new Error(
+          response.data.message || "Error al crear el aeropuerto"
+        );
+      }
+    } catch (error) {
+      console.error("Hubo un error al crear el aeropuerto", error.message);
+      throw error;
+    }
+  };
   return (
-    <AeropuertosContext.Provider value={{ aeropuertos, loading, error }}>
+    <AeropuertosContext.Provider value={{ aeropuertos, loading, error, crearAeropuerto }}>
       {children}
     </AeropuertosContext.Provider>
   );
