@@ -2,7 +2,11 @@ import pool from "../config/db.js";
 
 const obtenerBases = async () => {
   try {
-    const query = "SELECT * FROM base";
+    const query = `
+    SELECT b.*, p.nombre_ponton AS nombre_ponton
+    FROM base b
+    LEFT JOIN ponton p ON b.ponton_id = p.id
+    `;
     const response = await pool.query(query);
     return response.rows;
   } catch (error) {
@@ -12,7 +16,12 @@ const obtenerBases = async () => {
 };
 const obtenerBase = async (id) => {
   try {
-    const query = "SELECT * FROM base WHERE id = $1";
+    const query = `
+     SELECT b.*, p.nombre_ponton AS nombre_ponton
+    FROM base b
+    LEFT JOIN ponton p ON b.ponton_id = p.id
+    WHERE b.id = $1
+    `;
     const response = await pool.query(query, [id]);
     return response.rows[0];
   } catch (error) {

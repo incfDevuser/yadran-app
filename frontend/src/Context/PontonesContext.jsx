@@ -26,8 +26,22 @@ export const PontonesProvider = ({ children }) => {
     };
     obtenerPontones();
   }, []);
+  const crearPonton = async(nuevoPonton)=>{
+    try {
+      const response = await axios.post("http://localhost:5000/api/pontones/create", nuevoPonton)
+      if(response.status === 201){
+        setPontones([...pontones, response.data])
+        return response.data
+      }else{
+        console.error("Error al crear el ponton", response.data);
+        throw new Error(response.data.message || "Error al crear el ponton");
+      }
+    } catch (error) {
+      console.error("Hubo un error al crear el ponton")
+    }
+  }
   return (
-    <PontonesContext.Provider value={{ pontones, loading, error }}>
+    <PontonesContext.Provider value={{ pontones, loading, error, crearPonton }}>
       {children}
     </PontonesContext.Provider>
   );

@@ -102,7 +102,7 @@ create table vehiculos(
 	velocidad_promedio numeric(10, 2) not null
 );
 
-
+	
 --Luego la tabla rutas, primero consultar si es que la ruta va asociada al centro.
 create table rutas(
 	id serial primary key,

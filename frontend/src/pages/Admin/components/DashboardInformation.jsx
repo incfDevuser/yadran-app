@@ -20,6 +20,8 @@ import { MdLocalAirport } from "react-icons/md";
 // Otros
 import Modal from "../Modals/Modal";
 import CreateJurisdiccionModal from "../Modals/CreateJurisdiccionModal";
+import CreateZonaModal from "../Modals/CreateZonaModal";
+import CreateConcesionModal from "../Modals/CreateConcesionModal";
 
 const DashboardInformation = () => {
   const { jurisdicciones } = useJurisdiccion();
@@ -43,6 +45,8 @@ const DashboardInformation = () => {
 
   //Modals de creacion
   const [createJurisdiccionModal, setCreateJurisdiccionModal] = useState(false);
+  const [createZonaModal, setCreateZonaModal] = useState(false)
+  const [createConcesionModal, setCreateConcecionModal] = useState(false)
 
   const [selectedEntity, setSelectedEntity] = useState(null);
   const toggleMenu = (entity) => {
@@ -135,7 +139,8 @@ const DashboardInformation = () => {
                   <button
                     className="block text-gray-700 px-4 py-2 hover:bg-gray-100"
                     onClick={() => {
-                      console.log("Crear nueva Zona");
+                      console.log("Abriendo modal de creación de jurisdicción");
+                      setCreateZonaModal(true);
                       setSelectedEntity(null);
                     }}
                   >
@@ -177,7 +182,8 @@ const DashboardInformation = () => {
                   <button
                     className="block text-gray-700 px-4 py-2 hover:bg-gray-100"
                     onClick={() => {
-                      console.log("Crear nueva Concesión");
+                      console.log("Abriendo modal de creación de jurisdicción");
+                      setCreateConcecionModal(true);
                       setSelectedEntity(null);
                     }}
                   >
@@ -420,7 +426,10 @@ const DashboardInformation = () => {
         data={zonas}
         entityType="zona"
       />
-
+      <CreateZonaModal
+      isOpen={createZonaModal}
+      onClose={()=> setCreateZonaModal(false)}
+      />
       <Modal
         isOpen={isConcesionModalOpen}
         onClose={() => setIsConcesionModalOpen(false)}
@@ -428,7 +437,10 @@ const DashboardInformation = () => {
         data={concesiones}
         entityType="concesion"
       />
-
+      <CreateConcesionModal
+      isOpen={createConcesionModal}
+      onClose={()=> setCreateConcecionModal(false)}
+      />
       <Modal
         isOpen={isPontonesModalOpen}
         onClose={() => setIsPontonesModalOpen(false)}
