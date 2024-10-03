@@ -123,17 +123,22 @@ const CreateZonaModal = ({ isOpen, onClose }) => {
             ) : (
               <select
                 name="jurisdiccion_id"
-                value={nuevaZona.jurisdiccion_id}
-                onChange={handleInputChange}
+                value={nuevaZona.jurisdiccion_id || ""}
+                onChange={(e) =>
+                  setNuevaZona({
+                    ...nuevaZona,
+                    jurisdiccion_id:
+                      e.target.value === "" ? null : Number(e.target.value),
+                  })
+                }
                 className="w-full px-3 py-2 border rounded"
                 required
               >
-                {/* Mapear las options en base a los valores */}
-                <option value="">Selecciona una Jurisdiccion</option>
-                {jurisdicciones.map((jurisdiccion)=>(
-                    <option key={jurisdiccion.id} value={jurisdiccion.id}>
-                        {jurisdiccion.nombre_jurisdiccion}
-                    </option>
+                <option value="">Selecciona una Jurisdicción</option>
+                {jurisdicciones.map((jurisdiccion) => (
+                  <option key={jurisdiccion.id} value={jurisdiccion.id}>
+                    {jurisdiccion.nombre_jurisdiccion}
+                  </option>
                 ))}
               </select>
             )}

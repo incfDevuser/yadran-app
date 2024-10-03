@@ -3,9 +3,10 @@ import pool from "../config/db.js";
 const obtenerCentros = async () => {
   try {
     const query = `
-    SELECT c.*, p.nombre_ponton as nombre_ponton
+    SELECT c.*, p.nombre_ponton as nombre_ponton, r.nombre_ruta as nombre_ruta
     FROM centro c
     LEFT JOIN ponton p ON c.ponton_id = p.id
+    LEFT JOIN rutas r ON c.ruta_id = r.id
     `;
     const response = await pool.query(query);
     return response.rows;
@@ -16,7 +17,13 @@ const obtenerCentros = async () => {
 };
 const obtenerCentro = async (id) => {
   try {
-    const query = "SELECT * FROM centro WHERE id = $1";
+    const query = `
+    SELECT c.*, p.nombre_ponton as nombre_ponton, r.nombre_ruta as nombre_ruta
+    FROM centro c
+    LEFT JOIN ponton p ON c.ponton_id = p.id
+    LEFT JOIN rutas r ON c.ruta_id = r.id
+    WHERE c.id = $1
+    `;
     const response = await pool.query(query, [id]);
     return response.rows[0];
   } catch (error) {
@@ -24,6 +31,7 @@ const obtenerCentro = async (id) => {
     throw new Error("Error con la operacion obtenerCentro");
   }
 };
+
 const crearCentro = async ({
   nombre_centro,
   fecha_apertura_productiva,
@@ -31,7 +39,8 @@ const crearCentro = async ({
   jefe_centro,
   etapa_ciclo_cultivo,
   estructura,
-  ponton_id
+  ponton_id,
+  ruta_id,
 }) => {
   try {
     const query = `
@@ -41,7 +50,7 @@ const crearCentro = async ({
   fecha_cierre_productivo,
   jefe_centro,
   etapa_ciclo_cultivo,
-  estructura, ponton_id) VALUES($1, $2, $3, $4, $5, $6, $7)`;
+  estructura, ponton_id,ruta_id) VALUES($1, $2, $3, $4, $5, $6, $7,$8)`;
     const values = [
       nombre_centro,
       fecha_apertura_productiva,
@@ -49,7 +58,8 @@ const crearCentro = async ({
       jefe_centro,
       etapa_ciclo_cultivo,
       estructura,
-      ponton_id
+      ponton_id,
+      ruta_id,
     ];
     const response = await pool.query(query, values);
     return response.rows[0];

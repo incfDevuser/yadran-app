@@ -7,6 +7,7 @@ export const adminNavBar = [
     {id:"5",path:"/adminDashboard", label: "Dashboard"},
     {id:"6",path:"/adminConfiguracion", label: "Configuracion"},
     {id:"7",path:"/adminVehiculos", label: "Vehiculos"},
+    {id:"8",path:"/adminViajes", label: "Viajes"},
 ]
 export const mainNavBar = [
     {id:"1",path:"/", label: "Agendar"},

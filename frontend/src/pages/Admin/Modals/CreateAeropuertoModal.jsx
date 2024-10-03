@@ -10,7 +10,7 @@ const CreateAeropuertoModal = ({ isOpen, onClose }) => {
     nombre_aeropuerto: "",
     ubicacion_aeropuerto: "",
     localidad: "",
-    jurisdiccion_id: 0,
+    jurisdiccion_id: null,
     estado: "Abierto",
   });
   const handleInputChange = (e) => {
@@ -37,7 +37,9 @@ const CreateAeropuertoModal = ({ isOpen, onClose }) => {
         <h2 className="text-xl font-bold mb-4">Crear Nuevo Aeropuerto</h2>
         <form onSubmit={(e) => e.preventDefault()}>
           <div className="mb-4">
-            <label className="block text-gray-700 mb-2">Nombre del Aeropuerto</label>
+            <label className="block text-gray-700 mb-2">
+              Nombre del Aeropuerto
+            </label>
             <input
               type="text"
               name="nombre_aeropuerto"
@@ -50,7 +52,9 @@ const CreateAeropuertoModal = ({ isOpen, onClose }) => {
           </div>
 
           <div className="mb-4">
-            <label className="block text-gray-700 mb-2">Ubicación del Aeropuerto</label>
+            <label className="block text-gray-700 mb-2">
+              Ubicación del Aeropuerto
+            </label>
             <input
               type="text"
               name="ubicacion_aeropuerto"
@@ -82,8 +86,14 @@ const CreateAeropuertoModal = ({ isOpen, onClose }) => {
             ) : (
               <select
                 name="jurisdiccion_id"
-                value={nuevoAeropuerto.jurisdiccion_id}
-                onChange={handleInputChange}
+                value={nuevoAeropuerto.jurisdiccion_id || ""}
+                onChange={(e) =>
+                  setNuevoAeropuerto({
+                    ...nuevoAeropuerto,
+                    jurisdiccion_id:
+                      e.target.value === "" ? null : Number(e.target.value), 
+                  })
+                }
                 className="w-full px-3 py-2 border rounded"
                 required
               >

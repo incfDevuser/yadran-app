@@ -28,7 +28,7 @@ import CreateBaseModal from "../Modals/CreateBaseModal";
 import CreateAeropuertoModal from "../Modals/CreateAeropuertoModal";
 import CreatePuertoModal from "../Modals/CreatePuertoModal";
 
-const DashboardInformation = () => {
+const DashboardInformation = () => {  
   const { jurisdicciones } = useJurisdiccion();
   const { zonas } = useZonas();
   const { concesiones } = useConcesion();

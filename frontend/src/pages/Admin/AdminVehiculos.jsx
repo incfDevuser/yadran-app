@@ -13,7 +13,7 @@ const AdminVehiculos = () => {
   const [selectedVehiculo, setSelectedVehiculo] = useState(null);
   //Estado para crear el nuevo vehiculos
   const [nuevoVehiculo, setNuevoVehiculo] = useState({
-    proveedor_id: 0,
+    proveedor_id: null,
     num_tripulantes: 0,
     tipo_vehiculo: "",
     tipo_servicio: "",
@@ -93,8 +93,16 @@ const AdminVehiculos = () => {
                       ) : (
                         <select
                           name="proveedor_id"
-                          value={nuevoVehiculo.proveedor_id}
-                          onChange={handleChange}
+                          value={nuevoVehiculo.proveedor_id || ""}
+                          onChange={(e) =>
+                            setNuevoVehiculo({
+                              ...nuevoVehiculo,
+                              proveedor_id:
+                                e.target.value === ""
+                                  ? null
+                                  : Number(e.target.value),
+                            })
+                          }
                           className="w-full border border-gray-300 p-2 rounded"
                           required
                         >

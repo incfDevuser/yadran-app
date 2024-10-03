@@ -64,6 +64,7 @@ const Modal = ({ isOpen, onClose, title, data, entityType }) => {
             <p>Etapa Ciclo Cultivo: {item.etapa_ciclo_cultivo || "No disponible"}</p>
             <p>Estructura: {item.estructura || "No disponible"}</p>
             <p>Ponton Asociado: {item.nombre_ponton || "No disponible"}</p>
+            <p>Ruta Asociada: {item.nombre_ruta || "No disponible"}</p>
           </div>
         );
       case "base":

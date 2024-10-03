@@ -85,8 +85,14 @@ const CreatePuertoModal = ({ isOpen, onClose }) => {
             ) : (
               <select
                 name="jurisdiccion_id"
-                value={nuevoPuerto.jurisdiccion_id}
-                onChange={handleInputChange}
+                value={nuevoPuerto.jurisdiccion_id || ""}
+                onChange={(e) =>
+                  setNuevoPuerto({
+                    ...nuevoPuerto,
+                    jurisdiccion_id:
+                      e.target.value === "" ? null : Number(e.target.value),
+                  })
+                }
                 className="w-full px-3 py-2 border rounded"
                 required
               >

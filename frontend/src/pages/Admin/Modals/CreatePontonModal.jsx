@@ -10,7 +10,7 @@ const CreatePontonModal = ({ isOpen, onClose }) => {
   const [nuevoPonton, setNuevoPonton] = useState({
     nombre_ponton: "",
     ubicacion: "",
-    concesion_id: 0,
+    concesion_id: null,
     fecha_apertura_operacional: "",
     fecha_cierre_operacional: "",
     tipo_ponton: "",
@@ -35,7 +35,7 @@ const CreatePontonModal = ({ isOpen, onClose }) => {
       console.error("Error al crear el ponton", error);
     }
   };
-  if(!isOpen) return null
+  if (!isOpen) return null;
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
       <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-md  max-h-[80vh] overflow-y-auto">
@@ -67,7 +67,7 @@ const CreatePontonModal = ({ isOpen, onClose }) => {
               placeholder="Ubicación Geográfica"
             />
           </div>
-         
+
           <div className="mb-4">
             <label className="block text-gray-700 mb-2">Concesion</label>
             {loadingConcesiones ? (
@@ -75,8 +75,14 @@ const CreatePontonModal = ({ isOpen, onClose }) => {
             ) : (
               <select
                 name="concesion_id"
-                value={nuevoPonton.concesion_id}
-                onChange={handleInputChange}
+                value={nuevoPonton.concesion_id || ""}
+                onChange={(e) =>
+                  setNuevoPonton({
+                    ...nuevoPonton,
+                    concesion_id:
+                      e.target.value === "" ? null : Number(e.target.value),
+                  })
+                }
                 className="w-full px-3 py-2 border rounded"
                 required
               >
@@ -127,7 +133,9 @@ const CreatePontonModal = ({ isOpen, onClose }) => {
           </div>
 
           <div className="mb-4">
-            <label className="block text-gray-700 mb-2">Habitabilidad General</label>
+            <label className="block text-gray-700 mb-2">
+              Habitabilidad General
+            </label>
             <input
               type="text"
               name="habitabilidad_general"
@@ -139,7 +147,9 @@ const CreatePontonModal = ({ isOpen, onClose }) => {
           </div>
 
           <div className="mb-4">
-            <label className="block text-gray-700 mb-2">Habitabilidad Interna</label>
+            <label className="block text-gray-700 mb-2">
+              Habitabilidad Interna
+            </label>
             <input
               type="text"
               name="habitabilidad_interna"
@@ -151,7 +161,9 @@ const CreatePontonModal = ({ isOpen, onClose }) => {
           </div>
 
           <div className="mb-4">
-            <label className="block text-gray-700 mb-2">Habitabilidad Externa</label>
+            <label className="block text-gray-700 mb-2">
+              Habitabilidad Externa
+            </label>
             <input
               type="text"
               name="habitabilidad_externa"

@@ -27,7 +27,7 @@ const AdminRoutes = () => {
     origen: "",
     destino: "",
     escalas: "",
-    tiempo_estimado: 120,
+    tiempo_estimado:0,
     mov_interno: true,
     fecha_agendamiento: "",
   });
@@ -360,10 +360,10 @@ const AdminRoutes = () => {
 
                 <div className="mb-4">
                   <label className="block text-gray-700">
-                    Duración Estimada
+                    Duración Estimada (Minutos)
                   </label>
                   <input
-                    type="time"
+                    type="number"
                     name="duracion_estimada"
                     value={trayecto.duracion_estimada}
                     onChange={handleTrayectoChange}
@@ -399,7 +399,7 @@ const AdminRoutes = () => {
                       required
                     >
                       <option value="">Selecciona un vehiculo</option>
-                      {vehiculos.map((vehiculo)=>(
+                      {vehiculos.map((vehiculo) => (
                         <option key={vehiculo.id} value={vehiculo.id}>
                           {vehiculo.tipo_vehiculo}
                         </option>
@@ -464,9 +464,10 @@ const AdminRoutes = () => {
                             <p className="font-semibold">Duracion Estimada</p>
                             <div className="flex justify-center items-center gap-2 text-gray-500">
                               <FiClock />
-                              <p>{trayecto.duracion_estimada.hours}</p>:
-                              <p>{trayecto.duracion_estimada.minutes}</p>
-                              <p>Hrs</p>
+                              <div className="flex justify-center items-center gap-2 text-gray-500">
+                                <p>{trayecto.duracion_estimada}</p>
+                                <p>Min</p>
+                              </div>
                             </div>
                           </div>
 

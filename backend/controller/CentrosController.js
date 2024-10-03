@@ -42,7 +42,8 @@ const crearCentro = async (req, res) => {
     jefe_centro,
     etapa_ciclo_cultivo,
     estructura,
-    ponton_id
+    ponton_id,
+    ruta_id
   } = req.body;
   //Instanciar un centro
   const centro = {
@@ -52,7 +53,8 @@ const crearCentro = async (req, res) => {
     jefe_centro,
     etapa_ciclo_cultivo,
     estructura,
-    ponton_id
+    ponton_id,
+    ruta_id
   };
   try {
     const nuevoCentro = await CentrosModel.crearCentro(centro);

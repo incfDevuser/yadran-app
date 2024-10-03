@@ -9,7 +9,7 @@ const CreateBaseModal = ({ isOpen, onClose }) => {
   const [nuevaBase, setNuevaBase] = useState({
     nombre_base: "",
     jefe_base: "",
-    ponton_id: 0,
+    ponton_id: null,
   });
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -35,7 +35,9 @@ const CreateBaseModal = ({ isOpen, onClose }) => {
         <h2 className="text-xl font-bold mb-4">Crear Nueva Base</h2>
         <form onSubmit={(e) => e.preventDefault()}>
           <div className="mb-4">
-            <label className="block text-gray-700 mb-2">Nombre de la Base</label>
+            <label className="block text-gray-700 mb-2">
+              Nombre de la Base
+            </label>
             <input
               type="text"
               name="nombre_base"
@@ -67,8 +69,14 @@ const CreateBaseModal = ({ isOpen, onClose }) => {
             ) : (
               <select
                 name="ponton_id"
-                value={nuevaBase.ponton_id}
-                onChange={handleInputChange}
+                value={nuevaBase.ponton_id || ""}
+                onChange={(e) =>
+                  setNuevaBase({
+                    ...nuevaBase,
+                    ponton_id:
+                      e.target.value === "" ? null : Number(e.target.value), 
+                  })
+                }
                 className="w-full px-3 py-2 border rounded"
                 required
               >

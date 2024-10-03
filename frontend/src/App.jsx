@@ -20,6 +20,7 @@ import AdminProveedores from "./pages/Admin/AdminProveedores";
 import AdminDashboard from "./pages/Admin/AdminDashboard";
 import AdminConfiguracion from "./pages/Admin/AdminConfiguracion";
 import AdminVehiculos from "./pages/Admin/AdminVehiculos";
+import AdminViajes from "./pages/Admin/AdminViajes";
 import Trips from "./pages/Flight/Trips";
 import MisCentros from "./pages/MisCentros"; // Importa la nueva página
 import { ToastContainer } from "react-toastify";
@@ -38,11 +39,14 @@ import { BasesProvider } from "./Context/BasesContext";
 import { AeropuertosProvider } from "./Context/AeropuertosContext";
 import { PuertosProvider } from "./Context/PuertosContext";
 
+
 const App = () => {
   return (
-    <>
-      <div className="font-Nunito overflow-hidden max-w-[1440px] mx-auto">
-        <Navbar />
+    <div className="font-Nunito min-h-screen flex flex-col max-w-[1440px] mx-auto">
+      <Navbar />
+      
+      {/* Contenedor para las rutas que crece automáticamente y empuja el footer */}
+      <div className="flex-grow">
         <Routes>
           <Route path="/" element={<Flights />} />
           <Route path="/hotels" element={<Hotels />} />
@@ -53,9 +57,11 @@ const App = () => {
           <Route path="/payment" element={<Payment />} />
           <Route path="/confirm" element={<Confirm />} />
           <Route path="/trips" element={<Trips />} /> {/* Nueva ruta */}
-          <Route path="/mis-centros" element={<MisCentros />} />{" "}
-          {/* Nueva ruta para Mis Centros */}
+          <Route path="/mis-centros" element={<MisCentros />} /> {/* Nueva ruta */}
           <Route path="/admin" element={<AdminPanel />} /> {/* Nueva ruta */}
+
+          {/* Admin Viajes, para ver los paquetes ofrecidos */}
+          <Route path="/adminViajes" element={<AdminViajes />} /> 
           {/*  Rutas para el panel de administrador */}
           <Route path="/adminUserList" element={<AdminUserList />} />
           <Route
@@ -71,7 +77,6 @@ const App = () => {
             }
           />
           <Route path="/adminReportes" element={<AdminReportes />} />
-          {/* Envolver en una ruta al contexto, envolviendo al provider de proveedores al componente donde se ocupa */}
           <Route
             path="/adminProveedores"
             element={
@@ -80,6 +85,7 @@ const App = () => {
               </ProveedoresProvider>
             }
           />
+          
           <Route
             path="/adminDashboard"
             element={
@@ -87,6 +93,7 @@ const App = () => {
                 <ZonasProvider>
                   <ConcesionesProvider>
                     <PontonesProvider>
+                      <RutasProvider>
                       <CentrosProvider>
                         <BasesProvider>
                           <AeropuertosProvider>
@@ -96,6 +103,7 @@ const App = () => {
                           </AeropuertosProvider>
                         </BasesProvider>
                       </CentrosProvider>
+                      </RutasProvider>
                     </PontonesProvider>
                   </ConcesionesProvider>
                 </ZonasProvider>
@@ -114,21 +122,24 @@ const App = () => {
             }
           />
         </Routes>
-        <Footer />
-        <ToastContainer
-          position="bottom-center"
-          autoClose={5000}
-          hideProgressBar={false}
-          newestOnTop={false}
-          closeOnClick
-          rtl={false}
-          pauseOnFocusLoss
-          draggable
-          pauseOnHover
-          theme="dark"
-        />
       </div>
-    </>
+
+      {/* Footer con mt-auto para asegurar que se mantenga al final */}
+      <Footer className="mt-auto" />
+
+      <ToastContainer
+        position="bottom-center"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="dark"
+      />
+    </div>
   );
 };
 

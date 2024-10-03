@@ -1,10 +1,12 @@
 import React, { useState } from "react";
 import { usePontones } from "../../../Context/PontonesContext";
 import { useCentros } from "../../../Context/CentrosContext";
+import { useRutas } from "../../../Context/RoutesContext";
 
 const CreateCentroModal = ({ isOpen, onClose }) => {
   const { crearCentro } = useCentros();
   const { pontones, loading: loadingPontones } = usePontones();
+  const { rutas, loading: loadingRutas } = useRutas();
 
   const [nuevoCentro, setNuevoCentro] = useState({
     nombre_centro: "",
@@ -13,7 +15,8 @@ const CreateCentroModal = ({ isOpen, onClose }) => {
     jefe_centro: "",
     etapa_ciclo_cultivo: "",
     estructuras: "",
-    ponton_id: 0,
+    ponton_id: null,
+    ruta_id: null,
   });
 
   const handleInputChange = (e) => {
@@ -40,7 +43,9 @@ const CreateCentroModal = ({ isOpen, onClose }) => {
         <h2 className="text-xl font-bold mb-4">Crear Nuevo Centro</h2>
         <form onSubmit={(e) => e.preventDefault()}>
           <div className="mb-4">
-            <label className="block text-gray-700 mb-2">Nombre del Centro</label>
+            <label className="block text-gray-700 mb-2">
+              Nombre del Centro
+            </label>
             <input
               type="text"
               name="nombre_centro"
@@ -53,7 +58,9 @@ const CreateCentroModal = ({ isOpen, onClose }) => {
           </div>
 
           <div className="mb-4">
-            <label className="block text-gray-700 mb-2">Fecha de Apertura Productiva</label>
+            <label className="block text-gray-700 mb-2">
+              Fecha de Apertura Productiva
+            </label>
             <input
               type="date"
               name="fecha_apertura_productiva"
@@ -65,7 +72,9 @@ const CreateCentroModal = ({ isOpen, onClose }) => {
           </div>
 
           <div className="mb-4">
-            <label className="block text-gray-700 mb-2">Fecha de Cierre Productivo</label>
+            <label className="block text-gray-700 mb-2">
+              Fecha de Cierre Productivo
+            </label>
             <input
               type="date"
               name="fecha_cierre_productivo"
@@ -90,7 +99,9 @@ const CreateCentroModal = ({ isOpen, onClose }) => {
           </div>
 
           <div className="mb-4">
-            <label className="block text-gray-700 mb-2">Etapa del Ciclo de Cultivo</label>
+            <label className="block text-gray-700 mb-2">
+              Etapa del Ciclo de Cultivo
+            </label>
             <input
               type="text"
               name="etapa_ciclo_cultivo"
@@ -122,8 +133,14 @@ const CreateCentroModal = ({ isOpen, onClose }) => {
             ) : (
               <select
                 name="ponton_id"
-                value={nuevoCentro.ponton_id}
-                onChange={handleInputChange}
+                value={nuevoCentro.ponton_id || ""}
+                onChange={(e) =>
+                  setNuevoCentro({
+                    ...nuevoCentro,
+                    ponton_id:
+                      e.target.value === "" ? null : Number(e.target.value),
+                  })
+                }
                 className="w-full px-3 py-2 border rounded"
                 required
               >
@@ -131,6 +148,34 @@ const CreateCentroModal = ({ isOpen, onClose }) => {
                 {pontones.map((ponton) => (
                   <option key={ponton.id} value={ponton.id}>
                     {ponton.nombre_ponton}
+                  </option>
+                ))}
+              </select>
+            )}
+          </div>
+
+          <div className="mb-4">
+            <label className="block text-gray-700 mb-2">Ruta Asociada</label>
+            {loadingRutas ? (
+              <p>Cargando Rutas...</p>
+            ) : (
+              <select
+                name="ruta_id"
+                value={nuevoCentro.ruta_id || ""}
+                onChange={(e) =>
+                  setNuevoCentro({
+                    ...nuevoCentro,
+                    ruta_id:
+                      e.target.value === "" ? null : Number(e.target.value),
+                  })
+                }
+                className="w-full px-3 py-2 border rounded"
+                required
+              >
+                <option value="">Selecciona una Ruta</option>
+                {rutas.map((ruta) => (
+                  <option key={ruta.id} value={ruta.id}>
+                    {ruta.nombre_ruta}
                   </option>
                 ))}
               </select>

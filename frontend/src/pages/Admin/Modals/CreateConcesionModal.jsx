@@ -8,7 +8,7 @@ const CreateConcesionModal = ({ isOpen, onClose }) => {
 
   const [nuevaConcesion, setNuevaConcesion] = useState({
     vigencia: "",
-    zona_id: 0,
+    zona_id: null,
     nombre_concesion: "",
   });
 
@@ -47,9 +47,7 @@ const CreateConcesionModal = ({ isOpen, onClose }) => {
           </div>
 
           <div className="mb-4">
-            <label className="block text-gray-700 mb-2">
-              Vigencia
-            </label>
+            <label className="block text-gray-700 mb-2">Vigencia</label>
             <input
               type="date"
               name="vigencia"
@@ -67,12 +65,17 @@ const CreateConcesionModal = ({ isOpen, onClose }) => {
             ) : (
               <select
                 name="zona_id"
-                value={nuevaConcesion.zona_id}
-                onChange={handleInputChange}
+                value={nuevaConcesion.zona_id || ""}
+                onChange={(e) =>
+                  setNuevaConcesion({
+                    ...nuevaConcesion,
+                    zona_id:
+                      e.target.value === "" ? null : Number(e.target.value),
+                  })
+                }
                 className="w-full px-3 py-2 border rounded"
                 required
               >
-                {/* Mapear las options en base a los valores */}
                 <option value="">Selecciona una Zona</option>
                 {zonas.map((zona) => (
                   <option key={zona.id} value={zona.id}>
