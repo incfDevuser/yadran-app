@@ -3,6 +3,8 @@ import express from "express";
 import dotenv from "dotenv";
 import pool from "./config/db.js";
 import cors from "cors";
+import session from "express-session"; 
+import passport from "passport";
 //Importar las rutas
 import jurisdiccionesRoutes from "./routes/jurisdicciones.routes.js";
 import zonasRoutes from "./routes/zonas.routes.js";
@@ -19,6 +21,9 @@ import aeropuertosRoutes from "./routes/aeropuertos.routes.js";
 
 //Importaciones para los viajes
 import viajesRoutes from "./routes/viajes.routes.js";
+//Ruta para la autenticacion
+import authRouter from './passport/authRouter.js'
+import './auth.js'
 
 //Definiciones y variables globales
 dotenv.config();
@@ -34,6 +39,19 @@ app.use(
     credentials: true,
   })
 );
+app.use(
+  session({
+    secret:process.env.COOKIE_SECRET,
+    resave: false,
+    saveUninitialized: false,
+    cookie: { secure: false },
+  })
+);
+//INICIAR PASSPORT
+app.use(passport.initialize());
+app.use(passport.session());
+
+
 //Rutas para las jurisdicciones
 app.use("/api/jurisdicciones", jurisdiccionesRoutes);
 //Rutas para las zonas
@@ -60,6 +78,8 @@ app.use("/api/puertos", puertoRoutes);
 app.use("/api/aeropuertos", aeropuertosRoutes);
 //Ruta para los viajes
 app.use("/api/viajes", viajesRoutes);
+//Ruta para la autenticacion
+app.use("/auth", authRouter)
 
 app.listen(port, () => {
   console.log(`Servidor escuchando en el puerto ${port}`);
