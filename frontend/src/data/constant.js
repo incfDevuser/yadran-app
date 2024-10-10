@@ -13,5 +13,5 @@ export const mainNavBar = [
     {id:"1",path:"/", label: "Agendar"},
     {id:"2",path:"/trips", label: "Mis Viajes"},
     {id:"3",path:"/mis-centros", label: "Mis Centros"},
-    {id:"4",path:"/admin", label: "Admin Panel"}
+    {id:"4",path:"/miPerfil", label: "Mi Perfil"},
 ]

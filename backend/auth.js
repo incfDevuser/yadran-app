@@ -14,7 +14,9 @@ passport.use(
     },
     async (accessToken, refreshToken, profile, done) => {
       const account = profile._json;
+      console.log(account)
       let usuario = {};
+      
 
       try {
         const usuario_actual = await pool.query(

@@ -31,7 +31,6 @@ export const ZonasProvider = ({ children }) => {
         nuevaZona
       );
       if (response.status === 201) {
-        //Actualizar la lista de zonas
         setZonas([...zonas, response.data]);
         return response.data;
       } else {

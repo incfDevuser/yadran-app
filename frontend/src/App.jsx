@@ -39,107 +39,115 @@ import { BasesProvider } from "./Context/BasesContext";
 import { AeropuertosProvider } from "./Context/AeropuertosContext";
 import { PuertosProvider } from "./Context/PuertosContext";
 
+//Usuarios
+import { UsuariosProvider } from "./Context/UsuarioContext";
+import PerfilUsuario from "./pages/User/PerfilUsuario";
 
 const App = () => {
   return (
-    <div className="font-Nunito min-h-screen flex flex-col max-w-[1440px] mx-auto">
-      <Navbar />
-      
-      {/* Contenedor para las rutas que crece automáticamente y empuja el footer */}
-      <div className="flex-grow">
-        <Routes>
-          <Route path="/" element={<Flights />} />
-          <Route path="/hotels" element={<Hotels />} />
-          <Route path="/packages" element={<Packages />} />
-          <Route path="/explore" element={<FlightExplore />} />
-          <Route path="/passenger-info" element={<PassengerInfo />} />
-          <Route path="/seat-selection" element={<SeatSelect />} />
-          <Route path="/payment" element={<Payment />} />
-          <Route path="/confirm" element={<Confirm />} />
-          <Route path="/trips" element={<Trips />} /> {/* Nueva ruta */}
-          <Route path="/mis-centros" element={<MisCentros />} /> {/* Nueva ruta */}
-          <Route path="/admin" element={<AdminPanel />} /> {/* Nueva ruta */}
+    <UsuariosProvider>
+      <div className="font-Nunito min-h-screen flex flex-col max-w-[1440px] mx-auto">
+        <Navbar />
 
-          {/* Admin Viajes, para ver los paquetes ofrecidos */}
-          <Route path="/adminViajes" element={<AdminViajes />} /> 
-          {/*  Rutas para el panel de administrador */}
-          <Route path="/adminUserList" element={<AdminUserList />} />
-          <Route
-            path="/adminRoutes"
-            element={
-              <RutasProvider>
-                <TrayectosProvider>
-                  <VehiculosProvider>
-                    <AdminRoutes />
-                  </VehiculosProvider>
-                </TrayectosProvider>
-              </RutasProvider>
-            }
-          />
-          <Route path="/adminReportes" element={<AdminReportes />} />
-          <Route
-            path="/adminProveedores"
-            element={
-              <ProveedoresProvider>
-                <AdminProveedores />
-              </ProveedoresProvider>
-            }
-          />
-          
-          <Route
-            path="/adminDashboard"
-            element={
-              <JurisdiccionProvider>
-                <ZonasProvider>
-                  <ConcesionesProvider>
-                    <PontonesProvider>
-                      <RutasProvider>
-                      <CentrosProvider>
-                        <BasesProvider>
-                          <AeropuertosProvider>
-                            <PuertosProvider>
-                              <AdminDashboard />
-                            </PuertosProvider>
-                          </AeropuertosProvider>
-                        </BasesProvider>
-                      </CentrosProvider>
-                      </RutasProvider>
-                    </PontonesProvider>
-                  </ConcesionesProvider>
-                </ZonasProvider>
-              </JurisdiccionProvider>
-            }
-          />
-          <Route path="/adminConfiguracion" element={<AdminConfiguracion />} />
-          <Route
-            path="/adminVehiculos"
-            element={
-              <VehiculosProvider>
+        {/* Contenedor para las rutas que crece automáticamente y empuja el footer */}
+        <div className="flex-grow">
+          <Routes>
+            <Route path="/" element={<Flights />} />
+            <Route path="/hotels" element={<Hotels />} />
+            <Route path="/packages" element={<Packages />} />
+            <Route path="/explore" element={<FlightExplore />} />
+            <Route path="/passenger-info" element={<PassengerInfo />} />
+            <Route path="/seat-selection" element={<SeatSelect />} />
+            <Route path="/payment" element={<Payment />} />
+            <Route path="/confirm" element={<Confirm />} />
+            <Route path="/trips" element={<Trips />} /> {/* Nueva ruta */}
+            <Route path="/mis-centros" element={<MisCentros />} />{" "}
+            {/* Nueva ruta */}
+            <Route path="/admin" element={<AdminPanel />} /> {/* Nueva ruta */}
+            {/* Admin Viajes, para ver los paquetes ofrecidos */}
+            <Route path="/adminViajes" element={<AdminViajes />} />
+            {/*  Rutas para el panel de administrador */}
+            <Route path="/adminUserList" element={<AdminUserList />} />
+            <Route
+              path="/adminRoutes"
+              element={
+                <RutasProvider>
+                  <TrayectosProvider>
+                    <VehiculosProvider>
+                      <AdminRoutes />
+                    </VehiculosProvider>
+                  </TrayectosProvider>
+                </RutasProvider>
+              }
+            />
+            <Route path="/adminReportes" element={<AdminReportes />} />
+            <Route
+              path="/adminProveedores"
+              element={
                 <ProveedoresProvider>
-                  <AdminVehiculos />
+                  <AdminProveedores />
                 </ProveedoresProvider>
-              </VehiculosProvider>
-            }
-          />
-        </Routes>
+              }
+            />
+            <Route
+              path="/adminDashboard"
+              element={
+                <JurisdiccionProvider>
+                  <ZonasProvider>
+                    <ConcesionesProvider>
+                      <PontonesProvider>
+                        <RutasProvider>
+                          <CentrosProvider>
+                            <BasesProvider>
+                              <AeropuertosProvider>
+                                <PuertosProvider>
+                                  <AdminDashboard />
+                                </PuertosProvider>
+                              </AeropuertosProvider>
+                            </BasesProvider>
+                          </CentrosProvider>
+                        </RutasProvider>
+                      </PontonesProvider>
+                    </ConcesionesProvider>
+                  </ZonasProvider>
+                </JurisdiccionProvider>
+              }
+            />
+            <Route
+              path="/adminConfiguracion"
+              element={<AdminConfiguracion />}
+            />
+            <Route
+              path="/adminVehiculos"
+              element={
+                <VehiculosProvider>
+                  <ProveedoresProvider>
+                    <AdminVehiculos />
+                  </ProveedoresProvider>
+                </VehiculosProvider>
+              }
+            />
+            <Route path="/miPerfil" element={<PerfilUsuario />} />
+          </Routes>
+        </div>
+
+        {/* Footer con mt-auto para asegurar que se mantenga al final */}
+        <Footer className="mt-auto" />
+
+        <ToastContainer
+          position="bottom-center"
+          autoClose={5000}
+          hideProgressBar={false}
+          newestOnTop={false}
+          closeOnClick
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+          theme="dark"
+        />
       </div>
-
-      {/* Footer con mt-auto para asegurar que se mantenga al final */}
-      <Footer className="mt-auto" />
-
-      <ToastContainer
-        position="bottom-center"
-        autoClose={5000}
-        hideProgressBar={false}
-        newestOnTop={false}
-        closeOnClick
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-        theme="dark"
-      />
-    </div>
+    </UsuariosProvider>
   );
 };
 

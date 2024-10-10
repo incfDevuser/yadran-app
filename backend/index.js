@@ -5,6 +5,7 @@ import pool from "./config/db.js";
 import cors from "cors";
 import session from "express-session"; 
 import passport from "passport";
+import cookieParser from 'cookie-parser'
 //Importar las rutas
 import jurisdiccionesRoutes from "./routes/jurisdicciones.routes.js";
 import zonasRoutes from "./routes/zonas.routes.js";
@@ -24,7 +25,8 @@ import viajesRoutes from "./routes/viajes.routes.js";
 //Ruta para la autenticacion
 import authRouter from './passport/authRouter.js'
 import './auth.js'
-
+//Usuarios
+import userRoutes from './routes/usuarios.routes.js'
 //Definiciones y variables globales
 dotenv.config();
 pool;
@@ -33,6 +35,7 @@ const app = express();
 
 //Middlewares
 app.use(express.json());
+app.use(cookieParser())
 app.use(
   cors({
     origin: "http://localhost:5173",
@@ -80,7 +83,8 @@ app.use("/api/aeropuertos", aeropuertosRoutes);
 app.use("/api/viajes", viajesRoutes);
 //Ruta para la autenticacion
 app.use("/auth", authRouter)
-
+//Miperfil
+app.use("/api/usuarios", userRoutes)
 app.listen(port, () => {
   console.log(`Servidor escuchando en el puerto ${port}`);
 });
