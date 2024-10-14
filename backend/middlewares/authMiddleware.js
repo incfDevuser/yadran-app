@@ -10,7 +10,6 @@ const authToken = async (req, res, next) => {
     }
     const verified = jwt.verify(token, process.env.JWT_SECRET);
     req.user = verified;
-    console.log("Usuario autenticado:", req.user);
     next();
   } catch (error) {
     console.error("Error en authToken:", error.message);
@@ -20,7 +19,8 @@ const authToken = async (req, res, next) => {
   }
 };
 
-const isAdmin = (req, res, next) => {
+const isAdmin = (req, res, next) => { 
+  console.log("Verirficando si el usuario es admin:", req.user)
   try {
     if (req.user.isAdmin) {
       next();

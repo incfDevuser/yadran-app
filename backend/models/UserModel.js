@@ -14,7 +14,6 @@ const obtenerUsuarios = async () => {
     throw new Error("Hubo un error con la operación obtenerUsuarios");
   }
 };
-
 const obtenerUsuario = async (id) => {
   try {
     const query = `
@@ -54,11 +53,13 @@ const obtenerUsuarioConViajes = async (id) => {
                   'destino', trayectos.destino,
                   'estado', trayectos.estado,
                   'vehiculo_id', trayectos.vehiculo_id,
+                  'tipo_vehiculo', vehiculos.tipo_vehiculo,  -- Agregamos el nombre del vehículo
                   'duracion_estimada', trayectos.duracion_estimada
                 )
               )
               FROM trayectos
               JOIN rutas ON trayectos.ruta_id = rutas.id
+              LEFT JOIN vehiculos ON trayectos.vehiculo_id = vehiculos.id  -- Relación con la tabla vehiculos
               WHERE rutas.id = viajes.ruta_id
             )
           )

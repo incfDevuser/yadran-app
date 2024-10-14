@@ -7,7 +7,7 @@ const PerfilUsuario = () => {
   const [trayectos, setTrayectos] = useState([]);
 
   const handleOpenModal = (trayectos) => {
-    setTrayectos(trayectos);
+    setTrayectos(trayectos || []);
     setModalOpen(true);
   };
 
@@ -22,12 +22,13 @@ const PerfilUsuario = () => {
 
   return (
     <div className="max-w-5xl mx-auto p-6 bg-white shadow-lg rounded-lg mt-10">
-      <div className="flex justify-around items-center mb-8">
-        <h1 className="text-3xl font-bold text-gray-900 text-center">
-          Perfil del Usuario
-        </h1>
-        <button className="rounded-xl bg-blue-600 p-2 text-white">Editar Informacion</button>
+      <div className="flex justify-between items-center mb-8">
+        <h1 className="text-3xl font-bold text-gray-900">Perfil del Usuario</h1>
+        <button className="rounded-xl bg-blue-600 p-2 text-white hover:bg-blue-700">
+          Editar Información
+        </button>
       </div>
+
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
         {/* Información del Usuario */}
         <div className="bg-gray-100 p-6 rounded-lg shadow-md">
@@ -35,21 +36,18 @@ const PerfilUsuario = () => {
             Datos Personales
           </h2>
           <p className="text-gray-700">
-            <strong>Nombre:</strong> {usuarios.nombre}
+            <strong>Nombre:</strong> {usuarios?.nombre || "No disponible"}
           </p>
           <p className="text-gray-700">
-            <strong>Email:</strong> {usuarios.email}
+            <strong>Email:</strong> {usuarios?.email || "No disponible"}
           </p>
           <p className="text-gray-700">
-            <strong>Rol:</strong> {usuarios.nombre_rol}
+            <strong>Rol:</strong> {usuarios?.nombre_rol || "No disponible"}
           </p>
           <p className="text-gray-700">
-            <strong>Es Administrador:</strong> {usuarios.isadmin ? "Sí" : "No"}
+            <strong>Es Administrador:</strong> {usuarios?.isadmin ? "Sí" : "No"}
           </p>
-          <p className="text-gray-700">
-            <strong>Fecha de creación:</strong>{" "}
-            {new Date(usuarios.fecha_creacion).toLocaleDateString()}
-          </p>
+          
         </div>
 
         {/* Información Adicional */}
@@ -59,39 +57,37 @@ const PerfilUsuario = () => {
           </h2>
           <p className="text-gray-700">
             <strong>Ciudad de Origen:</strong>{" "}
-            {usuarios.ciudad_origen || "No disponible"}
+            {usuarios?.ciudad_origen || "No disponible"}
+          </p>
+
+          <p className="text-gray-700">
+            <strong>Género:</strong> {usuarios?.genero || "No disponible"}
           </p>
           <p className="text-gray-700">
-            <strong>Fecha de Nacimiento:</strong>{" "}
-            {usuarios.fecha_nacimiento || "No disponible"}
-          </p>
-          <p className="text-gray-700">
-            <strong>Género:</strong> {usuarios.genero || "No disponible"}
-          </p>
-          <p className="text-gray-700">
-            <strong>Teléfono:</strong> {usuarios.telefono || "No disponible"}
+            <strong>Teléfono:</strong> {usuarios?.telefono || "No disponible"}
           </p>
         </div>
       </div>
 
       {/* Información de los Viajes */}
-      {usuarios.viajes && usuarios.viajes.length > 0 && (
-        <div className="mt-8">
-          <h2 className="text-2xl font-semibold text-gray-900 mb-6">Viajes</h2>
-          {usuarios.viajes.map((viaje, index) => (
+      <div className="mt-8">
+        <h2 className="text-2xl font-semibold text-gray-900 mb-6">Viajes</h2>
+        {usuarios?.viajes && usuarios.viajes.length > 0 ? (
+          usuarios.viajes.map((viaje, index) => (
             <div
-              key={index}
+              key={viaje.id || index}
               className="bg-blue-50 border border-blue-200 rounded-lg p-6 mb-6 shadow-md"
             >
               <h3 className="text-xl font-semibold text-gray-800 mb-2">
                 {viaje.nombre}
               </h3>
               <p className="text-gray-700 mb-1">
-                <strong>Descripción:</strong> {viaje.descripcion}
+                <strong>Descripción:</strong>{" "}
+                {viaje.descripcion || "No disponible"}
               </p>
               <p className="text-gray-700 mb-1">
                 <strong>Comentario del Usuario:</strong>{" "}
-                {viaje.comentario_usuario}
+                {viaje.comentario_usuario || "No disponible"}
               </p>
               <p className="text-gray-700 mb-1">
                 <strong>Estado:</strong>
@@ -100,16 +96,16 @@ const PerfilUsuario = () => {
                     viaje.estado === "Aprobado" ? "bg-green-500" : "bg-red-500"
                   }`}
                 >
-                  {viaje.estado}
+                  {viaje.estado || "Desconocido"}
                 </span>
               </p>
               <p className="text-gray-700 mb-1">
                 <strong>Fecha de Inicio:</strong>{" "}
-                {new Date(viaje.fecha_inicio).toLocaleDateString()}
+                {viaje.fecha_inicio}
               </p>
               <p className="text-gray-700 mb-4">
                 <strong>Fecha de Fin:</strong>{" "}
-                {new Date(viaje.fecha_fin).toLocaleDateString()}
+                {viaje.fecha_fin}
               </p>
 
               {/* Botón para abrir el modal de trayectos */}
@@ -120,38 +116,55 @@ const PerfilUsuario = () => {
                 Ver Trayectos
               </button>
             </div>
-          ))}
-        </div>
-      )}
+          ))
+        ) : (
+          <p className="text-gray-600">No tienes viajes registrados.</p>
+        )}
+      </div>
 
       {/* Modal para mostrar los trayectos */}
       {modalOpen && (
-        <div className="fixed inset-0 bg-gray-800 bg-opacity-75 flex items-center justify-center">
-          <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-lg">
-            <h2 className="text-2xl font-semibold text-gray-900 mb-4">
+        <div
+          className="fixed inset-0 bg-gray-800 bg-opacity-75 flex items-center justify-center z-50"
+          aria-labelledby="modal-title"
+          role="dialog"
+          aria-modal="true"
+        >
+          <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-lg relative">
+            <h2
+              id="modal-title"
+              className="text-2xl font-semibold text-gray-900 mb-4"
+            >
               Trayectos
             </h2>
             {trayectos.length > 0 ? (
               trayectos.map((trayecto, idx) => (
                 <div
-                  key={idx}
+                  key={trayecto.id || idx}
                   className="border border-gray-200 rounded-md p-3 mb-3"
                 >
                   <p className="text-gray-700 mb-1">
-                    <strong>Origen:</strong> {trayecto.origen}
+                    <strong>Origen:</strong>{" "}
+                    {trayecto.origen || "No disponible"}
                   </p>
                   <p className="text-gray-700 mb-1">
-                    <strong>Destino:</strong> {trayecto.destino}
+                    <strong>Destino:</strong>{" "}
+                    {trayecto.destino || "No disponible"}
                   </p>
                   <p className="text-gray-700 mb-1">
-                    <strong>Estado:</strong> {trayecto.estado}
+                    <strong>Estado:</strong> {trayecto.estado || "Desconocido"}
                   </p>
+                  {/* <p className="text-gray-700 mb-1">
+                    <strong>Vehículo:</strong>{" "}
+                    {trayecto.vehiculo_id ? `ID: ${trayecto.vehiculo_id}` : "No disponible"}
+                  </p> */}
                   <p className="text-gray-700 mb-1">
-                    <strong>Vehículo:</strong> {trayecto.vehiculo_id}
+                    <strong>Vehiculo:</strong>{" "}
+                    {trayecto.tipo_vehiculo || "Desconocido"}
                   </p>
                   <p className="text-gray-700">
                     <strong>Duración Estimada:</strong>{" "}
-                    {trayecto.duracion_estimada} minutos
+                    {trayecto.duracion_estimada}
                   </p>
                 </div>
               ))

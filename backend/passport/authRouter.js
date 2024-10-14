@@ -22,7 +22,7 @@ router.get(
       {
         id: req.user.id,
         nombre: req.user.nombre,
-        isAdmin: req.user.isadmin,
+        isadmin: req.user.isAdmin,
         email: req.user.email
       },
       process.env.JWT_SECRET,
