@@ -43,6 +43,9 @@ import { PuertosProvider } from "./Context/PuertosContext";
 import { UsuariosProvider } from "./Context/UsuarioContext";
 import PerfilUsuario from "./pages/User/PerfilUsuario";
 
+//Viajes
+import { ViajesProvider } from "./Context/ViajesContext";
+
 const App = () => {
   return (
     <UsuariosProvider>
@@ -65,7 +68,14 @@ const App = () => {
             {/* Nueva ruta */}
             <Route path="/admin" element={<AdminPanel />} /> {/* Nueva ruta */}
             {/* Admin Viajes, para ver los paquetes ofrecidos */}
-            <Route path="/adminViajes" element={<AdminViajes />} />
+            <Route
+              path="/adminViajes"
+              element={
+                <ViajesProvider>
+                  <AdminViajes />
+                </ViajesProvider>
+              }
+            />
             {/*  Rutas para el panel de administrador */}
             <Route path="/adminUserList" element={<AdminUserList />} />
             <Route

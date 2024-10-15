@@ -7,8 +7,6 @@ export const ViajesProvider = ({ children }) => {
   const [viajes, setViajes] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-
-  //Renderizar la lista de vehiculos cuando se llama al componente
   useEffect(() => {
     const obtenerViajes = async () => {
       setLoading(true);
@@ -17,6 +15,7 @@ export const ViajesProvider = ({ children }) => {
           withCredentials: true,
         });
         const data = response.data.viajes;
+        console.log(data)
         setViajes(data);
       } catch (error) {
         setError(error.message || "Hubo un error al cargar los viajes");
@@ -26,8 +25,6 @@ export const ViajesProvider = ({ children }) => {
     };
     obtenerViajes();
   }, []);
-
-  //Solicitar viajes
   const solicitarViaje = async (nuevaSolicitud) => {
     try {
       const response = await axios.post(

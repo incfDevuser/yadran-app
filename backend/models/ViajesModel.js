@@ -45,6 +45,7 @@ const obtenerViajes = async () => {
     const query = `
         SELECT 
           v.*, 
+          r.nombre_ruta AS nombre_ruta,  -- Incluimos el nombre de la ruta
           json_agg(
             json_build_object(
               'id', t.id,
@@ -57,9 +58,10 @@ const obtenerViajes = async () => {
             )
           ) AS trayectos
         FROM viajes v
+        JOIN rutas r ON v.ruta_id = r.id  -- Relacionamos la tabla de rutas para obtener el nombre
         JOIN trayectos t ON v.ruta_id = t.ruta_id
         JOIN vehiculos veh ON t.vehiculo_id = veh.id 
-        GROUP BY v.id
+        GROUP BY v.id, r.nombre_ruta  -- Agrupamos por el nombre de la ruta y el id de viajes
       `;
     const response = await pool.query(query);
     return response.rows;
@@ -71,6 +73,7 @@ const obtenerViajes = async () => {
     throw new Error("Error al obtener los viajes con trayectos y vehículos");
   }
 };
+
 const aprobarRechazarViaje = async (viaje_usuario_id, estado) => {
   try {
     const query = `

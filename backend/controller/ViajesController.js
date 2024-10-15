@@ -19,16 +19,21 @@ const crearViaje = async (req, res) => {
   }
 };
 const solicitarViaje = async (req, res) => {
-  const { usuario_id, viaje_id, fecha_inicio, fecha_fin, comentario_usuario } =
+  //El id del usuario se obtiene del req.user
+  const { id } = req.user
+  console.log("id del usuario:", id)
+  const { viaje_id, fecha_inicio, fecha_fin, comentario_usuario } =
     req.body;
+  //Instanciar al usuario
+  const nuevaSolicitud = {
+    usuario_id: id,
+    viaje_id,
+    fecha_inicio,
+    fecha_fin,
+    comentario_usuario
+  }
   try {
-    const solicitud = await ViajesModel.solicitarViaje({
-      usuario_id,
-      viaje_id,
-      fecha_inicio,
-      fecha_fin,
-      comentario_usuario,
-    });
+    const solicitud = await ViajesModel.solicitarViaje(nuevaSolicitud)
     res.status(201).json({
       message: "Solicitud de viaje creada con éxito",
       solicitud,

@@ -1,5 +1,6 @@
 import express from "express";
 import { ViajesController } from "../controller/ViajesController.js";
+import { AuthMiddleware } from "../middlewares/authMiddleware.js";
 
 const router = express.Router();
 
@@ -8,7 +9,7 @@ router.get('/', ViajesController.obtenerViajes)
 //Crear un viaje
 router.post('/crear', ViajesController.crearViaje)
 //Ruta para solicitar un viaje
-router.post('/solicitar',ViajesController.solicitarViaje)
+router.post('/solicitar',AuthMiddleware.authToken,ViajesController.solicitarViaje)
 //Actualizar el estado del viaje
 router.put('/:viaje_usuario_id', ViajesController.aprobarRechazarViaje)
 //Obtener las solicitudes de viaje
