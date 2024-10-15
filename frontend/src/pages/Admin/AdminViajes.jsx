@@ -75,12 +75,11 @@ const AdminViajes = () => {
             Lista de Viajes <span className="text-red-600">Cancelados</span>
           </h1>
           {/* Aca renderizar cada viaje que esta cancelado */}
-
         </div>
         {/* Modal para mostrar los trayectos */}
         {selectedViaje && (
           <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-            <div className="bg-white p-8 rounded-lg max-w-lg w-full shadow-xl">
+            <div className="bg-white p-8 rounded-lg max-w-2xl w-full shadow-xl overflow-y-auto max-h-[80vh]">
               <h2 className="text-2xl font-bold mb-6">
                 Trayectos del Viaje: {selectedViaje.nombre}
               </h2>
@@ -102,6 +101,7 @@ const AdminViajes = () => {
                   </div>
                 ))}
               </div>
+
               <div className="mt-6 text-right">
                 <button
                   onClick={handleCloseModal}
