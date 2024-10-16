@@ -5,6 +5,7 @@ const ViajesContext = createContext();
 
 export const ViajesProvider = ({ children }) => {
   const [viajes, setViajes] = useState([]);
+  const [solicitudes, setSolicitudes] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   useEffect(() => {
@@ -15,7 +16,6 @@ export const ViajesProvider = ({ children }) => {
           withCredentials: true,
         });
         const data = response.data.viajes;
-        console.log(data)
         setViajes(data);
       } catch (error) {
         setError(error.message || "Hubo un error al cargar los viajes");
@@ -25,34 +25,68 @@ export const ViajesProvider = ({ children }) => {
     };
     obtenerViajes();
   }, []);
+  const obtenerSolicitudes = async () => {
+    setLoading(true);
+    try {
+      const response = await axios.get(`http://localhost:5000/api/viajes/solicitudes`, {
+        withCredentials: true,
+      });
+      const data = response.data.solicitudes;
+      setSolicitudes(data);
+    } catch (error) {
+      setError(error.message || "Hubo un error al cargar las solicitudes");
+    } finally {
+      setLoading(false);
+    }
+  };
+  const crearViaje = async (nuevoViaje) => {
+    try {
+      const response = await axios.post(
+        `http://localhost:5000/api/viajes/crear`,
+        nuevoViaje,
+        {
+          withCredentials: true,
+        }
+      );
+      if (response.status === 201) {
+        setViajes([...viajes, response.data]);
+        return response.data;
+      } else {
+        console.error("Error al crear el viaje", response.data);
+        throw new Error(response.data.message || "Error al crear el viaje");
+      }
+    } catch (error) {
+      console.error("Error al crear el viaje:", error.message);
+      throw error;
+    }
+  };
   const solicitarViaje = async (nuevaSolicitud) => {
     try {
       const response = await axios.post(
         `http://localhost:5000/api/viajes/solicitar`,
-        nuevaSolicitud
+        nuevaSolicitud,
+        {
+          withCredentials: true,
+        }
       );
       if (response.status === 201) {
-        //Actualizar la lsita de viajes
-        setViajes([...viajes, response.data]);
+        setSolicitudes([...solicitudes, response.data]);
         return response.data;
       } else {
         console.error("Error al crear la solicitud de viaje", response.data);
-        throw new Error(
-          response.data.message || "Error al crear la solicitud de viaje"
-        );
+        throw new Error(response.data.message || "Error al crear la solicitud de viaje");
       }
     } catch (error) {
       console.error("Error al crear la solicitud de viaje:", error.message);
       throw error;
     }
   };
-  //Actualizar estado del viaje
-  const actualizarEstado = {};
 
   return (
-    <ViajesContext.Provider value={{ viajes, loading, error, solicitarViaje }}>
+    <ViajesContext.Provider value={{ viajes, solicitudes, loading, error, obtenerSolicitudes, solicitarViaje, crearViaje }}>
       {children}
     </ViajesContext.Provider>
   );
 };
+
 export const useViajes = () => useContext(ViajesContext);

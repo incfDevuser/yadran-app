@@ -21,6 +21,10 @@ import AdminDashboard from "./pages/Admin/AdminDashboard";
 import AdminConfiguracion from "./pages/Admin/AdminConfiguracion";
 import AdminVehiculos from "./pages/Admin/AdminVehiculos";
 import AdminViajes from "./pages/Admin/AdminViajes";
+import AdminSolicitudes from "./pages/Admin/AdminSolicitudes";
+
+
+
 import Trips from "./pages/Flight/Trips";
 import MisCentros from "./pages/MisCentros"; // Importa la nueva página
 import { ToastContainer } from "react-toastify";
@@ -71,11 +75,15 @@ const App = () => {
             <Route
               path="/adminViajes"
               element={
-                <ViajesProvider>
-                  <AdminViajes />
-                </ViajesProvider>
+                <RutasProvider>
+                  <ViajesProvider>
+                    <AdminViajes />
+                  </ViajesProvider>
+                </RutasProvider>
               }
             />
+            {/* Obtener las solicitudes de viajes */}
+            <Route path=""/>
             {/*  Rutas para el panel de administrador */}
             <Route path="/adminUserList" element={<AdminUserList />} />
             <Route

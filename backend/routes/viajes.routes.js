@@ -7,7 +7,7 @@ const router = express.Router();
 //Ruta para obtener los viajes
 router.get('/', ViajesController.obtenerViajes)
 //Crear un viaje
-router.post('/crear', ViajesController.crearViaje)
+router.post('/crear', AuthMiddleware.authToken ,ViajesController.crearViaje)
 //Ruta para solicitar un viaje
 router.post('/solicitar',AuthMiddleware.authToken,ViajesController.solicitarViaje)
 //Actualizar el estado del viaje

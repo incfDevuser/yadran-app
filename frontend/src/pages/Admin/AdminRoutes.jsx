@@ -118,7 +118,7 @@ const AdminRoutes = () => {
           <h1 className="text-2xl font-bold text-gray-700">Lista de Rutas</h1>
           <button
             onClick={openModalCreate}
-            className="border rounded-lg p-2 bg-gray-400 text-white font-semibold"
+            className="border rounded-lg p-2 bg-blue-500 text-white font-semibold"
           >
             Agregar Ruta
           </button>

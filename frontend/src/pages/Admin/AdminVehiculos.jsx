@@ -67,7 +67,7 @@ const AdminVehiculos = () => {
               Lista de Vehículos
             </h1>
             <button
-              className="border rounded-lg p-2 bg-gray-400 text-white font-semibold"
+              className="border rounded-lg p-2 bg-blue-500 text-white font-semibold"
               onClick={() => setIsCreateModelOpen(true)}
             >
               Agregar un vehículo

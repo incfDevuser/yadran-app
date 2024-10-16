@@ -90,7 +90,7 @@ const AdminProveedores = () => {
           </h1>
           <button
             onClick={openModalCreate}
-            className="border rounded-lg p-2 bg-gray-400 text-white font-semibold"
+            className="border rounded-lg p-2 bg-blue-500 text-white font-semibold"
           >
             Agregar Proveedor
           </button>

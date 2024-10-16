@@ -71,7 +71,7 @@ const PerfilUsuario = () => {
 
       {/* Información de los Viajes */}
       <div className="mt-8">
-        <h2 className="text-2xl font-semibold text-gray-900 mb-6">Viajes</h2>
+        <h2 className="text-2xl font-semibold text-gray-900 mb-6">Mis Viajes</h2>
         {usuarios?.viajes && usuarios.viajes.length > 0 ? (
           usuarios.viajes.map((viaje, index) => (
             <div

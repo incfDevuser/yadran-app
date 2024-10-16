@@ -1,11 +1,35 @@
 import React, { useState } from "react";
 import AdminAside from "./AdminAside";
 import { useViajes } from "../../Context/ViajesContext";
+import { useRutas } from "../../Context/RoutesContext";
+
+//Solicitudes de viajes
+import AdminSolicitudes from "./AdminSolicitudes";
 
 const AdminViajes = () => {
-  const { viajes, loading, error } = useViajes();
+  const { viajes, loading, error, crearViaje } = useViajes();
+  const { rutas, loading: loadingRutas } = useRutas();
   const [selectedViaje, setSelectedViaje] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [newViaje, setNewViaje] = useState({
+    nombre: "",
+    descripcion: "",
+    ruta_id: "",
+  });
 
+  const handleChange = (e) => {
+    setNewViaje({ ...newViaje, [e.target.name]: e.target.value });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      await crearViaje(newViaje);
+      setIsModalOpen(false);
+    } catch (error) {
+      console.error("Error al crear el viaje:", error);
+    }
+  };
   if (loading) {
     return (
       <div className="flex justify-center items-center h-full">
@@ -32,9 +56,17 @@ const AdminViajes = () => {
     <div className="flex w-full h-full mt-11">
       <AdminAside />
       <main className="flex-1 p-5">
-        <h1 className="text-3xl font-extrabold text-gray-800 mb-6">
-          Administración de Viajes
-        </h1>
+        <div className="flex justify-between items-center mb-11 p-2">
+          <h1 className="text-3xl font-extrabold text-gray-800">
+            Administración de Viajes
+          </h1>
+          <button
+            onClick={() => setIsModalOpen(true)}
+            className="border rounded-md p-2 bg-blue-500 text-white"
+          >
+            Crear un Nuevo Viaje
+          </button>
+        </div>
         <div className="mt-8">
           <h1 className="font-bold text-xl text-gray-700 mb-4">
             Lista de Viajes <span className="text-blue-600">Totales</span>
@@ -72,9 +104,9 @@ const AdminViajes = () => {
         {/* Lista de viajes rechazados */}
         <div className="mt-8">
           <h1 className="font-bold text-xl text-gray-700 mb-4">
-            Lista de Viajes <span className="text-red-600">Cancelados</span>
+            Lista de <span className="text-green-600">Solicitudes</span>
           </h1>
-          {/* Aca renderizar cada viaje que esta cancelado */}
+          <AdminSolicitudes />
         </div>
         {/* Modal para mostrar los trayectos */}
         {selectedViaje && (
@@ -113,6 +145,87 @@ const AdminViajes = () => {
             </div>
           </div>
         )}
+        {/* Modal de creación de viaje */}
+        {isModalOpen && (
+          <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+            <div className="bg-white p-8 rounded-lg max-w-md w-full shadow-xl">
+              <h2 className="text-2xl font-bold mb-6">Crear un Nuevo Viaje</h2>
+              <form onSubmit={handleSubmit}>
+                <div className="mb-4">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Nombre del Viaje
+                  </label>
+                  <input
+                    type="text"
+                    name="nombre"
+                    value={newViaje.nombre}
+                    onChange={handleChange}
+                    className="w-full border border-gray-300 p-2 rounded-lg"
+                    required
+                  />
+                </div>
+                <div className="mb-4">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Descripción
+                  </label>
+                  <input
+                    type="text"
+                    name="descripcion"
+                    value={newViaje.descripcion}
+                    onChange={handleChange}
+                    className="w-full border border-gray-300 p-2 rounded-lg"
+                    required
+                  />
+                </div>
+                <div className="mb-4">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Ruta
+                  </label>
+                  <select
+                    name="ruta_id"
+                    value={newViaje.ruta_id}
+                    onChange={handleChange}
+                    className="w-full border border-gray-300 p-2 rounded-lg"
+                    required
+                  >
+                    <option value="">Seleccionar Ruta</option>
+                    {!loadingRutas && rutas.length > 0 ? (
+                      rutas.map((ruta) => (
+                        <option key={ruta.id} value={ruta.id}>
+                          {ruta.nombre_ruta ? ruta.nombre_ruta : "Sin Nombre"}
+                        </option>
+                      ))
+                    ) : (
+                      <option disabled>No hay rutas disponibles</option>
+                    )}
+                  </select>
+                </div>
+                <div className="text-right">
+                  <button
+                    type="submit"
+                    className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600"
+                  >
+                    Crear Viaje
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setIsModalOpen(false)}
+                    className="ml-2 bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600"
+                  >
+                    Cancelar
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        )}
+        {/* Lista de viajes cancelados */}
+        <div className="mt-8">
+          <h1 className="font-bold text-xl text-gray-700 mb-4">
+            Lista de Viajes <span className="text-red-600">Cancelados</span>
+          </h1>
+          {/* Aca se renderizan los viajes con estado = "CANCELADO" */}
+        </div>
       </main>
     </div>
   );
