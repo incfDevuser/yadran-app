@@ -23,8 +23,6 @@ import AdminVehiculos from "./pages/Admin/AdminVehiculos";
 import AdminViajes from "./pages/Admin/AdminViajes";
 import AdminSolicitudes from "./pages/Admin/AdminSolicitudes";
 
-
-
 import Trips from "./pages/Flight/Trips";
 import MisCentros from "./pages/MisCentros"; // Importa la nueva página
 import { ToastContainer } from "react-toastify";
@@ -42,6 +40,7 @@ import { CentrosProvider } from "./Context/CentrosContext";
 import { BasesProvider } from "./Context/BasesContext";
 import { AeropuertosProvider } from "./Context/AeropuertosContext";
 import { PuertosProvider } from "./Context/PuertosContext";
+import { SolicitudesProvider } from "./Context/SolicitudesContext";
 
 //Usuarios
 import { UsuariosProvider } from "./Context/UsuarioContext";
@@ -73,17 +72,27 @@ const App = () => {
             <Route path="/admin" element={<AdminPanel />} /> {/* Nueva ruta */}
             {/* Admin Viajes, para ver los paquetes ofrecidos */}
             <Route
+              path="/adminSolicitudes"
+              element={
+                <SolicitudesProvider>
+                  <AdminSolicitudes />
+                </SolicitudesProvider>
+              }
+            />
+            <Route
               path="/adminViajes"
               element={
                 <RutasProvider>
                   <ViajesProvider>
-                    <AdminViajes />
+                    <SolicitudesProvider>
+                      <AdminViajes />
+                    </SolicitudesProvider>
                   </ViajesProvider>
                 </RutasProvider>
               }
             />
             {/* Obtener las solicitudes de viajes */}
-            <Route path=""/>
+            <Route path="" />
             {/*  Rutas para el panel de administrador */}
             <Route path="/adminUserList" element={<AdminUserList />} />
             <Route

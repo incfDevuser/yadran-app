@@ -45,9 +45,9 @@ const Navbar = () => {
           <img src={tripma} alt="Tripma" className="md:w-[107px] md:h-[30px] w-[90px] h-[25px] object-contain" />
         </div>
         <div className="hidden md:flex items-center space-x-8">
-          {usuarios && (
+          {/* {usuarios && (
             <p className="text-md">Bienvenido, <span>{usuarios.nombre}</span></p>
-          )}
+          )} */}
 
           <ul className="hidden md:flex items-center space-x-8 text-[#7C8DB0]">
             {mainNavBar.map((item) => (

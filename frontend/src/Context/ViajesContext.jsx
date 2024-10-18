@@ -8,6 +8,7 @@ export const ViajesProvider = ({ children }) => {
   const [solicitudes, setSolicitudes] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+
   useEffect(() => {
     const obtenerViajes = async () => {
       setLoading(true);
@@ -23,22 +24,11 @@ export const ViajesProvider = ({ children }) => {
         setLoading(false);
       }
     };
-    obtenerViajes();
-  }, []);
-  const obtenerSolicitudes = async () => {
-    setLoading(true);
-    try {
-      const response = await axios.get(`http://localhost:5000/api/viajes/solicitudes`, {
-        withCredentials: true,
-      });
-      const data = response.data.solicitudes;
-      setSolicitudes(data);
-    } catch (error) {
-      setError(error.message || "Hubo un error al cargar las solicitudes");
-    } finally {
-      setLoading(false);
+  
+    if (viajes.length === 0) {
+      obtenerViajes();
     }
-  };
+  }, [viajes.length]);
   const crearViaje = async (nuevoViaje) => {
     try {
       const response = await axios.post(
@@ -83,7 +73,7 @@ export const ViajesProvider = ({ children }) => {
   };
 
   return (
-    <ViajesContext.Provider value={{ viajes, solicitudes, loading, error, obtenerSolicitudes, solicitarViaje, crearViaje }}>
+    <ViajesContext.Provider value={{ viajes, solicitudes, loading, error, solicitarViaje, crearViaje }}>
       {children}
     </ViajesContext.Provider>
   );

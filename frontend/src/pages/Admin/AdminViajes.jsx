@@ -1,10 +1,11 @@
 import React, { useState } from "react";
 import AdminAside from "./AdminAside";
+import AdminSolicitudes from "./AdminSolicitudes";
 import { useViajes } from "../../Context/ViajesContext";
 import { useRutas } from "../../Context/RoutesContext";
 
 //Solicitudes de viajes
-import AdminSolicitudes from "./AdminSolicitudes";
+// import AdminSolicitudes from "./AdminSolicitudes";
 
 const AdminViajes = () => {
   const { viajes, loading, error, crearViaje } = useViajes();
@@ -68,7 +69,7 @@ const AdminViajes = () => {
           </button>
         </div>
         <div className="mt-8">
-          <h1 className="font-bold text-xl text-gray-700 mb-4">
+          <h1 className="font-bold text-2xl text-gray-700 mb-4">
             Lista de Viajes <span className="text-blue-600">Totales</span>
           </h1>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -103,8 +104,8 @@ const AdminViajes = () => {
         </div>
         {/* Lista de viajes rechazados */}
         <div className="mt-8">
-          <h1 className="font-bold text-xl text-gray-700 mb-4">
-            Lista de <span className="text-green-600">Solicitudes</span>
+          <h1 className="font-bold text-2xl text-gray-700 mb-4">
+            Lista de Solicitudes
           </h1>
           <AdminSolicitudes />
         </div>
