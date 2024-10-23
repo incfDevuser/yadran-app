@@ -43,26 +43,28 @@ const solicitarViaje = async ({
 const obtenerViajes = async () => {
   try {
     const query = `
-        SELECT 
-          v.*, 
-          r.nombre_ruta AS nombre_ruta,  -- Incluimos el nombre de la ruta
-          json_agg(
-            json_build_object(
-              'id', t.id,
-              'origen', t.origen,
-              'destino', t.destino,
-              'duracion_estimada', t.duracion_estimada,
-              'orden', t.orden,
-              'vehiculo_id', t.vehiculo_id,
-              'nombre_vehiculo', veh.tipo_vehiculo 
-            )
-          ) AS trayectos
-        FROM viajes v
-        JOIN rutas r ON v.ruta_id = r.id  -- Relacionamos la tabla de rutas para obtener el nombre
-        JOIN trayectos t ON v.ruta_id = t.ruta_id
-        JOIN vehiculos veh ON t.vehiculo_id = veh.id 
-        GROUP BY v.id, r.nombre_ruta  -- Agrupamos por el nombre de la ruta y el id de viajes
-      `;
+  SELECT 
+    v.*, 
+    r.nombre_ruta AS nombre_ruta, 
+    json_agg(
+      json_build_object(
+        'id', t.id,
+        'origen', t.origen,
+        'destino', t.destino,
+        'duracion_estimada', t.duracion_estimada,
+        'vehiculo_id', t.vehiculo_id,
+        'nombre_vehiculo', veh.tipo_vehiculo 
+      )
+         ORDER BY t.id ASC
+    ) AS trayectos
+  FROM viajes v
+  JOIN rutas r ON v.ruta_id = r.id
+  JOIN trayectos t ON v.ruta_id = t.ruta_id
+  LEFT JOIN vehiculos veh ON t.vehiculo_id = veh.id  -- LEFT JOIN para incluir trayectos sin vehículo
+  GROUP BY v.id, r.nombre_ruta
+  ORDER BY v.id;
+`;
+
     const response = await pool.query(query);
     return response.rows;
   } catch (error) {

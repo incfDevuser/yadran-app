@@ -126,11 +126,12 @@ const obtenerRutasConTrayectos = async () => {
         t.duracion_estimada,
         t.orden,
         t.vehiculo_id,
+        t.created_at, -- Campo para ordenar los trayectos
         v.tipo_vehiculo AS nombre_vehiculo -- Obtener el nombre del vehículo
       FROM rutas r
       LEFT JOIN trayectos t ON r.id = t.ruta_id
       LEFT JOIN vehiculos v ON t.vehiculo_id = v.id -- Asociar vehículo al trayecto
-      ORDER BY r.id, t.orden
+      ORDER BY r.id, t.created_at ASC -- Ordenar trayectos por fecha de creación
     `;
     const response = await pool.query(query);
 

@@ -3,6 +3,7 @@ import AdminAside from "./AdminAside";
 import { useRutas } from "../../Context/RoutesContext";
 import { useTrayectos } from "../../Context/TrayectosContext";
 import { useVehiculos } from "../../Context/VehiculosContext";
+import { useVuelos } from "../../Context/VuelosContext";
 //Iconos
 import { IoTrashOutline } from "react-icons/io5";
 import { HiPencilSquare } from "react-icons/hi2";
@@ -10,28 +11,33 @@ import { BsInfoSquare } from "react-icons/bs";
 import { FaLongArrowAltRight } from "react-icons/fa";
 import { FiClock } from "react-icons/fi";
 import { IoAddCircleOutline } from "react-icons/io5";
+import { IoAirplaneOutline } from "react-icons/io5";
+import VueloCard from "./components/VueloCard";
 
 const AdminRoutes = () => {
   const { rutas, eliminarRuta, crearRuta } = useRutas();
   const { crearTrayecto } = useTrayectos();
   const { vehiculos, loading: loadingVehiculos } = useVehiculos();
+  const { vuelos, asignarVuelo, loading: loadingVuelos } = useVuelos();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedRuta, setSelectedRuta] = useState(null);
   const [isCreateModalOpen, setIsCreateModelOpen] = useState(false);
   const [isTrayectoModalOpen, setIsTrayectoModalOpen] = useState(false);
+  //Vuelos
+  const [isVueloModalOpen, setIsVueloModalOpen] = useState(false);
+  const [selectedVuelo, setSelectedVuelo] = useState(null);
+  const [searchTerm, setSearchTerm] = useState("");
 
-  //Estado para crear el nuevo proveedor
   const [nuevaRuta, setNuevaRuta] = useState({
     nombre_ruta: "",
     zona: "",
     origen: "",
     destino: "",
     escalas: "",
-    tiempo_estimado:0,
+    tiempo_estimado: 0,
     mov_interno: true,
     fecha_agendamiento: "",
   });
-  //Estado para crear una nueva ruta
   const [trayecto, setTrayecto] = useState({
     ruta_id: "",
     origen: "",
@@ -41,7 +47,33 @@ const AdminRoutes = () => {
     estado: "Pendiente",
     vehiculo_id: "",
   });
-  //Eliminar una ruta
+  const filteredVuelos = vuelos.filter((vuelo) =>
+    vuelo.numero_vuelo.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+  const openVueloModal = (rutaId) => {
+    setSelectedRuta(rutaId);
+    setIsVueloModalOpen(true);
+  };
+
+  const closeVueloModal = () => {
+    setIsVueloModalOpen(false);
+    setSelectedVuelo(null);
+  };
+
+  const handleAsignarVuelo = async (vuelo) => {
+    if (!selectedRuta || !vuelo) {
+      console.error("No se ha seleccionado una ruta o un vuelo");
+      return;
+    }
+
+    try {
+      await asignarVuelo(vuelo.numero_vuelo, selectedRuta);
+      closeVueloModal();
+    } catch (error) {
+      console.error("Error al asignar vuelo como trayecto", error);
+    }
+  };
+
   const handleDelete = async (id) => {
     try {
       if (window.confirm("Seguro que quieres eliminar la ruta?")) {
@@ -51,8 +83,6 @@ const AdminRoutes = () => {
       console.error(error);
     }
   };
-
-  //Estados para los modal
   const handleViewInfo = (ruta) => {
     setSelectedRuta(ruta);
     setIsModalOpen(true);
@@ -61,7 +91,6 @@ const AdminRoutes = () => {
     setIsModalOpen(false);
     setSelectedRuta(null);
   };
-  //Modal para crear rutas
   const openModalCreate = () => {
     setIsCreateModelOpen(true);
   };
@@ -74,7 +103,6 @@ const AdminRoutes = () => {
       [e.target.name]: e.target.value,
     });
   };
-  //Crear la ruta
   const handleCreateRuta = async (e) => {
     e.preventDefault();
     try {
@@ -84,7 +112,6 @@ const AdminRoutes = () => {
       console.error("Error al crear ruta o trayectos", error);
     }
   };
-  //Modals para los trayectos
   const openTrayectoModal = (rutaId) => {
     setIsTrayectoModalOpen(true);
     setTrayecto({ ...trayecto, ruta_id: rutaId });
@@ -181,6 +208,17 @@ const AdminRoutes = () => {
                         onClick={() => openTrayectoModal(ruta.id)} // Pasa la ruta_id correcta
                       >
                         <IoAddCircleOutline />
+                      </button>
+                    </div>
+                  </td>
+                  <td className="py-2 px-4 border-b">
+                    <div className="flex justify-center space-x-2 text-xl">
+                      {/* Botón para asignar vuelo */}
+                      <button
+                        onClick={() => openVueloModal(ruta.id)}
+                        className="text-blue-500 px-3 py-1 rounded"
+                      >
+                        <IoAirplaneOutline />
                       </button>
                     </div>
                   </td>
@@ -491,6 +529,55 @@ const AdminRoutes = () => {
                   className="bg-gray-500 text-white px-4 py-2 rounded"
                 >
                   Cerrar
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+        {isVueloModalOpen && (
+          <div className="fixed inset-0 bg-gray-500 bg-opacity-75 flex items-center justify-center z-50">
+            <div className="bg-white p-8 rounded shadow-lg max-w-2xl w-full">
+              <h2 className="text-xl font-bold mb-4">Seleccionar Vuelo</h2>
+
+              <div className="mb-4">
+                <input
+                  type="text"
+                  placeholder="Buscar por número de vuelo"
+                  className="w-full p-2 border rounded-md"
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                />
+              </div>
+
+              {loadingVuelos ? (
+                <p>Cargando vuelos...</p>
+              ) : (
+                <div className="flex flex-col items-center gap-4 max-h-[400px] overflow-y-auto">
+                  {filteredVuelos.map((vuelo) => (
+                    <div
+                      key={vuelo.id}
+                      className={`cursor-pointer ${
+                        selectedVuelo?.id === vuelo.id ? "bg-blue-100" : ""
+                      }`}
+                      onClick={() => setSelectedVuelo(vuelo)}
+                    >
+                      <VueloCard vuelo={vuelo} />
+                    </div>
+                  ))}
+                </div>
+              )}
+              <div className="flex justify-end mt-4">
+                <button
+                  onClick={() => handleAsignarVuelo(selectedVuelo)}
+                  className="bg-blue-500 text-white px-4 py-2 rounded mr-2"
+                >
+                  Asignar Vuelo
+                </button>
+                <button
+                  onClick={closeVueloModal}
+                  className="bg-gray-500 text-white px-4 py-2 rounded"
+                >
+                  Cancelar
                 </button>
               </div>
             </div>

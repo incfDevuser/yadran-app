@@ -101,8 +101,6 @@ create table vehiculos(
 	documentacion_ok boolean default true,
 	velocidad_promedio numeric(10, 2) not null
 );
-
-	
 --Luego la tabla rutas, primero consultar si es que la ruta va asociada al centro.
 create table rutas(
 	id serial primary key,
@@ -139,3 +137,53 @@ create table centro(
 	ponton_id integer references ponton(id) on delete cascade,
 	ruta_id integer references rutas(id) on delete cascade
 );
+create table roles(
+	id seria primary key,
+	nombre_rol varchar(50),
+	descripcion varchar(225)
+),
+create table usuarios(
+	id serial primary key,
+	nombre varchar(200),
+	rut varchar(20),
+	genero varchar(30),
+	telefono varchar(20),
+	google_id varchar(100) not null,
+	-- El email debe ser unico
+	email varchar(100) not null ,
+	fecha_nacimiento date,
+	ciudad_origen varchar(100),
+	estado varchar(100),
+	isadmin boolean,
+	rol_id integer references roles(id) on delete cascade
+),
+create table viajes(
+	id serial primary key,
+	nombre varchar(225),
+	descripcion varchar(225),
+	ruta_id integer references rutas(id) on delete cascade,
+	-- faltan los created y los updated
+)
+create table usuarios_viajes(
+	id serial primary key,
+	usuario_id integer references usuarios(id) on delete cascade,
+	viaje_id integer references viajes(id) on delete cascade,
+	fecha_inicio date,
+	fecha_fin date,
+	comentario_usuario text,
+	estado varchar(50),
+	-- faltan los created y los updates
+),
+create table vuelos(
+	id serial primary key, 
+	numero_vuelo varchar(50),
+	aerolinea varchar(100),
+	aeropuerto_salida varchar(100),
+	codigo_iata_salida varchar(10),
+	horario_salida timestamp,
+	aeropuerto_llegada varchar(100),
+	codigo_iata_llegada varchar(10),
+	horario_llegada timestamp,
+	duracion_estimada integer,
+	estado_vuelo varchar(50)
+)

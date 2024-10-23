@@ -21,32 +21,38 @@ const obtenerTrayecto = async (id) => {
   }
 };
 const crearTrayecto = async ({
-    ruta_id,
-    origen,
-    destino,
-    duracion_estimada,
-    orden,
-    estado,
-    vehiculo_id
-  }) => {
-    try {
-      const query = `
+  ruta_id,
+  origen,
+  destino,
+  duracion_estimada,
+  orden,
+  estado,
+  vehiculo_id,
+}) => {
+  try {
+    const query = `
         INSERT INTO trayectos (
           ruta_id, origen, destino, duracion_estimada, orden, estado, vehiculo_id
         ) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *
       `;
-      const values = [ruta_id, origen, destino, duracion_estimada, orden, estado, vehiculo_id];
-      const response = await pool.query(query, values);
-      return response.rows[0];
-    } catch (error) {
-      console.error(error);
-      throw new Error("Error al crear el trayecto");
-    }
-  };
-
-const actualizarTrayecto = async () => {
-  
+    const values = [
+      ruta_id,
+      origen,
+      destino,
+      duracion_estimada,
+      orden,
+      estado,
+      vehiculo_id,
+    ];
+    const response = await pool.query(query, values);
+    return response.rows[0];
+  } catch (error) {
+    console.error(error);
+    throw new Error("Error al crear el trayecto");
+  }
 };
+
+const actualizarTrayecto = async () => {};
 
 const eliminarTrayecto = async (id) => {
   try {

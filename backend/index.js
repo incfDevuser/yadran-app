@@ -3,9 +3,10 @@ import express from "express";
 import dotenv from "dotenv";
 import pool from "./config/db.js";
 import cors from "cors";
-import session from "express-session"; 
+import session from "express-session";
 import passport from "passport";
-import cookieParser from 'cookie-parser'
+import cookieParser from "cookie-parser";
+import cron from "node-cron";
 //Importar las rutas
 import jurisdiccionesRoutes from "./routes/jurisdicciones.routes.js";
 import zonasRoutes from "./routes/zonas.routes.js";
@@ -23,10 +24,14 @@ import aeropuertosRoutes from "./routes/aeropuertos.routes.js";
 //Importaciones para los viajes
 import viajesRoutes from "./routes/viajes.routes.js";
 //Ruta para la autenticacion
-import authRouter from './passport/authRouter.js'
-import './auth.js'
+import authRouter from "./passport/authRouter.js";
+import "./auth.js";
 //Usuarios
-import userRoutes from './routes/usuarios.routes.js'
+import userRoutes from "./routes/usuarios.routes.js";
+//Vuelos
+import vuelosRoutes from "./routes/vuelos.routes.js";
+import obtenerVuelos from "./Services/VuelosService.js";
+
 //Definiciones y variables globales
 dotenv.config();
 pool;
@@ -35,7 +40,7 @@ const app = express();
 
 //Middlewares
 app.use(express.json());
-app.use(cookieParser())
+app.use(cookieParser());
 app.use(
   cors({
     origin: "http://localhost:5173",
@@ -44,7 +49,7 @@ app.use(
 );
 app.use(
   session({
-    secret:process.env.COOKIE_SECRET,
+    secret: process.env.COOKIE_SECRET,
     resave: false,
     saveUninitialized: false,
     cookie: { secure: false },
@@ -53,7 +58,6 @@ app.use(
 //INICIAR PASSPORT
 app.use(passport.initialize());
 app.use(passport.session());
-
 
 //Rutas para las jurisdicciones
 app.use("/api/jurisdicciones", jurisdiccionesRoutes);
@@ -82,9 +86,27 @@ app.use("/api/aeropuertos", aeropuertosRoutes);
 //Ruta para los viajes
 app.use("/api/viajes", viajesRoutes);
 //Ruta para la autenticacion
-app.use("/auth", authRouter)
+app.use("/auth", authRouter);
 //Miperfil
-app.use("/api/usuarios", userRoutes)
+app.use("/api/usuarios", userRoutes);
+//Obtener los vuelos
+app.use("/api/vuelos", vuelosRoutes);
+
+//Node cron para obtener los vuelos
+const cronJob = cron.schedule("*/10 * * * *", async () => {
+  console.log("Iniciando la actualizacion de vuelos");
+  try {
+    await obtenerVuelos();
+    console.log("Obteniendo vuelos y actualizandolos correctamente");
+  } catch (error) {
+    console.error("Error al actualizar vuelos", error.message);
+  }
+});
+//Ejecutar el Start
+cronJob.start();
+//Ejecutar el stop al cronJob
+cronJob.stop();
+
 app.listen(port, () => {
   console.log(`Servidor escuchando en el puerto ${port}`);
 });

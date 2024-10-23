@@ -24,7 +24,7 @@ import AdminViajes from "./pages/Admin/AdminViajes";
 import AdminSolicitudes from "./pages/Admin/AdminSolicitudes";
 
 import Trips from "./pages/Flight/Trips";
-import MisCentros from "./pages/MisCentros"; // Importa la nueva página
+import MisCentros from "./pages/MisCentros";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 //Importar el contexto de los proveedores
@@ -48,6 +48,10 @@ import PerfilUsuario from "./pages/User/PerfilUsuario";
 
 //Viajes
 import { ViajesProvider } from "./Context/ViajesContext";
+
+//Vuelos
+import { VuelosProvider } from "./Context/VuelosContext";
+import AdminVuelos from "./pages/Admin/AdminVuelos";
 
 const App = () => {
   return (
@@ -98,13 +102,15 @@ const App = () => {
             <Route
               path="/adminRoutes"
               element={
-                <RutasProvider>
-                  <TrayectosProvider>
-                    <VehiculosProvider>
-                      <AdminRoutes />
-                    </VehiculosProvider>
-                  </TrayectosProvider>
-                </RutasProvider>
+                <VuelosProvider>
+                  <RutasProvider>
+                    <TrayectosProvider>
+                      <VehiculosProvider>
+                        <AdminRoutes />
+                      </VehiculosProvider>
+                    </TrayectosProvider>
+                  </RutasProvider>
+                </VuelosProvider>
               }
             />
             <Route path="/adminReportes" element={<AdminReportes />} />
@@ -155,6 +161,15 @@ const App = () => {
               }
             />
             <Route path="/miPerfil" element={<PerfilUsuario />} />
+            {/* Ruta para los vuelos */}
+            <Route
+              path="/adminVuelos"
+              element={
+                <VuelosProvider>
+                  <AdminVuelos />
+                </VuelosProvider>
+              }
+            />
           </Routes>
         </div>
 

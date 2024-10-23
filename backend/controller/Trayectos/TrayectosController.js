@@ -1,4 +1,5 @@
 import { TrayectosModel } from "../../models/Trayectos/TrayectosModel.js";
+import obtenerVuelos from "../../Services/VuelosService.js";
 
 const obtenerTrayectos = async (req, res) => {
   try {
