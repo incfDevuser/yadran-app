@@ -2,14 +2,8 @@ import { Route, Routes } from "react-router-dom";
 import "./App.css";
 import { Footer, Navbar } from "./components";
 import {
-  Confirm,
   FlightExplore,
-  Flights,
-  Hotels,
-  Packages,
-  PassengerInfo,
-  Payment,
-  SeatSelect,
+  Flights
 } from "./pages";
 import AdminPanel from "./pages/Admin/adminpanel";
 //Importaciones componentes de Admin Page
@@ -52,6 +46,9 @@ import { ViajesProvider } from "./Context/ViajesContext";
 //Vuelos
 import { VuelosProvider } from "./Context/VuelosContext";
 import AdminVuelos from "./pages/Admin/AdminVuelos";
+import ConfirmacionVuelo from "./pages/Flight/ConfirmacionVuelo";
+
+
 
 const App = () => {
   return (
@@ -62,19 +59,40 @@ const App = () => {
         {/* Contenedor para las rutas que crece automáticamente y empuja el footer */}
         <div className="flex-grow">
           <Routes>
+            {/* Home Page */}
             <Route path="/" element={<Flights />} />
-            <Route path="/hotels" element={<Hotels />} />
-            <Route path="/packages" element={<Packages />} />
-            <Route path="/explore" element={<FlightExplore />} />
-            <Route path="/passenger-info" element={<PassengerInfo />} />
-            <Route path="/seat-selection" element={<SeatSelect />} />
-            <Route path="/payment" element={<Payment />} />
-            <Route path="/confirm" element={<Confirm />} />
-            <Route path="/trips" element={<Trips />} /> {/* Nueva ruta */}
-            <Route path="/mis-centros" element={<MisCentros />} />{" "}
+
+            {/* Agendar un Viaje */}
+            <Route
+              path="/explore"
+              element={
+                <ViajesProvider>
+                  <FlightExplore />
+                </ViajesProvider>
+              }
+            />
+
+            {/* Solicitudes del Usuario */}
+            <Route path="/trips" element={<Trips />} />
+
+
+            {/* Centros los cuales el usuario ha visitado */}
+            <Route path="/mis-centros" element={<MisCentros />} />
+
+            {/* Confirmacion de viaje del usuario al agendar una visita */}
+            <Route
+              path="/confirmacion-vuelo/:viajeId"
+              element={
+                <ViajesProvider>
+                  <ConfirmacionVuelo />
+                </ViajesProvider>
+              }
+            />
+
             {/* Nueva ruta */}
-            <Route path="/admin" element={<AdminPanel />} /> {/* Nueva ruta */}
-            {/* Admin Viajes, para ver los paquetes ofrecidos */}
+            <Route path="/admin" element={<AdminPanel />} />
+
+            {/* Vista de Adminstracion, aca se ven las solicitudes hechas por un usuario*/}
             <Route
               path="/adminSolicitudes"
               element={
@@ -83,6 +101,7 @@ const App = () => {
                 </SolicitudesProvider>
               }
             />
+            {/* Administracion de los Viajes */}
             <Route
               path="/adminViajes"
               element={
@@ -95,10 +114,18 @@ const App = () => {
                 </RutasProvider>
               }
             />
-            {/* Obtener las solicitudes de viajes */}
-            <Route path="" />
+
             {/*  Rutas para el panel de administrador */}
-            <Route path="/adminUserList" element={<AdminUserList />} />
+            <Route
+              path="/adminUserList"
+              element={
+                <UsuariosProvider>
+                  <AdminUserList />
+                </UsuariosProvider>
+              }
+            />
+
+            {/* Administracion de las rutas, aca se crean las rutas */}
             <Route
               path="/adminRoutes"
               element={
@@ -113,7 +140,10 @@ const App = () => {
                 </VuelosProvider>
               }
             />
+            {/* No se que son los reportes , pero se consultara */}
             <Route path="/adminReportes" element={<AdminReportes />} />
+
+            {/* Administracion de los proveedores */}
             <Route
               path="/adminProveedores"
               element={
@@ -122,6 +152,7 @@ const App = () => {
                 </ProveedoresProvider>
               }
             />
+            {/* Admin Dashboard, donde mas se recopila informacion */}
             <Route
               path="/adminDashboard"
               element={

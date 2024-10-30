@@ -10,6 +10,7 @@ export const UsuariosProvider = ({ children }) => {
   const [isAdmin, setIsAdmin] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [ listaUsuarios, setListaUsuarios ] =useState([])
   const navigate = useNavigate();
   useEffect(() => {
     const miPerfil = async () => {
@@ -34,6 +35,21 @@ export const UsuariosProvider = ({ children }) => {
     };
     miPerfil();
   }, []);
+
+  const obtenerUsuarios = async () => {
+    setLoading(true);
+    try {
+      const response = await axios.get(`http://localhost:5000/api/usuarios`, {
+        withCredentials: true,
+      });
+      console.log(response.data)
+      setListaUsuarios(response.data);
+    } catch (error) {
+      setError(error.message || "Hubo un error al cargar los usuarios");
+    } finally {
+      setLoading(false);
+    }
+  };
   const iniciarSesion = async () => {
     try {
       const googleAuthUrl = `http://localhost:5000/auth/google`;
@@ -61,11 +77,10 @@ export const UsuariosProvider = ({ children }) => {
       navigate("/");
     } catch (error) {}
   };
-  useEffect(() => {
-  }, [isAutenticado, navigate]);
+  useEffect(() => {}, [isAutenticado, navigate]);
   return (
     <UsuariosContext.Provider
-      value={{ usuarios, loading, error, isAdmin ,iniciarSesion, cerrarSesion }}
+      value={{ usuarios, loading, error, isAdmin, listaUsuarios, obtenerUsuarios, iniciarSesion, cerrarSesion }}
     >
       {children}
     </UsuariosContext.Provider>

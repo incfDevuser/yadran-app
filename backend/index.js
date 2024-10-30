@@ -103,7 +103,7 @@ const cronJob = cron.schedule("*/10 * * * *", async () => {
   }
 });
 //Ejecutar el Start
-cronJob.start();
+// cronJob.start();
 //Ejecutar el stop al cronJob
 cronJob.stop();
 

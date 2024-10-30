@@ -24,7 +24,7 @@ export const ViajesProvider = ({ children }) => {
         setLoading(false);
       }
     };
-  
+
     if (viajes.length === 0) {
       obtenerViajes();
     }
@@ -64,7 +64,9 @@ export const ViajesProvider = ({ children }) => {
         return response.data;
       } else {
         console.error("Error al crear la solicitud de viaje", response.data);
-        throw new Error(response.data.message || "Error al crear la solicitud de viaje");
+        throw new Error(
+          response.data.message || "Error al crear la solicitud de viaje"
+        );
       }
     } catch (error) {
       console.error("Error al crear la solicitud de viaje:", error.message);
@@ -73,7 +75,16 @@ export const ViajesProvider = ({ children }) => {
   };
 
   return (
-    <ViajesContext.Provider value={{ viajes, solicitudes, loading, error, solicitarViaje, crearViaje }}>
+    <ViajesContext.Provider
+      value={{
+        viajes,
+        solicitudes,
+        loading,
+        error,
+        solicitarViaje,
+        crearViaje,
+      }}
+    >
       {children}
     </ViajesContext.Provider>
   );
