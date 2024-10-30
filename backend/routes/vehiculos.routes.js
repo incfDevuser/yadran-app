@@ -9,4 +9,11 @@ router.post("/create", VehiculosController.crearVehiculo);
 router.put("/:id", VehiculosController.actualizarVehiculo);
 router.delete("/:id", VehiculosController.eliminarVehiculo);
 
+//Informacion especifica del vehiculo y trayecto
+router.get("/:vehiculo_id/trayectos/:trayecto_id/usuarios", VehiculosController.obtenerUsuariosEnVehiculo);
+
+//Obtener el vehiculo general
+router.get("/:vehiculo_id/info", VehiculosController.obtenerInfoCompletaVehiculo);
+
+
 export default router;

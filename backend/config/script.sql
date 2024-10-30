@@ -163,6 +163,8 @@ create table viajes(
 	descripcion varchar(225),
 	ruta_id integer references rutas(id) on delete cascade,
 	-- faltan los created y los updated
+	created_at TIMESTAMPTZ DEFAULT NOW(),
+    updated_at TIMESTAMPTZ DEFAULT NOW()
 )
 create table usuarios_viajes(
 	id serial primary key,
@@ -173,6 +175,8 @@ create table usuarios_viajes(
 	comentario_usuario text,
 	estado varchar(50),
 	-- faltan los created y los updates
+	created_at TIMESTAMPTZ DEFAULT NOW(),
+    updated_at TIMESTAMPTZ DEFAULT NOW()
 ),
 create table vuelos(
 	id serial primary key, 
@@ -187,3 +191,13 @@ create table vuelos(
 	duracion_estimada integer,
 	estado_vuelo varchar(50)
 )
+CREATE TABLE vehiculo_usuarios (
+    id SERIAL PRIMARY KEY,
+    vehiculo_id INTEGER REFERENCES vehiculos(id) ON DELETE CASCADE,
+    usuario_id INTEGER REFERENCES usuarios(id) ON DELETE CASCADE,
+    trayecto_id INTEGER REFERENCES trayectos(id) ON DELETE CASCADE,
+    estado VARCHAR(50) DEFAULT 'Pendiente', -- Pendiente, Confirmado
+    fecha_confirmacion TIMESTAMPTZ,
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+    updated_at TIMESTAMPTZ DEFAULT NOW()
+);

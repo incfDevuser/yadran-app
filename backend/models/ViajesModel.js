@@ -21,23 +21,54 @@ const solicitarViaje = async ({
   fecha_fin,
   comentario_usuario,
 }) => {
+  const client = await pool.connect(); // Uso de transacción para asegurar consistencia
   try {
-    const query = `
-            INSERT INTO usuarios_viajes(usuario_id, viaje_id, fecha_inicio, fecha_fin, comentario_usuario, estado)
-            VALUES ($1, $2, $3, $4, $5, 'Pendiente') RETURNING *
-        `;
-    const values = [
+    await client.query("BEGIN"); // Inicia la transacción
+
+    // 1. Inserta la solicitud de viaje en usuarios_viajes
+    const querySolicitud = `
+      INSERT INTO usuarios_viajes(usuario_id, viaje_id, fecha_inicio, fecha_fin, comentario_usuario, estado)
+      VALUES ($1, $2, $3, $4, $5, 'Pendiente') RETURNING *
+    `;
+    const valuesSolicitud = [
       usuario_id,
       viaje_id,
       fecha_inicio,
       fecha_fin,
       comentario_usuario,
     ];
-    const response = await pool.query(query, values);
-    return response.rows[0];
+    const responseSolicitud = await client.query(
+      querySolicitud,
+      valuesSolicitud
+    );
+    const solicitud = responseSolicitud.rows[0];
+
+    const queryTrayectos = `
+      SELECT id, vehiculo_id
+      FROM trayectos
+      WHERE ruta_id = (SELECT ruta_id FROM viajes WHERE id = $1)
+    `;
+    const responseTrayectos = await client.query(queryTrayectos, [viaje_id]);
+
+    for (const trayecto of responseTrayectos.rows) {
+      const queryVehiculoUsuario = `
+        INSERT INTO vehiculo_usuarios (vehiculo_id, usuario_id, trayecto_id, estado)
+        VALUES ($1, $2, $3, 'Pendiente')
+      `;
+      await client.query(queryVehiculoUsuario, [
+        trayecto.vehiculo_id,
+        usuario_id,
+        trayecto.id,
+      ]);
+    }
+    await client.query("COMMIT");
+    return solicitud;
   } catch (error) {
+    await client.query("ROLLBACK");
     console.error("Error al crear la solicitud de viaje:", error);
     throw new Error("Error con la solicitud de viaje");
+  } finally {
+    client.release();
   }
 };
 const obtenerViajes = async () => {
