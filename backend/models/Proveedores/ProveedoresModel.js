@@ -16,23 +16,70 @@ const obtenerProveedoresConVehiculos = async () => {
             'capacidad_operacional', v.capacidad_operacional,
             'estado', v.estado,
             'documentacion_ok', v.documentacion_ok,
-            'velocidad_promedio', v.velocidad_promedio
+            'velocidad_promedio', v.velocidad_promedio,
+            'nombre_chofer', c.nombre,
+            'email_chofer', c.email,
+            'trayectos', (
+              SELECT json_agg(
+                json_build_object(
+                  'trayecto_id', t.id,
+                  'origen', t.origen,
+                  'destino', t.destino,
+                  'duracion_estimada', t.duracion_estimada,
+                  'capacidad_ocupada', 
+                    (SELECT COUNT(vu.usuario_id) 
+                     FROM vehiculo_usuarios vu 
+                     WHERE vu.trayecto_id = t.id AND vu.estado = 'Confirmado'),
+                  'capacidad_reservada', 
+                    (SELECT COUNT(vu.usuario_id) 
+                     FROM vehiculo_usuarios vu 
+                     WHERE vu.trayecto_id = t.id AND vu.estado = 'Pendiente'),
+                  'cupos_disponibles', 
+                    v.capacidad_operacional - 
+                    (SELECT COUNT(vu.usuario_id) 
+                     FROM vehiculo_usuarios vu 
+                     WHERE vu.trayecto_id = t.id AND vu.estado = 'Confirmado') -
+                    (SELECT COUNT(vu.usuario_id) 
+                     FROM vehiculo_usuarios vu 
+                     WHERE vu.trayecto_id = t.id AND vu.estado = 'Pendiente'),
+                  'usuarios', (
+                    SELECT json_agg(
+                      json_build_object(
+                        'usuario_id', u.id,
+                        'nombre', u.nombre,
+                        'email', u.email,
+                        'estado', vu.estado
+                      )
+                    )
+                    FROM vehiculo_usuarios vu
+                    JOIN usuarios u ON vu.usuario_id = u.id
+                    WHERE vu.trayecto_id = t.id
+                  )
+                )
+              )
+              FROM trayectos t
+              WHERE t.vehiculo_id = v.id
+            )
           )
         ) FILTER (WHERE v.id IS NOT NULL), '[]'
       ) AS vehiculos
       FROM proveedores p
       LEFT JOIN vehiculos v ON p.id = v.proveedor_id
+      LEFT JOIN choferes c ON v.chofer_id = c.id -- Unión para obtener la información del chofer
       GROUP BY p.id;
     `;
     const { rows } = await pool.query(query);
     return rows;
   } catch (error) {
-    console.error("Error al obtener proveedores con vehículos:", error);
+    console.error(
+      "Error al obtener proveedores con vehículos y trayectos:",
+      error
+    );
     throw error;
   }
 };
 
-// Obtener un proveedor con sus vehículos
+//Obtener un proveedor con sus vehículos
 const obtenerProveedorConVehiculos = async ({ nombre_proveedor, rut }) => {
   try {
     const query = `

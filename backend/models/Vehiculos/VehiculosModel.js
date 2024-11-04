@@ -109,8 +109,19 @@ const obtenerUsuariosPorVehiculoYTrayecto = async (vehiculo_id) => {
         v.tipo_vehiculo,
         v.capacidad_total,
         v.capacidad_operacional,
-        COUNT(CASE WHEN vu.estado = 'Confirmado' THEN 1 END) AS capacidad_ocupada,
-        v.capacidad_total - COUNT(CASE WHEN vu.estado = 'Confirmado' THEN 1 END) AS capacidad_disponible,
+        
+        -- Capacidad ocupada: Usuarios confirmados en el vehículo
+        COUNT(vu.usuario_id) FILTER (WHERE vu.estado = 'Confirmado') AS capacidad_ocupada,
+        
+        -- Capacidad reservada: Usuarios en estado "Pendiente"
+        COUNT(vu.usuario_id) FILTER (WHERE vu.estado = 'Pendiente') AS capacidad_reservada,
+        
+        -- Cupos disponibles: Capacidad operacional menos ocupados y reservados
+        v.capacidad_operacional - 
+        COUNT(vu.usuario_id) FILTER (WHERE vu.estado = 'Confirmado') -
+        COUNT(vu.usuario_id) FILTER (WHERE vu.estado = 'Pendiente') AS cupos_disponibles,
+        
+        -- Lista de usuarios y su estado
         json_agg(
           json_build_object(
             'usuario_id', u.id,
@@ -118,23 +129,31 @@ const obtenerUsuariosPorVehiculoYTrayecto = async (vehiculo_id) => {
             'email', u.email,
             'estado', vu.estado
           )
-        ) AS usuarios
+        ) AS usuarios,
+        
+        -- Información del chofer
+        c.nombre AS nombre_chofer,
+        c.email AS email_chofer
       FROM trayectos t
       LEFT JOIN vehiculo_usuarios vu ON t.id = vu.trayecto_id AND vu.vehiculo_id = $1
       LEFT JOIN usuarios u ON vu.usuario_id = u.id
       LEFT JOIN vehiculos v ON v.id = vu.vehiculo_id
-      WHERE vu.vehiculo_id = $1
-      GROUP BY t.id, v.id
+      LEFT JOIN choferes c ON v.chofer_id = c.id
+      WHERE v.id = $1
+      GROUP BY t.id, v.id, c.nombre, c.email
     `;
     const response = await pool.query(query, [vehiculo_id]);
     return response.rows;
   } catch (error) {
-    console.error("Error al obtener la lista de usuarios por vehículo y trayecto:", error);
-    throw new Error("Error al obtener la lista de usuarios por vehículo y trayecto");
+    console.error(
+      "Error al obtener la lista de usuarios por vehículo y trayecto:",
+      error
+    );
+    throw new Error(
+      "Error al obtener la lista de usuarios por vehículo y trayecto"
+    );
   }
 };
-
-
 export const VehiculosModel = {
   obtenerVehiculos,
   obtenerVehiculo,
@@ -142,5 +161,5 @@ export const VehiculosModel = {
   actualizarVehiculo,
   eliminarVehiculo,
   obtenerUsuariosEnVehiculo,
-  obtenerUsuariosPorVehiculoYTrayecto
+  obtenerUsuariosPorVehiculoYTrayecto,
 };

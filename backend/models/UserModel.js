@@ -36,33 +36,38 @@ const obtenerUsuarioConViajes = async (id) => {
       SELECT 
         usuarios.*,
         roles.nombre_rol,
-        json_agg(
-          json_build_object(
-            'id', viajes.id,
-            'nombre', viajes.nombre,
-            'descripcion', viajes.descripcion,
-            'fecha_inicio', usuarios_viajes.fecha_inicio,
-            'fecha_fin', usuarios_viajes.fecha_fin,
-            'comentario_usuario', usuarios_viajes.comentario_usuario,
-            'estado', usuarios_viajes.estado,
-            'trayectos', (
-              SELECT json_agg(
-                json_build_object(
-                  'id', trayectos.id,
-                  'origen', trayectos.origen,
-                  'destino', trayectos.destino,
-                  'estado', trayectos.estado,
-                  'vehiculo_id', trayectos.vehiculo_id,
-                  'tipo_vehiculo', vehiculos.tipo_vehiculo,  -- Agregamos el nombre del vehículo
-                  'duracion_estimada', trayectos.duracion_estimada
+        COALESCE(
+          json_agg(
+            json_build_object(
+              'id', viajes.id,
+              'nombre', viajes.nombre,
+              'descripcion', viajes.descripcion,
+              'fecha_inicio', usuarios_viajes.fecha_inicio,
+              'fecha_fin', usuarios_viajes.fecha_fin,
+              'comentario_usuario', usuarios_viajes.comentario_usuario,
+              'estado', usuarios_viajes.estado,
+              'solicitud_id', usuarios_viajes.id, -- Agregamos el id de la solicitud
+              'trayectos', (
+                SELECT COALESCE(
+                  json_agg(
+                    json_build_object(
+                      'id', trayectos.id,
+                      'origen', trayectos.origen,
+                      'destino', trayectos.destino,
+                      'estado', trayectos.estado,
+                      'vehiculo_id', trayectos.vehiculo_id,
+                      'tipo_vehiculo', vehiculos.tipo_vehiculo,
+                      'duracion_estimada', trayectos.duracion_estimada
+                    )
+                  ) FILTER (WHERE trayectos.id IS NOT NULL), '[]'
                 )
+                FROM trayectos
+                JOIN rutas ON trayectos.ruta_id = rutas.id
+                LEFT JOIN vehiculos ON trayectos.vehiculo_id = vehiculos.id
+                WHERE rutas.id = viajes.ruta_id
               )
-              FROM trayectos
-              JOIN rutas ON trayectos.ruta_id = rutas.id
-              LEFT JOIN vehiculos ON trayectos.vehiculo_id = vehiculos.id  -- Relación con la tabla vehiculos
-              WHERE rutas.id = viajes.ruta_id
             )
-          )
+          ) FILTER (WHERE viajes.id IS NOT NULL), '[]'
         ) AS viajes
       FROM usuarios
       JOIN roles ON usuarios.rol_id = roles.id
@@ -79,6 +84,8 @@ const obtenerUsuarioConViajes = async (id) => {
     throw new Error("Hubo un error con la operación obtenerUsuarioConViajes");
   }
 };
+
+
 const eliminarUsuario = async (id) => {
   try {
     const query = "DELETE FROM usuarios WHERE id = $1";

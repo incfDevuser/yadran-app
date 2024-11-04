@@ -94,11 +94,30 @@ const solicitudes = async (req, res) => {
     });
   }
 };
+const eliminarViajeUsuario = async (req, res) => {
+  const { viaje_usuario_id } = req.params;
+
+  try {
+    const viajeEliminado = await ViajesModel.eliminarViajeUsuario(viaje_usuario_id);
+    if (!viajeEliminado) {
+      return res.status(404).json({ message: "Solicitud de viaje no encontrada o ya fue eliminada" });
+    }
+    res.status(200).json({
+      message: "Solicitud de viaje eliminada con éxito",
+      viaje: viajeEliminado,
+    });
+  } catch (error) {
+    console.error("Error al eliminar la solicitud de viaje:", error);
+    res.status(500).json({ message: "Error al eliminar la solicitud de viaje" });
+  }
+};
+
 
 export const ViajesController = {
   crearViaje,
   solicitarViaje,
   obtenerViajes,
   aprobarRechazarViaje,
-  solicitudes
+  solicitudes,
+  eliminarViajeUsuario
 };

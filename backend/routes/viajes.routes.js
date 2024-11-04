@@ -14,6 +14,10 @@ router.post('/solicitar',AuthMiddleware.authToken,ViajesController.solicitarViaj
 router.put('/:viaje_usuario_id', ViajesController.aprobarRechazarViaje)
 //Obtener las solicitudes de viaje
 router.get('/solicitudes', ViajesController.solicitudes)
+//Cancelar el viaje del usuario
+router.delete('/eliminar/:viaje_usuario_id', AuthMiddleware.authToken, ViajesController.eliminarViajeUsuario);
+
+
 
 
 export default router;

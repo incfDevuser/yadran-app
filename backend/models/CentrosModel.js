@@ -1,4 +1,5 @@
 import pool from "../config/db.js";
+import obtenerClimaPorUbicacion from "../Services/ClimaService.js";
 
 const obtenerCentros = async () => {
   try {

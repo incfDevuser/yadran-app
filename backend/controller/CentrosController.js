@@ -1,11 +1,30 @@
 import { CentrosModel } from "../models/CentrosModel.js";
+import obtenerClimaPorUbicacion from "../Services/ClimaService.js";
 
 const obtenerCentros = async (req, res) => {
   try {
+    // Obtiene todos los centros desde la base de datos
     const centros = await CentrosModel.obtenerCentros();
+    
+    const centrosConClima = await Promise.all(
+      centros.map(async (centro) => {
+        if (centro.latitud && centro.longitud) {
+          try {
+            const clima = await obtenerClimaPorUbicacion(centro.latitud, centro.longitud);
+            return { ...centro, clima };
+          } catch (error) {
+            console.error(`Error obteniendo el clima para el centro ${centro.nombre_centro}`, error);
+            return { ...centro, clima: null };
+          }
+        } else {
+          return { ...centro, clima: null };
+        }
+      })
+    );
+
     return res.status(200).json({
-      message: "Lista de centros",
-      centros,
+      message: "Lista de centros con clima",
+      centros: centrosConClima,
     });
   } catch (error) {
     return res.status(500).json({

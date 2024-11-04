@@ -21,7 +21,7 @@ const solicitarViaje = async ({
   fecha_fin,
   comentario_usuario,
 }) => {
-  const client = await pool.connect(); // Uso de transacción para asegurar consistencia
+  const client = await pool.connect();
   try {
     await client.query("BEGIN"); // Inicia la transacción
 
@@ -139,6 +139,54 @@ const obtenerSolicitudes = async () => {
     throw new Error("Error con la obtención de solicitudes");
   }
 };
+const eliminarViajeUsuario = async (viaje_usuario_id) => {
+  const client = await pool.connect(); // Conexión para una transacción
+  try {
+    await client.query("BEGIN"); // Inicia la transacción
+
+    // Obtener la solicitud de viaje para identificar usuario_id y viaje_id
+    const querySolicitud = `
+      SELECT usuario_id, viaje_id FROM usuarios_viajes WHERE id = $1
+    `;
+    const responseSolicitud = await client.query(querySolicitud, [
+      viaje_usuario_id,
+    ]);
+    const solicitud = responseSolicitud.rows[0];
+
+    if (!solicitud) {
+      throw new Error("Solicitud de viaje no encontrada");
+    }
+
+    const { usuario_id, viaje_id } = solicitud;
+
+    // 1. Eliminar la solicitud de viaje en `usuarios_viajes`
+    await client.query("DELETE FROM usuarios_viajes WHERE id = $1", [
+      viaje_usuario_id,
+    ]);
+
+    // 2. Eliminar las entradas en `vehiculo_usuarios` para liberar los cupos en trayectos
+    await client.query(
+      `DELETE FROM vehiculo_usuarios 
+       WHERE usuario_id = $1 
+       AND trayecto_id IN (
+         SELECT id FROM trayectos WHERE ruta_id = (SELECT ruta_id FROM viajes WHERE id = $2)
+       )`,
+      [usuario_id, viaje_id]
+    );
+
+    await client.query("COMMIT"); // Confirma la transacción
+    return { message: "Solicitud de viaje y cupos eliminados con éxito" };
+  } catch (error) {
+    await client.query("ROLLBACK"); // Revertir cambios en caso de error
+    console.error(
+      "Error al eliminar la solicitud de viaje y liberar cupos:",
+      error
+    );
+    throw new Error("Error al eliminar la solicitud de viaje y liberar cupos");
+  } finally {
+    client.release();
+  }
+};
 
 export const ViajesModel = {
   crearViaje,
@@ -146,4 +194,5 @@ export const ViajesModel = {
   obtenerViajes,
   aprobarRechazarViaje,
   obtenerSolicitudes,
+  eliminarViajeUsuario,
 };

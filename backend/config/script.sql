@@ -201,3 +201,29 @@ CREATE TABLE vehiculo_usuarios (
     created_at TIMESTAMPTZ DEFAULT NOW(),
     updated_at TIMESTAMPTZ DEFAULT NOW()
 );
+-- Tabla de choferes
+CREATE TABLE choferes (
+    id SERIAL PRIMARY KEY,
+    nombre VARCHAR(255) NOT NULL,
+    telefono VARCHAR(15),
+    email VARCHAR(255) UNIQUE,
+    vehiculo_id INTEGER REFERENCES vehiculos(id) ON DELETE CASCADE,
+    estado VARCHAR(50) DEFAULT 'Activo',
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+    updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- Tabla para asignar choferes a trayectos
+CREATE TABLE chofer_trayecto (
+    id SERIAL PRIMARY KEY,
+    chofer_id INTEGER REFERENCES choferes(id) ON DELETE CASCADE,
+    trayecto_id INTEGER REFERENCES trayectos(id) ON DELETE CASCADE,
+    qr_validacion VARCHAR(255), -- Código QR para validar usuarios
+    estado VARCHAR(50) DEFAULT 'Pendiente', -- Pendiente, Confirmado
+    fecha_confirmacion TIMESTAMPTZ,
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+    updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+ALTER TABLE centro
+ADD COLUMN latitud DECIMAL(10, 8),
+ADD COLUMN longitud DECIMAL(11, 8);
