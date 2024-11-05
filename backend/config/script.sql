@@ -227,3 +227,25 @@ CREATE TABLE chofer_trayecto (
 ALTER TABLE centro
 ADD COLUMN latitud DECIMAL(10, 8),
 ADD COLUMN longitud DECIMAL(11, 8);
+create table lanchas(
+	id serial primary key,
+	nombre varchar(100) not null,
+	capacidad int not null,
+	disponible boolean default true
+);
+create table movimientosintercentro (
+  id SERIAL PRIMARY KEY,
+  fecha TIMESTAMP NOT NULL,
+  centro_origen_id INT REFERENCES Centro(id) on delete cascade,
+  centro_destino_id INT REFERENCES Centro(id) on delete cascade,
+  lancha_id INT REFERENCES Lanchas(id),
+  estado VARCHAR(20) DEFAULT 'pendiente', --Si el movimiento esta terminado, limpiar la lista de usuarios que esta en la lancha
+  comentarios TEXT
+);
+create table usuariosmovimientosintercentro (
+  id SERIAL PRIMARY KEY,
+  movimiento_id INT REFERENCES MovimientosIntercentro(id) on delete cascade,
+  usuario_id INT REFERENCES Usuarios(id) on delete cascade,
+  estado VARCHAR(20) DEFAULT 'pendiente', --Aprobado o rechazado, en la lista de la lancha solo se muestran los usuarios con estado "Aprobado" y "Pendiente", la que es tan rechazados no.
+	comentario text
+);
