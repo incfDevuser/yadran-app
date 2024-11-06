@@ -11,7 +11,9 @@ export const UsuariosProvider = ({ children }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [ listaUsuarios, setListaUsuarios ] =useState([])
+  const [ rol, setRol ] = useState("");
   const navigate = useNavigate();
+
   useEffect(() => {
     const miPerfil = async () => {
       setLoading(true);
@@ -27,6 +29,8 @@ export const UsuariosProvider = ({ children }) => {
         setUsuarios(data);
         setIsAutenticado(true);
         setIsAdmin(data.isadmin);
+        //Insertar el rol del usuario
+        setRol(data.nombre_rol)
       } catch (error) {
         setError(error.message || "Hubo un error al cargar el usuario");
       } finally {
@@ -80,7 +84,7 @@ export const UsuariosProvider = ({ children }) => {
   useEffect(() => {}, [isAutenticado, navigate]);
   return (
     <UsuariosContext.Provider
-      value={{ usuarios, loading, error, isAdmin, listaUsuarios, obtenerUsuarios, iniciarSesion, cerrarSesion }}
+      value={{ usuarios, loading, error, isAdmin, rol, listaUsuarios, obtenerUsuarios, iniciarSesion, cerrarSesion }}
     >
       {children}
     </UsuariosContext.Provider>

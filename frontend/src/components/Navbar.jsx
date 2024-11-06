@@ -11,7 +11,7 @@ const Navbar = () => {
   const location = useLocation();
   const [toggle, setToggle] = useState(false);
   const [signin, setSignin] = useState(false);
-  const { usuarios, isAdmin, cerrarSesion } = useUsuario(); 
+  const { usuarios, isAdmin, rol, cerrarSesion } = useUsuario(); 
 
   const locationPath = (route) => route === location.pathname;
 
@@ -62,6 +62,7 @@ const Navbar = () => {
               Admin Panel
             </Link>
           )}
+          {rol === "Contratista" ? <p>hola contratista</p> : <p>{rol.nombre_rol}</p>}
           {!usuarios ? (
             <button
               className="bg-[#605DEC] py-2 px-4 md:py-3 md:px-5 rounded-[5px] border-2 border-[#605DEC] text-base text-[#FAFAFA] hover:text-[#605DEC] hover:bg-white hover:border-2 hover:border-[#605DEC] transition-all duration-200"
