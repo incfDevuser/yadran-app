@@ -246,6 +246,7 @@ create table usuariosmovimientosintercentro (
   id SERIAL PRIMARY KEY,
   movimiento_id INT REFERENCES MovimientosIntercentro(id) on delete cascade,
   usuario_id INT REFERENCES Usuarios(id) on delete cascade,
+  trabajador_id int REFERENCES 
   estado VARCHAR(20) DEFAULT 'pendiente', --Aprobado o rechazado, en la lista de la lancha solo se muestran los usuarios con estado "Aprobado" y "Pendiente", la que es tan rechazados no.
 	comentario text
 );

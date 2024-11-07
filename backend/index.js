@@ -32,7 +32,8 @@ import userRoutes from "./routes/usuarios.routes.js";
 import vuelosRoutes from "./routes/vuelos.routes.js";
 import obtenerVuelos from "./Services/VuelosService.js";
 //Rutas intercentro
-import intercentroRoutes from './routes/intercentro.routes.js'
+import intercentroRoutes from "./routes/intercentro.routes.js";
+import contratistaRoutes from "./routes/contratista.routes.js";
 
 //Definiciones y variables globales
 dotenv.config();
@@ -94,7 +95,9 @@ app.use("/api/usuarios", userRoutes);
 //Obtener los vuelos
 app.use("/api/vuelos", vuelosRoutes);
 //Rutas intercentro
-app.use("/api/intercentro", intercentroRoutes)
+app.use("/api/intercentro", intercentroRoutes);
+//Rutas para el contratisa
+app.use("/api/contratista", contratistaRoutes);
 
 //Node cron para obtener los vuelos
 const cronJob = cron.schedule("*/10 * * * *", async () => {
