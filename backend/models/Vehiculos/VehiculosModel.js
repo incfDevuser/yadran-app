@@ -30,7 +30,7 @@ const obtenerVehiculo = async (id) => {
     throw new Error("Error con la operación obtenerVehiculo");
   }
 };
-
+//Funcion para crear un vehiculo
 const crearVehiculo = async ({
   proveedor_id,
   num_tripulantes,
@@ -41,14 +41,15 @@ const crearVehiculo = async ({
   estado,
   documentacion_ok,
   velocidad_promedio,
+  chofer_id
 }) => {
   try {
     const query = `
       INSERT INTO vehiculos (
         proveedor_id, num_tripulantes, tipo_vehiculo, tipo_servicio,
         capacidad_total, capacidad_operacional, estado,
-        documentacion_ok, velocidad_promedio
-      ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING *
+        documentacion_ok, velocidad_promedio, chofer_id
+      ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) RETURNING *
     `;
     const values = [
       proveedor_id,
@@ -60,6 +61,7 @@ const crearVehiculo = async ({
       estado,
       documentacion_ok,
       velocidad_promedio,
+      chofer_id
     ];
     const response = await pool.query(query, values);
     return response.rows[0];
@@ -68,9 +70,7 @@ const crearVehiculo = async ({
     throw new Error("Hubo un error al crear el vehículo");
   }
 };
-
 const actualizarVehiculo = async (id, data) => {};
-
 const eliminarVehiculo = async (id) => {
   try {
     const query = "DELETE FROM vehiculos WHERE id = $1 RETURNING *";
@@ -110,15 +110,15 @@ const obtenerUsuariosPorVehiculoYTrayecto = async (vehiculo_id) => {
         v.capacidad_total,
         v.capacidad_operacional,
         
-        -- Capacidad ocupada: Usuarios confirmados en el vehículo
-        COUNT(vu.usuario_id) FILTER (WHERE vu.estado = 'Confirmado') AS capacidad_ocupada,
+        -- Capacidad ocupada: Usuarios en estado "Aprobado" en el vehículo
+        COUNT(vu.usuario_id) FILTER (WHERE vu.estado = 'Aprobado') AS capacidad_ocupada,
         
         -- Capacidad reservada: Usuarios en estado "Pendiente"
         COUNT(vu.usuario_id) FILTER (WHERE vu.estado = 'Pendiente') AS capacidad_reservada,
         
         -- Cupos disponibles: Capacidad operacional menos ocupados y reservados
         v.capacidad_operacional - 
-        COUNT(vu.usuario_id) FILTER (WHERE vu.estado = 'Confirmado') -
+        COUNT(vu.usuario_id) FILTER (WHERE vu.estado = 'Aprobado') -
         COUNT(vu.usuario_id) FILTER (WHERE vu.estado = 'Pendiente') AS cupos_disponibles,
         
         -- Lista de usuarios y su estado
@@ -154,6 +154,7 @@ const obtenerUsuariosPorVehiculoYTrayecto = async (vehiculo_id) => {
     );
   }
 };
+
 export const VehiculosModel = {
   obtenerVehiculos,
   obtenerVehiculo,

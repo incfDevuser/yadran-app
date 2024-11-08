@@ -99,7 +99,8 @@ create table vehiculos(
 	capacidad_operacional integer not null,
 	estado varchar(50) not null,
 	documentacion_ok boolean default true,
-	velocidad_promedio numeric(10, 2) not null
+	velocidad_promedio numeric(10, 2) not null,
+	chofer_id integer references chofereres(id) on delete cascade
 );
 --Luego la tabla rutas, primero consultar si es que la ruta va asociada al centro.
 create table rutas(

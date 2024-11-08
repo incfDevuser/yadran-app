@@ -5,19 +5,31 @@ import { AuthMiddleware } from "../middlewares/authMiddleware.js";
 const router = express.Router();
 
 //Ruta para obtener los viajes
-router.get('/', ViajesController.obtenerViajes)
+router.get("/", ViajesController.obtenerViajes);
+//Obtener solicitudes de usuarios naturales
+router.get(
+  "/solicitudes-usuarios",
+  ViajesController.obtenerSolicitudesUsuariosNaturales
+);
+
 //Crear un viaje
-router.post('/crear', AuthMiddleware.authToken ,ViajesController.crearViaje)
-//Ruta para solicitar un viaje
-router.post('/solicitar',AuthMiddleware.authToken,ViajesController.solicitarViaje)
-//Actualizar el estado del viaje
-router.put('/:viaje_usuario_id', ViajesController.aprobarRechazarViaje)
-//Obtener las solicitudes de viaje
-router.get('/solicitudes', ViajesController.solicitudes)
-//Cancelar el viaje del usuario
-router.delete('/eliminar/:viaje_usuario_id', AuthMiddleware.authToken, ViajesController.eliminarViajeUsuario);
+router.post("/crear", AuthMiddleware.authToken, ViajesController.crearViaje);
 
+//Solicitar Viaje para Usuario natural
+router.post(
+  "/solicitar",
+  AuthMiddleware.authToken,
+  ViajesController.solicitarViajeUsuarioNatural
+);
 
-
+//Rechazar solicitud de viaje del usuario
+router.patch(
+  "/solicitud/:solicitudId/rechazar",
+  ViajesController.rechazarSolicitudViaje
+);
+router.put(
+  "/solicitud/:solicitud_id/aprobar",
+  ViajesController.aprobarSolicitudViaje
+);
 
 export default router;

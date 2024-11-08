@@ -38,7 +38,7 @@ const obtenerVehiculo = async (req, res) => {
   }
 };
 
-// Crear un nuevo vehículo y asignarlo a un proveedor
+//Crear un nuevo vehículo y asignarlo a un proveedor
 const crearVehiculo = async (req, res) => {
   const {
     proveedor_id,
@@ -50,6 +50,7 @@ const crearVehiculo = async (req, res) => {
     estado,
     documentacion_ok,
     velocidad_promedio,
+    chofer_id
   } = req.body;
 
   try {
@@ -63,6 +64,7 @@ const crearVehiculo = async (req, res) => {
       estado,
       documentacion_ok,
       velocidad_promedio,
+      chofer_id
     };
     const nuevoVehiculo = await VehiculosModel.crearVehiculo(vehiculo);
     res.status(201).json({

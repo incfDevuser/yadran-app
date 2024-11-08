@@ -1,14 +1,13 @@
 import { ChoferesModel } from "../models/ChoferModel.js";
 
+//Crear un nuevo chofer
 const crearChofer = async (req, res) => {
-  const { nombre, telefono, email, vehiculo_id } = req.body;
-
+  const { nombre, telefono, email } = req.body;
   try {
     const chofer = await ChoferesModel.crearChofer({
       nombre,
       telefono,
       email,
-      vehiculo_id,
     });
     res.status(201).json({ message: "Chofer creado exitosamente", chofer });
   } catch (error) {
@@ -16,42 +15,38 @@ const crearChofer = async (req, res) => {
     res.status(500).json({ message: "Error al crear el chofer" });
   }
 };
-
-const asignarChoferATrayecto = async (req, res) => {
-  const { chofer_id, trayecto_id } = req.body;
-
+//Obtener la lista de choferes
+const obtenerChoferes = async (req, res) => {
   try {
-    const asignacion = await ChoferesModel.asignarChoferATrayecto(
-      chofer_id,
-      trayecto_id
-    );
-    res
-      .status(201)
-      .json({
-        message: "Chofer asignado al trayecto exitosamente",
-        asignacion,
-      });
+    const choferes = await ChoferesModel.obtenerChoferes();
+    res.json({ message: "Lista de choferes obtenida exitosamente", choferes });
   } catch (error) {
-    console.error("Error al asignar el chofer al trayecto:", error);
-    res.status(500).json({ message: "Error al asignar el chofer al trayecto" });
+    console.error("Error al obtener los choferes:", error);
+    res.status(500).json({ message: "Error al obtener los choferes" });
   }
 };
-const obtenerChoferes = async()=>{
-    try {
-        const choferes = await ChoferesModel.obtenerChoferes();
-        return res.status(200).json({
-            message:"Lista de choferes",
-            choferes
-        })
-    } catch (error) {
-        console.error(error)
-        return res.status(500).json({
-            message:"Error interno del servidor"
-        })
-    }
-}
+//Obtener lista de usuarios por trayecto
+const obtenerUsuariosPorTrayectoParaChofer = async (req, res) => {
+  const { chofer_id } = req.params;
+
+  try {
+    const usuariosPorTrayecto =
+      await ChoferesModel.obtenerUsuariosPorTrayectoParaChofer(chofer_id);
+    res.status(200).json({
+      message: "Lista de usuarios por trayecto obtenida exitosamente",
+      vehiculoInfo: usuariosPorTrayecto,
+    });
+  } catch (error) {
+    res.status(500).json({
+      message:
+        "Error al obtener la lista de usuarios por trayecto para el chofer",
+      error: error.message,
+    });
+  }
+};
+
 export const ChoferController = {
   crearChofer,
-  asignarChoferATrayecto,
-  obtenerChoferes
+  obtenerChoferes,
+  obtenerUsuariosPorTrayectoParaChofer
 };
