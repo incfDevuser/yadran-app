@@ -10,7 +10,6 @@ const crearChofer = async ({ nombre, telefono, email }) => {
   const response = await pool.query(query, values);
   return response.rows[0];
 };
-
 //Función para obtener todos los choferes
 const obtenerChoferes = async () => {
   const query = `
@@ -19,9 +18,7 @@ const obtenerChoferes = async () => {
   const response = await pool.query(query);
   return response.rows;
 };
-
 //Obtener lista de usuarios para el chofer
-// Función en el modelo para obtener usuarios por trayecto para un chofer
 const obtenerUsuariosPorTrayectoParaChofer = async (chofer_id) => {
   try {
     const query = `
@@ -61,9 +58,6 @@ const obtenerUsuariosPorTrayectoParaChofer = async (chofer_id) => {
     throw new Error("Error al obtener la lista de usuarios por trayecto");
   }
 };
-
-
-
 export const ChoferesModel = {
   crearChofer,
   obtenerChoferes,

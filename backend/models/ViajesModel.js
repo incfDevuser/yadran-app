@@ -213,6 +213,12 @@ const obtenerSolicitudesUsuariosNaturales = async () => {
     );
   }
 };
+//Agendar viaje para terceros, Contratista agenda a sus trabajadores
+
+
+//Lista de solicitudes de usuarios agendados por contratista
+
+
 //Aprobar solicitudes para usuarios
 const aprobarSolicitudViaje = async (solicitudId) => {
   const client = await pool.connect();
