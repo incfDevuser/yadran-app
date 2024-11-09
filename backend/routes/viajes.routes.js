@@ -12,6 +12,12 @@ router.get(
   ViajesController.obtenerSolicitudesUsuariosNaturales
 );
 
+//Obtener solicitudes contratista
+router.get(
+  "/solicitudes-trabajadores",
+  ViajesController.obtenerSolicitudesContratista
+);
+
 //Crear un viaje
 router.post("/crear", AuthMiddleware.authToken, ViajesController.crearViaje);
 
@@ -20,6 +26,13 @@ router.post(
   "/solicitar",
   AuthMiddleware.authToken,
   ViajesController.solicitarViajeUsuarioNatural
+);
+
+//Solicitar un viaje para trabajadore ( Contratisa )
+router.post(
+  "/solicitar-trabajadores",
+  AuthMiddleware.authToken,
+  ViajesController.agendarViajeParaTrabajadores
 );
 
 //Rechazar solicitud de viaje del usuario

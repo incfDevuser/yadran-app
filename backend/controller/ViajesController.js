@@ -40,6 +40,15 @@ const obtenerSolicitudesUsuariosNaturales = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+//Obtener solicitudes de viaje contratista
+const obtenerSolicitudesContratista = async (req, res) => {
+  try {
+    const result = await ViajesModel.obtenerSolicitudesTrabajadores();
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
 //Controlador para agendar un viaje para un usuario natural
 const solicitarViajeUsuarioNatural = async (req, res) => {
   const { viaje_id, fecha_inicio, fecha_fin, comentario_usuario } = req.body;
@@ -66,7 +75,7 @@ const solicitarViajeUsuarioNatural = async (req, res) => {
   }
 };
 const agendarViajeParaTrabajadores = async (req, res) => {
-  const { contratista_id } = req.user;
+  const contratista_id = req.user.id;
   const {
     viaje_id,
     trabajadores,
@@ -74,6 +83,7 @@ const agendarViajeParaTrabajadores = async (req, res) => {
     fecha_fin,
     comentario_contratista,
   } = req.body;
+
   try {
     const response = await ViajesModel.agendarViajeParaTrabajadores({
       contratista_id,
@@ -83,18 +93,19 @@ const agendarViajeParaTrabajadores = async (req, res) => {
       fecha_fin,
       comentario_contratista,
     });
-
     res.status(201).json({
       message: response.message,
       solicitudes: response.solicitudes,
     });
   } catch (error) {
+    console.error("Error al agendar viaje para trabajadores:", error);
     res.status(500).json({
       message: "Error al agendar viaje para trabajadores",
       error: error.message,
     });
   }
 };
+
 //Rechazar la solicitud de viaje
 const rechazarSolicitudViaje = async (req, res) => {
   const { solicitudId } = req.params;
@@ -131,4 +142,6 @@ export const ViajesController = {
   rechazarSolicitudViaje,
   obtenerSolicitudesUsuariosNaturales,
   aprobarSolicitudViaje,
+  agendarViajeParaTrabajadores,
+  obtenerSolicitudesContratista,
 };
