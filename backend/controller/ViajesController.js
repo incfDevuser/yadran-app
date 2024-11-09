@@ -65,6 +65,36 @@ const solicitarViajeUsuarioNatural = async (req, res) => {
     });
   }
 };
+const agendarViajeParaTrabajadores = async (req, res) => {
+  const { contratista_id } = req.user;
+  const {
+    viaje_id,
+    trabajadores,
+    fecha_inicio,
+    fecha_fin,
+    comentario_contratista,
+  } = req.body;
+  try {
+    const response = await ViajesModel.agendarViajeParaTrabajadores({
+      contratista_id,
+      viaje_id,
+      trabajadores,
+      fecha_inicio,
+      fecha_fin,
+      comentario_contratista,
+    });
+
+    res.status(201).json({
+      message: response.message,
+      solicitudes: response.solicitudes,
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: "Error al agendar viaje para trabajadores",
+      error: error.message,
+    });
+  }
+};
 //Rechazar la solicitud de viaje
 const rechazarSolicitudViaje = async (req, res) => {
   const { solicitudId } = req.params;
@@ -84,7 +114,7 @@ const aprobarSolicitudViaje = async (req, res) => {
     const resultado = await ViajesModel.aprobarSolicitudViaje(solicitud_id);
 
     res.status(200).json({
-      message: "Solicitud de viaje aprobada exitosamente"
+      message: "Solicitud de viaje aprobada exitosamente",
     });
   } catch (error) {
     console.error("Error al aprobar la solicitud de viaje:", error);
@@ -100,5 +130,5 @@ export const ViajesController = {
   solicitarViajeUsuarioNatural,
   rechazarSolicitudViaje,
   obtenerSolicitudesUsuariosNaturales,
-  aprobarSolicitudViaje
+  aprobarSolicitudViaje,
 };

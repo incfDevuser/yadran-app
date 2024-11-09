@@ -169,10 +169,35 @@ const modificarRutaTrabajador = async (
     throw new Error("Hubo un error al modificar la ruta del trabajador");
   }
 };
+//Obtener trabajadores por contratista
+const obtenerTrabajadoresPorContratista = async (contratistaId) => {
+  try {
+    const query = `
+      SELECT 
+        t.id AS trabajador_id,
+        t.nombre AS trabajador_nombre,
+        t.email AS trabajador_email,
+        t.identificacion,
+        t.telefono
+      FROM trabajadores t
+      WHERE t.contratista_id = $1
+      ORDER BY t.id;
+    `;
+    const response = await pool.query(query, [contratistaId]);
+    return {
+      message: "Lista de trabajadores obtenida exitosamente",
+      trabajadores: response.rows,
+    };
+  } catch (error) {
+    console.error("Error al obtener la lista de trabajadores:", error);
+    throw new Error("Hubo un error al obtener la lista de trabajadores");
+  }
+};
 
 export const ContratistaModel = {
   agregarTrabajador,
   agendarTrabajadoresParaMovimiento,
   obtenerEstadoTrabajadores,
   modificarRutaTrabajador,
+  obtenerTrabajadoresPorContratista
 };

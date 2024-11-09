@@ -84,9 +84,29 @@ const modificarRutaTrabajador = async (req, res) => {
     });
   }
 };
+//Lista de usuarios por contratista
+const obtenerTrabajadoresPorContratista = async (req, res) => {
+  const { id: contratistaId } = req.user;
+  try {
+    const response = await ContratistaModel.obtenerTrabajadoresPorContratista(
+      contratistaId
+    );
+    res.status(200).json({
+      message: response.message,
+      trabajadores: response.trabajadores,
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: "Error al obtener la lista de trabajadores",
+      error: error.message,
+    });
+  }
+};
+
 export const ContratistaController = {
   agregarTrabajador,
   agendarTrabajadoresParaMovimiento,
   obtenerEstadoTrabajadores,
   modificarRutaTrabajador,
+  obtenerTrabajadoresPorContratista,
 };

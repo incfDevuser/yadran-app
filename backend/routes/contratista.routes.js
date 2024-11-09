@@ -8,7 +8,7 @@ const router = express.Router();
 router.get(
   "/misTrabajadores",
   AuthMiddleware.authToken,
-  ContratistaController.obtenerEstadoTrabajadores
+  ContratistaController.obtenerTrabajadoresPorContratista
 );
 
 //Ruta para agregar un trabajador

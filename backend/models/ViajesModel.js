@@ -110,6 +110,91 @@ const solicitarViajeParaUsuario = async ({
     client.release();
   }
 };
+//Solicitar un viaje desde los contratistas
+const agendarViajeParaTrabajadores = async ({
+  contratista_id,
+  viaje_id,
+  trabajadores,
+  fecha_inicio,
+  fecha_fin,
+  comentario_contratista,
+}) => {
+  const client = await pool.connect();
+  try {
+    await client.query("BEGIN");
+    const viajeQuery = `SELECT id FROM viajes WHERE id = $1`;
+    const viajeResult = await client.query(viajeQuery, [viaje_id]);
+    if (viajeResult.rows.length === 0) {
+      throw new Error("El viaje no existe");
+    }
+    const trabajadoresQuery = `
+      SELECT id 
+      FROM trabajadores 
+      WHERE id = ANY($1::int[]) AND contratista_id = $2
+    `;
+    const trabajadoresValidos = await client.query(trabajadoresQuery, [
+      trabajadores,
+      contratista_id,
+    ]);
+
+    if (trabajadoresValidos.rows.length !== trabajadores.length) {
+      throw new Error(
+        "Algunos trabajadores no pertenecen al contratista o no existen"
+      );
+    }
+    const trayectosQuery = `
+      SELECT id, vehiculo_id 
+      FROM trayectos 
+      WHERE ruta_id = (SELECT ruta_id FROM viajes WHERE id = $1)
+    `;
+    const trayectosResult = await client.query(trayectosQuery, [viaje_id]);
+    if (trayectosResult.rows.length === 0) {
+      throw new Error("El viaje no tiene trayectos asociados");
+    }
+    const solicitudes = [];
+    for (const trabajador_id of trabajadores) {s
+      const solicitudQuery = `
+        INSERT INTO usuarios_viajes 
+        (trabajador_id, contratista_id, viaje_id, fecha_inicio, fecha_fin, comentario_usuario, estado)
+        VALUES ($1, $2, $3, $4, $5, $6, 'Pendiente') 
+        RETURNING id
+      `;
+      const solicitudResult = await client.query(solicitudQuery, [
+        trabajador_id,
+        contratista_id,
+        viaje_id,
+        fecha_inicio,
+        fecha_fin,
+        comentario_contratista,
+      ]);
+      const solicitudId = solicitudResult.rows[0].id;
+      solicitudes.push({ trabajador_id, solicitudId });
+      for (const trayecto of trayectosResult.rows) {
+        const vehiculoUsuariosQuery = `
+          INSERT INTO vehiculo_usuarios 
+          (vehiculo_id, trabajador_id, trayecto_id, estado) 
+          VALUES ($1, $2, $3, 'Pendiente')
+        `;
+        await client.query(vehiculoUsuariosQuery, [
+          trayecto.vehiculo_id,
+          trabajador_id,
+          trayecto.id,
+        ]);
+      }
+    }
+    await client.query("COMMIT");
+    return {
+      message: "Agendamiento exitoso para los trabajadores",
+      solicitudes,
+    };
+  } catch (error) {
+    await client.query("ROLLBACK");
+    console.error("Error al agendar viaje para trabajadores:", error);
+    throw new Error("Error al agendar viaje para trabajadores");
+  } finally {
+    client.release();
+  }
+};
 //Rechazar la solicitud de un viaje
 const rechazarSolicitudViaje = async (solicitudId) => {
   const client = await pool.connect();
@@ -266,6 +351,7 @@ export const ViajesModel = {
   crearViaje,
   obtenerViajes,
   solicitarViajeParaUsuario,
+  agendarViajeParaTrabajadores,
   rechazarSolicitudViaje,
   obtenerSolicitudesUsuariosNaturales,
   aprobarSolicitudViaje,
