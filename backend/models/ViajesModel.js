@@ -374,6 +374,7 @@ const obtenerSolicitudesUsuariosNaturales = async () => {
   }
 };
 //Obtener solicitudes para trabajadores
+
 const obtenerSolicitudesTrabajadores = async () => {
   try {
     const query = `
