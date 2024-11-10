@@ -14,7 +14,6 @@ const obtenerVehiculos = async () => {
     throw new Error("Error con la operación obtenerVehiculos");
   }
 };
-
 const obtenerVehiculo = async (id) => {
   try {
     const query = `
@@ -41,7 +40,7 @@ const crearVehiculo = async ({
   estado,
   documentacion_ok,
   velocidad_promedio,
-  chofer_id
+  chofer_id,
 }) => {
   try {
     const query = `
@@ -61,7 +60,7 @@ const crearVehiculo = async ({
       estado,
       documentacion_ok,
       velocidad_promedio,
-      chofer_id
+      chofer_id,
     ];
     const response = await pool.query(query, values);
     return response.rows[0];
@@ -81,7 +80,6 @@ const eliminarVehiculo = async (id) => {
     throw new Error("Hubo un error al eliminar el vehículo");
   }
 };
-
 const obtenerUsuariosEnVehiculo = async (vehiculo_id, trayecto_id) => {
   try {
     const query = `
@@ -110,26 +108,32 @@ const obtenerUsuariosPorVehiculoYTrayecto = async (vehiculo_id) => {
         v.capacidad_total,
         v.capacidad_operacional,
         
-        -- Capacidad ocupada: Usuarios en estado "Aprobado" en el vehículo
-        COUNT(vu.usuario_id) FILTER (WHERE vu.estado = 'Aprobado') AS capacidad_ocupada,
+        -- Capacidad ocupada: Usuarios en estado "Aprobado"
+        COALESCE(SUM(CASE WHEN vu.estado = 'Aprobado' THEN 1 ELSE 0 END), 0) AS capacidad_ocupada,
         
         -- Capacidad reservada: Usuarios en estado "Pendiente"
-        COUNT(vu.usuario_id) FILTER (WHERE vu.estado = 'Pendiente') AS capacidad_reservada,
+        COALESCE(SUM(CASE WHEN vu.estado = 'Pendiente' THEN 1 ELSE 0 END), 0) AS capacidad_reservada,
         
         -- Cupos disponibles: Capacidad operacional menos ocupados y reservados
         v.capacidad_operacional - 
-        COUNT(vu.usuario_id) FILTER (WHERE vu.estado = 'Aprobado') -
-        COUNT(vu.usuario_id) FILTER (WHERE vu.estado = 'Pendiente') AS cupos_disponibles,
+        COALESCE(SUM(CASE WHEN vu.estado = 'Aprobado' THEN 1 ELSE 0 END), 0) -
+        COALESCE(SUM(CASE WHEN vu.estado = 'Pendiente' THEN 1 ELSE 0 END), 0) AS cupos_disponibles,
         
-        -- Lista de usuarios y su estado
+        -- Lista de usuarios y trabajadores con su estado
         json_agg(
           json_build_object(
-            'usuario_id', u.id,
-            'nombre', u.nombre,
-            'email', u.email,
-            'estado', vu.estado
+            'usuario_id', vu.usuario_id,
+            'trabajador_id', vu.trabajador_id,
+            'nombre', COALESCE(u.nombre, t2.nombre),
+            'email', COALESCE(u.email, t2.email),
+            'estado', vu.estado,
+            'tipo', CASE 
+                      WHEN vu.usuario_id IS NOT NULL THEN 'usuario'
+                      WHEN vu.trabajador_id IS NOT NULL THEN 'trabajador'
+                      ELSE NULL
+                    END
           )
-        ) AS usuarios,
+        ) FILTER (WHERE vu.id IS NOT NULL) AS usuarios_trabajadores,
         
         -- Información del chofer
         c.nombre AS nombre_chofer,
@@ -137,24 +141,24 @@ const obtenerUsuariosPorVehiculoYTrayecto = async (vehiculo_id) => {
       FROM trayectos t
       LEFT JOIN vehiculo_usuarios vu ON t.id = vu.trayecto_id AND vu.vehiculo_id = $1
       LEFT JOIN usuarios u ON vu.usuario_id = u.id
+      LEFT JOIN trabajadores t2 ON vu.trabajador_id = t2.id
       LEFT JOIN vehiculos v ON v.id = vu.vehiculo_id
       LEFT JOIN choferes c ON v.chofer_id = c.id
       WHERE v.id = $1
-      GROUP BY t.id, v.id, c.nombre, c.email
+      GROUP BY t.id, v.id, c.nombre, c.email;
     `;
     const response = await pool.query(query, [vehiculo_id]);
     return response.rows;
   } catch (error) {
     console.error(
-      "Error al obtener la lista de usuarios por vehículo y trayecto:",
+      "Error al obtener la lista de usuarios y trabajadores por vehículo y trayecto:",
       error
     );
     throw new Error(
-      "Error al obtener la lista de usuarios por vehículo y trayecto"
+      "Error al obtener la lista de usuarios y trabajadores por vehículo y trayecto"
     );
   }
 };
-
 export const VehiculosModel = {
   obtenerVehiculos,
   obtenerVehiculo,

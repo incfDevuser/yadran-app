@@ -110,21 +110,174 @@ const solicitarViajeParaUsuario = async ({
     client.release();
   }
 };
+//Cancelar viaje usuario
+const cancelarViajeUsuarioYTrabajadores = async (solicitudId) => {
+  const client = await pool.connect();
+  try {
+    await client.query("BEGIN");
+
+    // Obtener la información de la solicitud y los trayectos relacionados
+    const solicitudQuery = `
+      SELECT usuario_id, trabajador_id, viaje_id
+      FROM usuarios_viajes
+      WHERE id = $1 AND estado = 'Pendiente';
+    `;
+    const solicitudResult = await client.query(solicitudQuery, [solicitudId]);
+
+    if (solicitudResult.rows.length === 0) {
+      throw new Error("Solicitud no encontrada o ya procesada");
+    }
+
+    const { usuario_id, trabajador_id, viaje_id } = solicitudResult.rows[0];
+
+    // Eliminar al usuario o trabajador de los vehículos asociados a los trayectos del viaje
+    const deleteVehiculoUsuariosQuery = `
+      DELETE FROM vehiculo_usuarios
+      WHERE 
+        (usuario_id = $1 OR trabajador_id = $2)
+        AND trayecto_id IN (
+          SELECT t.id
+          FROM trayectos t
+          JOIN viajes v ON v.ruta_id = t.ruta_id
+          WHERE v.id = $3
+        );
+    `;
+    await client.query(deleteVehiculoUsuariosQuery, [
+      usuario_id,
+      trabajador_id,
+      viaje_id,
+    ]);
+
+    // Eliminar la solicitud de la tabla usuarios_viajes
+    const deleteSolicitudQuery = `
+      DELETE FROM usuarios_viajes
+      WHERE id = $1;
+    `;
+    await client.query(deleteSolicitudQuery, [solicitudId]);
+
+    await client.query("COMMIT");
+    return {
+      message:
+        "Solicitud de viaje cancelada exitosamente y cupos liberados para usuarios y trabajadores",
+    };
+  } catch (error) {
+    await client.query("ROLLBACK");
+    console.error("Error al cancelar la solicitud de viaje:", error);
+    throw new Error("Error al cancelar la solicitud de viaje");
+  } finally {
+    client.release();
+  }
+};
+
+//Solicitar un viaje desde los contratistas
+const agendarViajeParaTrabajadores = async ({
+  contratista_id,
+  viaje_id,
+  trabajadores,
+  fecha_inicio,
+  fecha_fin,
+  comentario_contratista,
+}) => {
+  const client = await pool.connect();
+  try {
+    await client.query("BEGIN");
+
+    // Validar trabajadores
+    const validacionQuery = `
+      SELECT id 
+      FROM trabajadores 
+      WHERE contratista_id = $1 AND id = ANY($2::int[]);
+    `;
+    const validacionResult = await client.query(validacionQuery, [
+      contratista_id,
+      trabajadores,
+    ]);
+    const trabajadoresValidos = validacionResult.rows.map((row) => row.id);
+
+    if (trabajadoresValidos.length !== trabajadores.length) {
+      throw new Error(
+        "Algunos trabajadores no pertenecen al contratista o no existen"
+      );
+    }
+
+    // Crear solicitudes para los trabajadores
+    const solicitudes = [];
+    for (const trabajador_id of trabajadoresValidos) {
+      const solicitudQuery = `
+        INSERT INTO usuarios_viajes 
+        (trabajador_id, contratista_id, viaje_id, fecha_inicio, fecha_fin, comentario_usuario, estado)
+        VALUES ($1, $2, $3, $4, $5, $6, 'Pendiente')
+        RETURNING *;
+      `;
+      const solicitudResult = await client.query(solicitudQuery, [
+        trabajador_id,
+        contratista_id,
+        viaje_id,
+        fecha_inicio,
+        fecha_fin,
+        comentario_contratista,
+      ]);
+      solicitudes.push(solicitudResult.rows[0]);
+    }
+
+    // Obtener trayectos del viaje
+    const trayectosQuery = `
+      SELECT id AS trayecto_id, vehiculo_id 
+      FROM trayectos 
+      WHERE ruta_id = (SELECT ruta_id FROM viajes WHERE id = $1);
+    `;
+    const trayectosResult = await client.query(trayectosQuery, [viaje_id]);
+    const trayectos = trayectosResult.rows;
+
+    // Asignar trabajadores a los vehículos
+    for (const trayecto of trayectos) {
+      for (const trabajador_id of trabajadoresValidos) {
+        const vehiculoUsuariosQuery = `
+          INSERT INTO vehiculo_usuarios (vehiculo_id, trayecto_id, trabajador_id, estado)
+          VALUES ($1, $2, $3, 'Pendiente');
+        `;
+        await client.query(vehiculoUsuariosQuery, [
+          trayecto.vehiculo_id,
+          trayecto.trayecto_id,
+          trabajador_id,
+        ]);
+      }
+    }
+
+    await client.query("COMMIT");
+    return {
+      message: "Viaje agendado exitosamente para los trabajadores",
+      solicitudes,
+    };
+  } catch (error) {
+    await client.query("ROLLBACK");
+    console.error("Error al agendar viaje para trabajadores:", error);
+    throw new Error("Error al agendar viaje para trabajadores");
+  } finally {
+    client.release();
+  }
+};
 //Rechazar la solicitud de un viaje
 const rechazarSolicitudViaje = async (solicitudId) => {
   const client = await pool.connect();
   try {
     await client.query("BEGIN");
+
+    // Obtener la solicitud y determinar si es un usuario o trabajador
     const solicitudQuery = `
-      SELECT usuario_id, viaje_id
+      SELECT usuario_id, trabajador_id, viaje_id
       FROM usuarios_viajes
       WHERE id = $1 AND estado = 'Pendiente';
     `;
     const solicitudResult = await client.query(solicitudQuery, [solicitudId]);
+
     if (solicitudResult.rows.length === 0) {
       throw new Error("Solicitud no encontrada o ya procesada");
     }
-    const { usuario_id, viaje_id } = solicitudResult.rows[0];
+
+    const { usuario_id, trabajador_id, viaje_id } = solicitudResult.rows[0];
+
+    // Actualizar el estado de la solicitud a "Rechazado"
     const updateSolicitudQuery = `
       UPDATE usuarios_viajes
       SET estado = 'Rechazado'
@@ -132,17 +285,23 @@ const rechazarSolicitudViaje = async (solicitudId) => {
       RETURNING *;
     `;
     await client.query(updateSolicitudQuery, [solicitudId]);
+
+    // Eliminar al usuario o trabajador de los vehículos asociados a los trayectos del viaje
     const deleteVehiculoUsuariosQuery = `
       DELETE FROM vehiculo_usuarios
-      WHERE usuario_id = $1 
+      WHERE (usuario_id = $1 OR trabajador_id = $2)
       AND trayecto_id IN (
         SELECT t.id
         FROM trayectos t
         JOIN viajes v ON v.ruta_id = t.ruta_id
-        WHERE v.id = $2
+        WHERE v.id = $3
       );
     `;
-    await client.query(deleteVehiculoUsuariosQuery, [usuario_id, viaje_id]);
+    await client.query(deleteVehiculoUsuariosQuery, [
+      usuario_id,
+      trabajador_id,
+      viaje_id,
+    ]);
 
     await client.query("COMMIT");
     return {
@@ -156,6 +315,7 @@ const rechazarSolicitudViaje = async (solicitudId) => {
     client.release();
   }
 };
+
 //Obtener las solicitudes de usuarios naturales
 const obtenerSolicitudesUsuariosNaturales = async () => {
   try {
@@ -224,8 +384,10 @@ const aprobarSolicitudViaje = async (solicitudId) => {
   const client = await pool.connect();
   try {
     await client.query("BEGIN");
+
+    // Paso 1: Obtener el usuario, trabajador y el viaje asociado a la solicitud
     const solicitudQuery = `
-      SELECT usuario_id, viaje_id
+      SELECT usuario_id, trabajador_id, viaje_id
       FROM usuarios_viajes
       WHERE id = $1 AND estado = 'Pendiente';
     `;
@@ -234,7 +396,10 @@ const aprobarSolicitudViaje = async (solicitudId) => {
     if (solicitudResult.rows.length === 0) {
       throw new Error("Solicitud no encontrada o ya procesada");
     }
-    const { usuario_id, viaje_id } = solicitudResult.rows[0];
+
+    const { usuario_id, trabajador_id, viaje_id } = solicitudResult.rows[0];
+
+    // Paso 2: Validar si es usuario o trabajador y actualizar el estado de la solicitud
     const updateSolicitudQuery = `
       UPDATE usuarios_viajes
       SET estado = 'Aprobado'
@@ -242,18 +407,25 @@ const aprobarSolicitudViaje = async (solicitudId) => {
       RETURNING *;
     `;
     await client.query(updateSolicitudQuery, [solicitudId]);
+
+    // Paso 3: Actualizar el estado en la tabla `vehiculo_usuarios`
     const updateVehiculoUsuariosQuery = `
       UPDATE vehiculo_usuarios
       SET estado = 'Aprobado'
-      WHERE usuario_id = $1 
-      AND trayecto_id IN (
-        SELECT t.id
-        FROM trayectos t
-        JOIN viajes v ON v.ruta_id = t.ruta_id
-        WHERE v.id = $2
-      );
+      WHERE 
+        (usuario_id = $1 OR trabajador_id = $2)
+        AND trayecto_id IN (
+          SELECT t.id
+          FROM trayectos t
+          JOIN viajes v ON v.ruta_id = t.ruta_id
+          WHERE v.id = $3
+        );
     `;
-    await client.query(updateVehiculoUsuariosQuery, [usuario_id, viaje_id]);
+    await client.query(updateVehiculoUsuariosQuery, [
+      usuario_id,
+      trabajador_id,
+      viaje_id,
+    ]);
 
     await client.query("COMMIT");
     return {
@@ -268,11 +440,15 @@ const aprobarSolicitudViaje = async (solicitudId) => {
     client.release();
   }
 };
+
 export const ViajesModel = {
   crearViaje,
   obtenerViajes,
   solicitarViajeParaUsuario,
   rechazarSolicitudViaje,
+  agendarViajeParaTrabajadores,
   obtenerSolicitudesUsuariosNaturales,
   aprobarSolicitudViaje,
+  obtenerSolicitudesTrabajadores,
+  cancelarViajeUsuarioYTrabajadores
 };

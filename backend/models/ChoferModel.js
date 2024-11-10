@@ -31,21 +31,24 @@ const obtenerUsuariosPorTrayectoParaChofer = async (chofer_id) => {
         v.capacidad_total,
         v.capacidad_operacional,
         
-        -- Capacidad ocupada: Usuarios con estado 'Aprobado' en el vehículo
-        COUNT(vu.usuario_id) FILTER (WHERE vu.estado = 'Aprobado') AS capacidad_ocupada,
+        -- Capacidad ocupada: Usuarios y trabajadores con estado 'Aprobado' en el vehículo
+        COUNT(vu.usuario_id) FILTER (WHERE vu.estado = 'Aprobado') +
+        COUNT(vu.trabajador_id) FILTER (WHERE vu.estado = 'Aprobado') AS capacidad_ocupada,
         
-        -- Lista de usuarios y su estado
+        -- Lista de usuarios y trabajadores y sus estados
         COALESCE(json_agg(
           json_build_object(
             'usuario_id', u.id,
-            'nombre', u.nombre,
-            'email', u.email,
+            'trabajador_id', tr.id,
+            'nombre', COALESCE(u.nombre, tr.nombre),
+            'email', COALESCE(u.email, tr.email),
             'estado', vu.estado
           )
-        ) FILTER (WHERE u.id IS NOT NULL), '[]') AS usuarios
+        ) FILTER (WHERE u.id IS NOT NULL OR tr.id IS NOT NULL), '[]') AS participantes
       FROM trayectos t
       LEFT JOIN vehiculo_usuarios vu ON t.id = vu.trayecto_id
       LEFT JOIN usuarios u ON vu.usuario_id = u.id
+      LEFT JOIN trabajadores tr ON vu.trabajador_id = tr.id
       LEFT JOIN vehiculos v ON v.id = vu.vehiculo_id
       WHERE v.chofer_id = $1
       GROUP BY t.id, v.tipo_vehiculo, v.capacidad_total, v.capacidad_operacional
