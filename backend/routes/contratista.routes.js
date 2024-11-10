@@ -17,19 +17,24 @@ router.post(
   AuthMiddleware.authToken,
   ContratistaController.agregarTrabajador
 );
-
 //Ruta para agendar un viaje de intercentro del trabajador
 router.post(
   "/agendarTrabajadores",
   AuthMiddleware.authToken,
   ContratistaController.agendarTrabajadoresParaMovimiento
 );
-
 //Ruta para modificar la ruta de un trabajador
 router.put(
   "/modificar/:trabajadorId",
   AuthMiddleware.authToken,
   ContratistaController.modificarRutaTrabajador
 );
+//Lista de solicitudes por usuarios
+router.get(
+  "/solicitudes-trabajadores",
+  AuthMiddleware.authToken,
+  ContratistaController.obtenerSolicitudesTrabajadoresPorContratista
+);
+
 
 export default router;

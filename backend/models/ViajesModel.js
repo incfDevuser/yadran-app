@@ -110,6 +110,65 @@ const solicitarViajeParaUsuario = async ({
     client.release();
   }
 };
+//Cancelar viaje usuario
+const cancelarViajeUsuarioYTrabajadores = async (solicitudId) => {
+  const client = await pool.connect();
+  try {
+    await client.query("BEGIN");
+
+    // Obtener la información de la solicitud y los trayectos relacionados
+    const solicitudQuery = `
+      SELECT usuario_id, trabajador_id, viaje_id
+      FROM usuarios_viajes
+      WHERE id = $1 AND estado = 'Pendiente';
+    `;
+    const solicitudResult = await client.query(solicitudQuery, [solicitudId]);
+
+    if (solicitudResult.rows.length === 0) {
+      throw new Error("Solicitud no encontrada o ya procesada");
+    }
+
+    const { usuario_id, trabajador_id, viaje_id } = solicitudResult.rows[0];
+
+    // Eliminar al usuario o trabajador de los vehículos asociados a los trayectos del viaje
+    const deleteVehiculoUsuariosQuery = `
+      DELETE FROM vehiculo_usuarios
+      WHERE 
+        (usuario_id = $1 OR trabajador_id = $2)
+        AND trayecto_id IN (
+          SELECT t.id
+          FROM trayectos t
+          JOIN viajes v ON v.ruta_id = t.ruta_id
+          WHERE v.id = $3
+        );
+    `;
+    await client.query(deleteVehiculoUsuariosQuery, [
+      usuario_id,
+      trabajador_id,
+      viaje_id,
+    ]);
+
+    // Eliminar la solicitud de la tabla usuarios_viajes
+    const deleteSolicitudQuery = `
+      DELETE FROM usuarios_viajes
+      WHERE id = $1;
+    `;
+    await client.query(deleteSolicitudQuery, [solicitudId]);
+
+    await client.query("COMMIT");
+    return {
+      message:
+        "Solicitud de viaje cancelada exitosamente y cupos liberados para usuarios y trabajadores",
+    };
+  } catch (error) {
+    await client.query("ROLLBACK");
+    console.error("Error al cancelar la solicitud de viaje:", error);
+    throw new Error("Error al cancelar la solicitud de viaje");
+  } finally {
+    client.release();
+  }
+};
+
 //Solicitar un viaje desde los contratistas
 const agendarViajeParaTrabajadores = async ({
   contratista_id,
@@ -449,4 +508,5 @@ export const ViajesModel = {
   obtenerSolicitudesUsuariosNaturales,
   aprobarSolicitudViaje,
   obtenerSolicitudesTrabajadores,
+  cancelarViajeUsuarioYTrabajadores
 };

@@ -102,6 +102,35 @@ const obtenerTrabajadoresPorContratista = async (req, res) => {
     });
   }
 };
+const obtenerSolicitudesTrabajadoresPorContratista = async (req, res) => {
+  try {
+    // Asegúrate de que `req.user` esté definido
+    const { id: contratistaId } = req.user;
+
+    if (!contratistaId) {
+      return res.status(400).json({
+        message: "ID del contratista no proporcionado o no válido",
+      });
+    }
+
+    // Llama a la función del modelo para obtener las solicitudes
+    const response =
+      await ContratistaModel.obtenerSolicitudesTrabajadoresPorContratista(
+        contratistaId
+      );
+
+    res.status(200).json({
+      message: response.message,
+      solicitudes: response.solicitudes,
+    });
+  } catch (error) {
+    res.status(500).json({
+      message:
+        "Error al obtener las solicitudes de trabajadores por contratista",
+      error: error.message,
+    });
+  }
+};
 
 export const ContratistaController = {
   agregarTrabajador,
@@ -109,4 +138,5 @@ export const ContratistaController = {
   obtenerEstadoTrabajadores,
   modificarRutaTrabajador,
   obtenerTrabajadoresPorContratista,
+  obtenerSolicitudesTrabajadoresPorContratista
 };

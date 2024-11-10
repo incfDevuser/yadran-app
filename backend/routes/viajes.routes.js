@@ -27,7 +27,11 @@ router.post(
   AuthMiddleware.authToken,
   ViajesController.solicitarViajeUsuarioNatural
 );
-
+//Cancelar Viaje para Usuario Natural, se pasa el ID mediante los params
+router.delete(
+  "/cancelar-solicitud/:solicitudId",
+  ViajesController.cancelarViajeUsuarioHandler
+);
 //Solicitar un viaje para trabajadore ( Contratisa )
 router.post(
   "/solicitar-trabajadores",

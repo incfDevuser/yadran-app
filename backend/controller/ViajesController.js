@@ -74,6 +74,24 @@ const solicitarViajeUsuarioNatural = async (req, res) => {
     });
   }
 };
+//Cancelar Viaje Usuario
+const cancelarViajeUsuarioHandler = async (req, res) => {
+  console.log(req.params);
+  const { solicitudId } = req.params;
+  try {
+    if (!solicitudId) {
+      throw new Error("El ID de la solicitud es requerido");
+    }
+    const response = await ViajesModel.cancelarViajeUsuarioYTrabajadores(solicitudId);
+    res.status(200).json(response);
+  } catch (error) {
+    res.status(500).json({
+      message: "Error al cancelar la solicitud de viaje",
+      error: error.message,
+    });
+  }
+};
+//Agendar viaje para trabajadores
 const agendarViajeParaTrabajadores = async (req, res) => {
   const contratista_id = req.user.id;
   const {
@@ -144,4 +162,5 @@ export const ViajesController = {
   aprobarSolicitudViaje,
   agendarViajeParaTrabajadores,
   obtenerSolicitudesContratista,
+  cancelarViajeUsuarioHandler
 };
