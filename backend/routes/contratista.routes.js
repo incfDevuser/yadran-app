@@ -10,7 +10,6 @@ router.get(
   AuthMiddleware.authToken,
   ContratistaController.obtenerTrabajadoresPorContratista
 );
-
 //Ruta para agregar un trabajador
 router.post(
   "/trabajadores",
@@ -29,12 +28,17 @@ router.put(
   AuthMiddleware.authToken,
   ContratistaController.modificarRutaTrabajador
 );
-//Lista de solicitudes por usuarios
+//Lista de solicitudes por usuarios para viajes "normales"
 router.get(
   "/solicitudes-trabajadores",
   AuthMiddleware.authToken,
   ContratistaController.obtenerSolicitudesTrabajadoresPorContratista
 );
-
+//Lista de solicitudes de usuarios para viajes de intercentro
+router.get(
+  "/solicitudes-trabajadores/intercentro",
+  AuthMiddleware.authToken,
+  ContratistaController.obtenerSolicitudesIntercentroTrabajadores
+);
 
 export default router;

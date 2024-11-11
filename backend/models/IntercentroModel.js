@@ -184,7 +184,8 @@ const rechazarSolicitud = async (solicitudId) => {
       throw new Error("Solicitud no encontrada o ya procesada");
     }
 
-    const { movimiento_id, usuario_id, trabajador_id } = solicitudResult.rows[0];
+    const { movimiento_id, usuario_id, trabajador_id } =
+      solicitudResult.rows[0];
 
     // Paso 2: Cambiamos el estado de la solicitud a "rechazado"
     const updateQuery = `
@@ -210,7 +211,9 @@ const rechazarSolicitud = async (solicitudId) => {
     };
   } catch (error) {
     console.error("Error al rechazar la solicitud:", error);
-    throw new Error("Hubo un error al rechazar la solicitud y liberar el cupo en la lancha");
+    throw new Error(
+      "Hubo un error al rechazar la solicitud y liberar el cupo en la lancha"
+    );
   }
 };
 //Finalizar el viaje de los intercentro y eliminar los usuarios asociados
@@ -289,6 +292,55 @@ const cancelarSolicitudUsuario = async (solicitudId) => {
     );
   }
 };
+//Cancelar solitud de parte del contratista para su trabajador trabajador
+const cancelarSolicitudTrabajador = async (solicitudId, contratistaId) => {
+  const client = await pool.connect();
+  try {
+    await client.query("BEGIN");
+    const solicitudQuery = `
+      SELECT umi.movimiento_id, umi.trabajador_id, t.contratista_id
+      FROM usuariosmovimientosintercentro umi
+      JOIN trabajadores t ON umi.trabajador_id = t.id
+      WHERE umi.id = $1 AND umi.estado = 'pendiente';
+    `;
+    const solicitudResult = await client.query(solicitudQuery, [solicitudId]);
+    if (solicitudResult.rows.length === 0) {
+      throw new Error("Solicitud no encontrada o ya procesada");
+    }
+    const { movimiento_id, trabajador_id, contratista_id } =
+      solicitudResult.rows[0];
+    if (contratista_id !== contratistaId) {
+      throw new Error(
+        "No tienes permiso para cancelar esta solicitud de trabajador"
+      );
+    }
+    const updateSolicitudQuery = `
+      UPDATE usuariosmovimientosintercentro
+      SET estado = 'cancelado'
+      WHERE id = $1
+      RETURNING *;
+    `;
+    await client.query(updateSolicitudQuery, [solicitudId]);
+    const deleteWorkerQuery = `
+      DELETE FROM usuariosmovimientosintercentro
+      WHERE movimiento_id = $1 AND trabajador_id = $2 AND estado = 'cancelado';
+    `;
+    await client.query(deleteWorkerQuery, [movimiento_id, trabajador_id]);
+
+    await client.query("COMMIT");
+    return {
+      message: "Solicitud de intercentro cancelada exitosamente",
+    };
+  } catch (error) {
+    await client.query("ROLLBACK");
+    console.error("Error al cancelar la solicitud del trabajador:", error);
+    throw new Error(
+      "Hubo un error al cancelar la solicitud del trabajador y eliminarlo del movimiento"
+    );
+  } finally {
+    client.release();
+  }
+};
 const obtenerSolicitudPorId = async (solicitudId) => {
   try {
     const query = "SELECT * FROM usuariosmovimientosintercentro WHERE id = $1";
@@ -313,4 +365,5 @@ export const IntercentroModel = {
   obtenerSolicitudesIntercentro,
   cancelarSolicitudUsuario,
   obtenerSolicitudPorId,
+  cancelarSolicitudTrabajador
 };

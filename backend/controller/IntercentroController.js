@@ -3,9 +3,9 @@ import { IntercentroModel } from "../models/IntercentroModel.js";
 const obtenerLanchas = async (req, res) => {
   try {
     const lanchas = await IntercentroModel.obtenerLanchas();
-    res.status(200).json({ message: "Lista de lanchas", lanchas });
+    return res.status(200).json({ message: "Lista de lanchas", lanchas });
   } catch (error) {
-    res
+    return res
       .status(500)
       .json({ message: "Error interno del servidor", error: error.message });
   }
@@ -26,7 +26,7 @@ const crearLanchas = async (req, res) => {
       lancha,
     });
   } catch (error) {
-    res
+    return res
       .status(500)
       .json({ message: "Error interno del servidor", error: error.message });
   }
@@ -34,9 +34,11 @@ const crearLanchas = async (req, res) => {
 const obtenerRutasIntercentro = async (req, res) => {
   try {
     const rutas = await IntercentroModel.obtenerRutasIntercentro();
-    res.status(200).json({ message: "Lista de rutas de intercentro", rutas });
+    return res
+      .status(200)
+      .json({ message: "Lista de rutas de intercentro", rutas });
   } catch (error) {
-    res
+    return res
       .status(500)
       .json({ message: "Error interno del servidor", error: error.message });
   }
@@ -61,12 +63,12 @@ const crearRutaIntercentro = async (req, res) => {
       comentarios,
     });
 
-    res.status(201).json({
+    return res.status(201).json({
       message: "Ruta de intercentro creada correctamente",
       ruta: nuevaRuta,
     });
   } catch (error) {
-    res.status(500).json({
+    return res.status(500).json({
       message: "Error al crear la ruta de intercentro",
       error: error.message,
     });
@@ -82,12 +84,12 @@ const solicitarRuta = async (req, res) => {
       usuario_id: id,
       comentario,
     });
-    res.status(201).json({
+    return res.status(201).json({
       message: "Ruta de intercentro solicitada y usuario agregado a la lancha",
       solicitud,
     });
   } catch (error) {
-    res
+    return res
       .status(500)
       .json({ message: "Error interno del servidor", error: error.message });
   }
@@ -103,7 +105,7 @@ const aprobarSolicitud = async (req, res) => {
       solicitud: solicitudAprobada,
     });
   } catch (error) {
-    res.status(500).json({
+    return res.status(500).json({
       message: "Error interno del servidor al aprobar la solicitud",
       error: error.message,
     });
@@ -115,12 +117,12 @@ const cancelarSolicitud = async (req, res) => {
     const solicitudCancelada = await IntercentroModel.rechazarSolicitud(
       solicitudId
     );
-    res.status(200).json({
+    return res.status(200).json({
       message: "Solicitud cancelada correctamente",
       solicitud: solicitudCancelada,
     });
   } catch (error) {
-    res.status(500).json({
+    return res.status(500).json({
       message: "Error interno del servidor al cancelar la solicitud",
       error: error.message,
     });
@@ -130,9 +132,9 @@ const finalizarMovimiento = async (req, res) => {
   const { movimientoId } = req.params;
   try {
     const result = await completarMovimiento(movimientoId);
-    res.status(200).json(result);
+    return res.status(200).json(result);
   } catch (error) {
-    res.status(500).json({
+    return res.status(500).json({
       message: "Error al finalizar el movimiento",
       error: error.message,
     });
@@ -141,12 +143,12 @@ const finalizarMovimiento = async (req, res) => {
 const obtenerSolicitudes = async (req, res) => {
   try {
     const solicitudes = await IntercentroModel.obtenerSolicitudesIntercentro();
-    res.status(200).json({
+    return res.status(200).json({
       message: "Lista de solicitudes de intercentro",
       solicitudes,
     });
   } catch (error) {
-    res.status(500).json({
+    return res.status(500).json({
       message:
         "Error interno del servidor al obtener las solicitudes de intercentro",
       error: error.message,
@@ -166,16 +168,30 @@ const cancelarSolicitudUsuario = async (req, res) => {
     const solicitudCancelada = await IntercentroModel.cancelarSolicitudUsuario(
       solicitudId
     );
-    res.status(200).json({
+    return res.status(200).json({
       message:
         "Solicitud cancelada correctamente y usuario eliminado de la lancha",
       solicitud: solicitudCancelada,
     });
   } catch (error) {
-    res.status(500).json({
+    return res.status(500).json({
       message: "Error interno del servidor al cancelar la solicitud",
       error: error.message,
     });
+  }
+};
+const cancelarSolicitudTrabajador = async (req, res) => {
+  const { id: solicitudId } = req.params;
+  const contratistaId = req.user.id;
+
+  try {
+    const response = await IntercentroModel.cancelarSolicitudTrabajador(
+      solicitudId,
+      contratistaId
+    );
+    return res.status(200).json(response);
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
   }
 };
 export const IntercentroController = {
@@ -188,5 +204,6 @@ export const IntercentroController = {
   cancelarSolicitud,
   finalizarMovimiento,
   obtenerSolicitudes,
-  cancelarSolicitudUsuario
+  cancelarSolicitudUsuario,
+  cancelarSolicitudTrabajador
 };

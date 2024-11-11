@@ -81,42 +81,61 @@ const agendarTrabajadoresParaMovimiento = async (
     throw new Error("Hubo un error al agendar trabajadores para el movimiento");
   }
 };
-//Obtener la lista de usuario y su estado en el viaje
-const obtenerEstadoTrabajadores = async (contratistaId) => {
+//Obtener la lista de solicitudes de trabajadores para un contratista ( Intercentro )
+const obtenerSolicitudesIntercentro = async (contratistaId) => {
   try {
     const query = `
       SELECT 
+        umi.id AS solicitud_id,
+        umi.movimiento_id,
+        umi.estado AS estado_solicitud,
+        umi.comentario AS comentario_solicitud,
+        mi.fecha AS fecha_movimiento,
         t.id AS trabajador_id,
         t.nombre AS trabajador_nombre,
         t.email AS trabajador_email,
-        t.identificacion,
-        t.telefono,
-        umi.movimiento_id,
-        mi.fecha AS fecha_movimiento,
-        mi.centro_origen_id,
         co.nombre_centro AS centro_origen_nombre,
-        mi.centro_destino_id,
         cd.nombre_centro AS centro_destino_nombre,
-        mi.estado AS estado_movimiento,
-        umi.estado AS estado_solicitud,
         l.nombre AS lancha_nombre
-      FROM trabajadores t
-      LEFT JOIN usuariosmovimientosintercentro umi ON umi.trabajador_id = t.id
-      LEFT JOIN movimientosintercentro mi ON umi.movimiento_id = mi.id
-      LEFT JOIN lanchas l ON mi.lancha_id = l.id
+      FROM usuariosmovimientosintercentro umi
+      JOIN trabajadores t ON umi.trabajador_id = t.id
+      JOIN movimientosintercentro mi ON umi.movimiento_id = mi.id
       LEFT JOIN centro co ON mi.centro_origen_id = co.id
       LEFT JOIN centro cd ON mi.centro_destino_id = cd.id
+      LEFT JOIN lanchas l ON mi.lancha_id = l.id
       WHERE t.contratista_id = $1
-      ORDER BY t.id, mi.fecha;
+      ORDER BY umi.id DESC;
     `;
     const response = await pool.query(query, [contratistaId]);
+
+    const solicitudes = response.rows.map((row) => ({
+      solicitud_id: row.solicitud_id,
+      movimiento_id: row.movimiento_id,
+      estado: row.estado_solicitud,
+      comentario: row.comentario_solicitud,
+      fecha_movimiento: row.fecha_movimiento,
+      trabajador: {
+        id: row.trabajador_id,
+        nombre: row.trabajador_nombre,
+        email: row.trabajador_email,
+      },
+      centro_origen: row.centro_origen_nombre,
+      centro_destino: row.centro_destino_nombre,
+      lancha: row.lancha_nombre,
+    }));
+
     return {
-      message: "Estado de los trabajadores obtenido exitosamente",
-      trabajadores: response.rows,
+      message: "Lista de solicitudes de intercentro obtenida exitosamente",
+      solicitudes,
     };
   } catch (error) {
-    console.error("Error al obtener el estado de los trabajadores:", error);
-    throw new Error("Hubo un error al obtener el estado de los trabajadores");
+    console.error(
+      "Error al obtener las solicitudes de intercentro de los trabajadores:",
+      error
+    );
+    throw new Error(
+      "Hubo un error al obtener las solicitudes de intercentro de los trabajadores"
+    );
   }
 };
 //Modificar la ruta del trabajador
@@ -252,12 +271,11 @@ const obtenerSolicitudesTrabajadoresPorContratista = async (contratistaId) => {
   }
 };
 
-
 export const ContratistaModel = {
   agregarTrabajador,
   agendarTrabajadoresParaMovimiento,
-  obtenerEstadoTrabajadores,
+  obtenerSolicitudesIntercentro,
   modificarRutaTrabajador,
   obtenerTrabajadoresPorContratista,
-  obtenerSolicitudesTrabajadoresPorContratista
+  obtenerSolicitudesTrabajadoresPorContratista,
 };

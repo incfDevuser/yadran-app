@@ -102,6 +102,7 @@ const obtenerTrabajadoresPorContratista = async (req, res) => {
     });
   }
 };
+//Para viajes "normales"
 const obtenerSolicitudesTrabajadoresPorContratista = async (req, res) => {
   try {
     // Asegúrate de que `req.user` esté definido
@@ -131,6 +132,23 @@ const obtenerSolicitudesTrabajadoresPorContratista = async (req, res) => {
     });
   }
 };
+//Para viajes de intercentro
+const obtenerSolicitudesIntercentroTrabajadores = async (req, res) => {
+  const contratistaId = req.user.id;
+
+  try {
+    const response =
+      await ContratistaModel.obtenerSolicitudesIntercentro(
+        contratistaId
+      );
+    res.status(200).json(response);
+  } catch (error) {
+    res.status(500).json({
+      message: "Error al obtener las solicitudes de intercentro",
+      error: error.message,
+    });
+  }
+};
 
 export const ContratistaController = {
   agregarTrabajador,
@@ -138,5 +156,6 @@ export const ContratistaController = {
   obtenerEstadoTrabajadores,
   modificarRutaTrabajador,
   obtenerTrabajadoresPorContratista,
-  obtenerSolicitudesTrabajadoresPorContratista
+  obtenerSolicitudesTrabajadoresPorContratista,
+  obtenerSolicitudesIntercentroTrabajadores
 };
