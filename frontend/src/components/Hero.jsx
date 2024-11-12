@@ -13,11 +13,24 @@ const Hero = () => {
       </div>
 
       {/* Botón con un estilo más serio y limpio */}
-      <div className="flex items-center gap-2 p-5 mt-12 shadow-md shadow-gray-400 rounded-xl border-2 border-gray-200 bg-white text-gray-500 hover:border-gray-300">
-        <Link className="font-bold text-lg" to="/explore">
-          Quiero Agendar Un Viaje
-        </Link>
-        <RxPaperPlane className="font-bold text-lg"/>
+      <div className="flex justify-center items-center mt-12 gap-2">
+        <div className="flex items-center gap-2 p-5 shadow-md shadow-gray-400 rounded-xl border-2 border-gray-200 bg-white text-gray-500 hover:border-gray-300">
+          <Link className="font-bold text-lg" to="/explore">
+            Agendar Un Viaje Normal
+          </Link>
+          <RxPaperPlane className="font-bold text-lg" />
+        </div>
+        <p className="text-2xl text-gray-500">
+          -
+          o
+          -
+        </p>
+        <div className="flex items-center gap-2 p-5 shadow-md shadow-gray-400 rounded-xl border-2 border-gray-200 bg-white text-gray-500 hover:border-gray-300">
+          <Link className="font-bold text-lg" to="/explore">
+            Agendar un Intercentro
+          </Link>
+          <RxPaperPlane className="font-bold text-lg" />
+        </div>
       </div>
     </div>
   );

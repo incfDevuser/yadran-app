@@ -62,7 +62,7 @@ const App = () => {
             {/* Home Page */}
             <Route path="/" element={<Flights />} />
 
-            {/* Agendar un Viaje */}
+            {/* Agendar un Viaje Normal*/}
             <Route
               path="/explore"
               element={
@@ -71,6 +71,8 @@ const App = () => {
                 </ViajesProvider>
               }
             />
+            {/* Agendar un Viaje Intercentro */}
+            
 
             {/* Solicitudes del Usuario */}
             <Route path="/trips" element={<Trips />} />
