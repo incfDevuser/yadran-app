@@ -5,14 +5,14 @@ import Places from "../../components/Places"
 const Flights = () => {
   return (
     <>
-    <div className="mt-[70px]">
+    <div className="mt-[100px]">
      <Hero/>
     </div>
     <div className="mt-[40px]">
-      <FlightDeals/>
+      {/* <FlightDeals/> */}
     </div>
     <div className="mt-[60px]">
-     <Places/>
+     {/* <Places/> */}
     </div>
     </>
   )

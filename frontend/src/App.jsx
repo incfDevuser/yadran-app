@@ -1,10 +1,7 @@
 import { Route, Routes } from "react-router-dom";
 import "./App.css";
 import { Footer, Navbar } from "./components";
-import {
-  FlightExplore,
-  Flights
-} from "./pages";
+import { FlightExplore, Flights } from "./pages";
 import AdminPanel from "./pages/Admin/adminpanel";
 //Importaciones componentes de Admin Page
 import AdminUserList from "./pages/Admin/AdminUserList";
@@ -42,13 +39,17 @@ import PerfilUsuario from "./pages/User/PerfilUsuario";
 
 //Viajes
 import { ViajesProvider } from "./Context/ViajesContext";
-
+//Intercentro
+import { IntercentrosProvider } from "./Context/IntercentroContext";
+import IntercentroExplore from "./pages/Flight/IntercentroExplore";
+import ConfirmacionIntercentro from "./pages/Flight/ConfirmacionIntercentro";
 //Vuelos
 import { VuelosProvider } from "./Context/VuelosContext";
 import AdminVuelos from "./pages/Admin/AdminVuelos";
 import ConfirmacionVuelo from "./pages/Flight/ConfirmacionVuelo";
 
-
+//Pagina de Espera
+import WaitingPage from "./pages/User/WaitingPage";
 
 const App = () => {
   return (
@@ -62,6 +63,9 @@ const App = () => {
             {/* Home Page */}
             <Route path="/" element={<Flights />} />
 
+            {/* Pagina de espera */}
+
+            <Route path="/proceso-espera" element={<WaitingPage />} />
             {/* Agendar un Viaje Normal*/}
             <Route
               path="/explore"
@@ -72,11 +76,25 @@ const App = () => {
               }
             />
             {/* Agendar un Viaje Intercentro */}
-            
+            <Route
+              path="/explore-intercentro"
+              element={
+                <IntercentrosProvider>
+                  <IntercentroExplore />
+                </IntercentrosProvider>
+              }
+            />
+            <Route
+              path="/confirmacion-intercentro/:id"
+              element={
+                <IntercentrosProvider>
+                  <ConfirmacionIntercentro />
+                </IntercentrosProvider>
+              }
+            />
 
             {/* Solicitudes del Usuario */}
             <Route path="/trips" element={<Trips />} />
-
 
             {/* Centros los cuales el usuario ha visitado */}
             <Route path="/mis-centros" element={<MisCentros />} />
@@ -193,7 +211,15 @@ const App = () => {
                 </VehiculosProvider>
               }
             />
-            <Route path="/miPerfil" element={<PerfilUsuario />} />
+            <Route
+              path="/miPerfil"
+              element={
+                <IntercentrosProvider>
+                  <PerfilUsuario />
+                </IntercentrosProvider>
+              }
+            />
+
             {/* Ruta para los vuelos */}
             <Route
               path="/adminVuelos"

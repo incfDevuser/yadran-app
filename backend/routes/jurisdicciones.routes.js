@@ -4,7 +4,7 @@ import { AuthMiddleware } from "../middlewares/authMiddleware.js";
 
 const router = Router();
 //Ruta para obtener todas las jurisdicciones
-router.get("/",JurisdiccionesControllers.obtenerJurisdicciones)
+router.get("/",AuthMiddleware.authToken, AuthMiddleware.isAdmin,JurisdiccionesControllers.obtenerJurisdicciones)
 //Ruta para obtener una jurisccion mediante el id
 router.get("/:id",JurisdiccionesControllers.obtenerJurisdiccion)
 //Ruta para crear una jurisdiccion

@@ -12,7 +12,7 @@ export const SolicitudesProvider = ({ children }) => {
     const obtenerSolicitudes = async () => {
       try {
         const response = await axios.get(
-          "http://localhost:5000/api/viajes/solicitudes"
+          "http://localhost:5000/api/viajes/solicitudes-usuarios"
         );
         setSolicitudes(response.data.solicitudes);
       } catch (error) {

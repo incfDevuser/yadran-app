@@ -26,6 +26,7 @@ router.put("/solicitudes/:solicitudId/cancelar", IntercentroController.cancelarS
 
 //Eliminar o cancelar la solicitud de parte de los usuarios
 router.delete("/cancelarSolicitud/:id", AuthMiddleware.authToken, IntercentroController.cancelarSolicitudUsuario);
+
 //Eliminar o cancelar la solicitud de parte del contratista
 router.delete("/cancelarSolicitud/trabajador/:id", AuthMiddleware.authToken, IntercentroController.cancelarSolicitudTrabajador)
 export default router;

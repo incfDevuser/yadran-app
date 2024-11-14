@@ -23,12 +23,12 @@ const authToken = async (req, res, next) => {
 const isAdmin = (req, res, next) => { 
   console.log("Verirficando si el usuario es admin:", req.user)
   try {
-    if (req.user.isAdmin) {
+    if (req.user.isadmin) {
       next();
     } else {
       return res.status(403).json({
         message: "Acceso denegado, solo administradores",
-        admin: req.user.isAdmin,
+        admin: req.user.isadmin,
       });
     }
   } catch (error) {

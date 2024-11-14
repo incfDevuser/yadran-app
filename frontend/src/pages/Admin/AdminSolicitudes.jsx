@@ -18,12 +18,14 @@ const AdminSolicitudes = () => {
     rechazarSolicitud,
   } = useSolicitudes();
   const [selectedSolicitud, setSelectedSolicitud] = useState(null);
+
   if (loadingSolicitudes) {
     return <div>Cargando solicitudes...</div>;
   }
   if (errorSolicitudes) {
     return <div>Error al cargar solicitudes: {errorSolicitudes}</div>;
   }
+
   // Filtrar solicitudes por estado
   const solicitudesPendientes = solicitudes.filter(
     (solicitud) => solicitud.estado === "Pendiente"
@@ -38,15 +40,63 @@ const AdminSolicitudes = () => {
   const handleVerDetalles = (solicitud) => {
     setSelectedSolicitud(solicitud);
   };
+
   const handleCloseModal = () => {
     setSelectedSolicitud(null);
   };
+
   const handleAprobar = (id) => {
     aprobarSolicitud(id);
   };
+
   const handleRechazar = (id) => {
     rechazarSolicitud(id);
   };
+
+  const renderSolicitudCard = (solicitud, estado) => (
+    <div
+      key={solicitud.solicitud_id}
+      className="bg-white shadow-lg rounded-lg p-8 hover:shadow-xl transition-shadow duration-300"
+    >
+      <h2 className="text-xl font-semibold text-gray-800">
+        {solicitud.nombre_viaje}
+      </h2>
+      <p className="text-sm text-gray-600 mt-4 flex items-center">
+        <FiUser className="mr-2" /> Solicitante: {solicitud.nombre_solicitante}
+      </p>
+      <p className="text-sm text-gray-600 flex items-center mt-2">
+        <FiCalendar className="mr-2" />
+        Fecha de solicitud:{" "}
+        {new Date(solicitud.created_at).toLocaleDateString()}
+      </p>
+      <div className="mt-6 flex justify-between items-center">
+        <button
+          className="text-blue-500 p-3 rounded-lg hover:text-blue-300 flex items-center text-lg"
+          onClick={() => handleVerDetalles(solicitud)}
+        >
+          <FiEye className="mr-1" /> Ver detalles
+        </button>
+        {estado === "Pendiente" && (
+          <div className="flex items-center space-x-4">
+            <button
+              className="text-green-500 p-3 rounded-lg hover:text-green-300 flex items-center text-lg"
+              onClick={() => handleAprobar(solicitud.solicitud_id)}
+            >
+              <FiCheckCircle className="mr-1" /> Aprobar
+            </button>
+            <button
+              className="text-red-500 p-3 rounded-lg hover:text-red-300 flex items-center text-lg"
+              onClick={() => handleRechazar(solicitud.solicitud_id)}
+            >
+              <FiXCircle className="mr-1" /> Rechazar
+            </button>
+            a
+          </div>
+        )}
+      </div>
+    </div>
+  );
+
   return (
     <div className="p-2">
       <h1 className="text-3xl font-extrabold text-gray-900 mb-8">
@@ -63,47 +113,9 @@ const AdminSolicitudes = () => {
           <p>No hay solicitudes pendientes.</p>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-8">
-            {solicitudesPendientes.map((solicitud) => (
-              <div
-                key={solicitud.id}
-                className="bg-white shadow-lg rounded-lg p-8 hover:shadow-xl transition-shadow duration-300"
-              >
-                <h2 className="text-xl font-semibold text-gray-800">
-                  {solicitud.nombre_viaje}
-                </h2>
-                <p className="text-sm text-gray-600 mt-4 flex items-center">
-                  <FiUser className="mr-2" /> Usuario:{" "}
-                  {solicitud.nombre_usuario}
-                </p>
-                <p className="text-sm text-gray-600 flex items-center mt-2">
-                  <FiCalendar className="mr-2" />
-                  Fecha de solicitud:{" "}
-                  {new Date(solicitud.created_at).toLocaleDateString()}
-                </p>
-                <div className="mt-6 flex justify-between items-center">
-                  <button
-                    className="text-blue-500 p-3 rounded-lg hover:text-blue-300 flex items-center text-lg"
-                    onClick={() => handleVerDetalles(solicitud)}
-                  >
-                    <FiEye className="mr-1" /> Ver detalles
-                  </button>
-                  <div className="flex items-center space-x-4">
-                    <button
-                      className="text-green-500 p-3 rounded-lg hover:text-green-300 flex items-center text-lg"
-                      onClick={() => handleAprobar(solicitud.id)}
-                    >
-                      <FiCheckCircle className="mr-1" /> Aprobar
-                    </button>
-                    <button
-                      className="text-red-500 p-3 rounded-lg hover:text-red-300 flex items-center text-lg"
-                      onClick={() => handleRechazar(solicitud.id)}
-                    >
-                      <FiXCircle className="mr-1" /> Rechazar
-                    </button>
-                  </div>
-                </div>
-              </div>
-            ))}
+            {solicitudesPendientes.map((solicitud) =>
+              renderSolicitudCard(solicitud, "Pendiente")
+            )}
           </div>
         )}
       </div>
@@ -117,33 +129,9 @@ const AdminSolicitudes = () => {
           <p>No hay solicitudes aprobadas.</p>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-8">
-            {solicitudesAprobadas.map((solicitud) => (
-              <div
-                key={solicitud.id}
-                className="bg-white shadow-lg rounded-lg p-8 hover:shadow-xl transition-shadow duration-300"
-              >
-                <h2 className="text-xl font-semibold text-gray-800">
-                  {solicitud.nombre_viaje}
-                </h2>
-                <p className="text-sm text-gray-600 mt-4 flex items-center">
-                  <FiUser className="mr-2" /> Usuario:{" "}
-                  {solicitud.nombre_usuario}
-                </p>
-                <p className="text-sm text-gray-600 flex items-center mt-2">
-                  <FiCalendar className="mr-2" />
-                  Fecha de solicitud:{" "}
-                  {new Date(solicitud.created_at).toLocaleDateString()}
-                </p>
-                <div className="mt-6">
-                  <button
-                    className="bg-blue-500 text-white px-6 py-3 rounded-lg hover:bg-blue-600 flex items-center justify-center text-lg"
-                    onClick={() => handleVerDetalles(solicitud)}
-                  >
-                    <FiEye className="mr-1" /> Ver detalles
-                  </button>
-                </div>
-              </div>
-            ))}
+            {solicitudesAprobadas.map((solicitud) =>
+              renderSolicitudCard(solicitud, "Aprobado")
+            )}
           </div>
         )}
       </div>
@@ -157,33 +145,9 @@ const AdminSolicitudes = () => {
           <p>No hay solicitudes rechazadas.</p>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-8">
-            {solicitudesRechazadas.map((solicitud) => (
-              <div
-                key={solicitud.id}
-                className="bg-white shadow-lg rounded-lg p-8 hover:shadow-xl transition-shadow duration-300"
-              >
-                <h2 className="text-xl font-semibold text-gray-800">
-                  {solicitud.nombre_viaje}
-                </h2>
-                <p className="text-sm text-gray-600 mt-4 flex items-center">
-                  <FiUser className="mr-2" /> Usuario:{" "}
-                  {solicitud.nombre_usuario}
-                </p>
-                <p className="text-sm text-gray-600 flex items-center mt-2">
-                  <FiCalendar className="mr-2" />
-                  Fecha de solicitud:{" "}
-                  {new Date(solicitud.created_at).toLocaleDateString()}
-                </p>
-                <div className="mt-6">
-                  <button
-                    className="bg-blue-500 text-white px-6 py-3 rounded-lg hover:bg-blue-600 flex items-center justify-center text-lg"
-                    onClick={() => handleVerDetalles(solicitud)}
-                  >
-                    <FiEye className="mr-1" /> Ver detalles
-                  </button>
-                </div>
-              </div>
-            ))}
+            {solicitudesRechazadas.map((solicitud) =>
+              renderSolicitudCard(solicitud, "Rechazado")
+            )}
           </div>
         )}
       </div>
@@ -195,7 +159,10 @@ const AdminSolicitudes = () => {
               Detalles de la Solicitud: {selectedSolicitud.nombre_viaje}
             </h2>
             <p>
-              <strong>Usuario:</strong> {selectedSolicitud.nombre_usuario}
+              <strong>Solicitante:</strong> {selectedSolicitud.nombre_solicitante}
+            </p>
+            <p>
+              <strong>Email:</strong> {selectedSolicitud.email_solicitante}
             </p>
             <p>
               <strong>Comentario:</strong>{" "}
@@ -231,4 +198,5 @@ const AdminSolicitudes = () => {
     </div>
   );
 };
+
 export default AdminSolicitudes;

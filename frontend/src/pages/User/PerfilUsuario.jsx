@@ -1,8 +1,12 @@
 import React, { useState } from "react";
 import { useUsuario } from "../../Context/UsuarioContext";
+import { useIntercentros } from "../../Context/IntercentroContext";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const PerfilUsuario = () => {
-  const { usuarios } = useUsuario();
+  const { usuarios, cancelarViaje } = useUsuario();
+  const { cancelarSolicitudIntercentro } = useIntercentros();
   const [modalOpen, setModalOpen] = useState(false);
   const [trayectos, setTrayectos] = useState([]);
 
@@ -14,6 +18,45 @@ const PerfilUsuario = () => {
   const handleCloseModal = () => {
     setModalOpen(false);
     setTrayectos([]);
+  };
+
+  const handleCancelarSolicitud = async (solicitudId) => {
+    try {
+      toast.info("Procesando cancelación...", {
+        position: "top-right",
+      });
+
+      await cancelarSolicitudIntercentro(solicitudId);
+
+      toast.success("La solicitud fue cancelada con éxito.", {
+        position: "top-right",
+      });
+    } catch (error) {
+      toast.error(
+        "Hubo un error al cancelar la solicitud. Verifica tu conexión o permisos.",
+        {
+          position: "top-right",
+        }
+      );
+    }
+  };
+  const handleCancelarViaje = async (solicitudId) => {
+    try {
+      toast.info("Procesando cancelación del viaje...", {
+        position: "top-right",
+      });
+      await cancelarViaje(solicitudId);
+      toast.success("El viaje fue cancelado con éxito.", {
+        position: "top-right",
+      });
+    } catch (error) {
+      toast.error(
+        "Hubo un error al cancelar el viaje. Verifica tu conexión o permisos.",
+        {
+          position: "top-right",
+        }
+      );
+    }
   };
 
   if (!usuarios) {
@@ -47,7 +90,6 @@ const PerfilUsuario = () => {
           <p className="text-gray-700">
             <strong>Es Administrador:</strong> {usuarios?.isadmin ? "Sí" : "No"}
           </p>
-          
         </div>
 
         {/* Información Adicional */}
@@ -59,7 +101,6 @@ const PerfilUsuario = () => {
             <strong>Ciudad de Origen:</strong>{" "}
             {usuarios?.ciudad_origen || "No disponible"}
           </p>
-
           <p className="text-gray-700">
             <strong>Género:</strong> {usuarios?.genero || "No disponible"}
           </p>
@@ -71,12 +112,14 @@ const PerfilUsuario = () => {
 
       {/* Información de los Viajes */}
       <div className="mt-8">
-        <h2 className="text-2xl font-semibold text-gray-900 mb-6">Mis Viajes</h2>
+        <h2 className="text-2xl font-semibold text-gray-900 mb-6">
+          Mis Viajes
+        </h2>
         {usuarios?.viajes && usuarios.viajes.length > 0 ? (
           usuarios.viajes.map((viaje, index) => (
             <div
               key={viaje.id || index}
-              className="bg-blue-50 border border-blue-200 rounded-lg p-6 mb-6 shadow-md"
+              className=" rounded-lg p-6 mb-6 shadow-md"
             >
               <h3 className="text-xl font-semibold text-gray-800 mb-2">
                 {viaje.nombre}
@@ -93,32 +136,94 @@ const PerfilUsuario = () => {
                 <strong>Estado:</strong>
                 <span
                   className={`ml-2 px-2 py-1 rounded-full text-white ${
-                    viaje.estado === "Aprobado" ? "bg-green-500" : "bg-red-500"
+                    viaje.estado === "Aprobado"
+                      ? "bg-green-500"
+                      : viaje.estado === "Pendiente"
+                      ? "bg-yellow-500"
+                      : "bg-red-500"
                   }`}
                 >
                   {viaje.estado || "Desconocido"}
                 </span>
               </p>
               <p className="text-gray-700 mb-1">
-                <strong>Fecha de Inicio:</strong>{" "}
-                {viaje.fecha_inicio}
+                <strong>Fecha de Inicio:</strong> {viaje.fecha_inicio}
               </p>
               <p className="text-gray-700 mb-4">
-                <strong>Fecha de Fin:</strong>{" "}
-                {viaje.fecha_fin}
+                <strong>Fecha de Fin:</strong> {viaje.fecha_fin}
               </p>
-
-              {/* Botón para abrir el modal de trayectos */}
-              <button
-                onClick={() => handleOpenModal(viaje.trayectos)}
-                className="bg-blue-500 text-white px-4 py-2 rounded-md shadow hover:bg-blue-600"
-              >
-                Ver Trayectos
-              </button>
+              <div className="flex gap-4">
+                <button
+                  onClick={() => handleOpenModal(viaje.trayectos)}
+                  className="bg-blue-500 text-white px-4 py-2 rounded-md shadow hover:bg-blue-600"
+                >
+                  Ver Trayectos
+                </button>
+                <button
+                  onClick={() => handleCancelarViaje(viaje.solicitud_id)}
+                  className="bg-red-500 text-white px-4 py-2 rounded-md shadow hover:bg-red-600"
+                >
+                  Cancelar Viaje
+                </button>
+              </div>
             </div>
           ))
         ) : (
           <p className="text-gray-600">No tienes viajes registrados.</p>
+        )}
+      </div>
+
+      {/* Información de los Viajes Intercentro */}
+      <div className="mt-8">
+        <h2 className="text-2xl font-semibold text-gray-900 mb-6">
+          Mis Viajes Intercentro
+        </h2>
+        {usuarios?.solicitudes_intercentro &&
+        usuarios.solicitudes_intercentro.length > 0 ? (
+          usuarios.solicitudes_intercentro.map((solicitud, index) => (
+            <div
+              key={solicitud.solicitud_id || index}
+              className="rounded-lg p-6 mb-6 shadow-md"
+            >
+              <h3 className="text-xl font-semibold text-gray-800 mb-2">
+                {solicitud.centro_origen} → {solicitud.centro_destino}
+              </h3>
+              <p className="text-gray-700 mb-1">
+                <strong>Lancha:</strong> {solicitud.lancha}
+              </p>
+              <p className="text-gray-700 mb-1">
+                <strong>Estado:</strong>{" "}
+                <span
+                  className={`ml-2 px-2 py-1 rounded-full text-white ${
+                    solicitud.estado === "pendiente"
+                      ? "bg-yellow-500"
+                      : solicitud.estado === "aprobado"
+                      ? "bg-green-500"
+                      : "bg-red-500"
+                  }`}
+                >
+                  {solicitud.estado || "Desconocido"}
+                </span>
+              </p>
+              <p className="text-gray-700 mb-1">
+                <strong>Fecha:</strong>{" "}
+                {new Date(solicitud.fecha_movimiento).toLocaleString()}
+              </p>
+              <p className="text-gray-700 mb-4">
+                <strong>Comentario:</strong> {solicitud.comentario || "N/A"}
+              </p>
+              <button
+                onClick={() => handleCancelarSolicitud(solicitud.solicitud_id)}
+                className="bg-red-500 text-white px-4 py-2 rounded-md shadow hover:bg-red-600"
+              >
+                Cancelar Solicitud
+              </button>
+            </div>
+          ))
+        ) : (
+          <p className="text-gray-600">
+            No tienes solicitudes de intercentro registradas.
+          </p>
         )}
       </div>
 
@@ -154,10 +259,6 @@ const PerfilUsuario = () => {
                   <p className="text-gray-700 mb-1">
                     <strong>Estado:</strong> {trayecto.estado || "Desconocido"}
                   </p>
-                  {/* <p className="text-gray-700 mb-1">
-                    <strong>Vehículo:</strong>{" "}
-                    {trayecto.vehiculo_id ? `ID: ${trayecto.vehiculo_id}` : "No disponible"}
-                  </p> */}
                   <p className="text-gray-700 mb-1">
                     <strong>Vehiculo:</strong>{" "}
                     {trayecto.tipo_vehiculo || "Desconocido"}

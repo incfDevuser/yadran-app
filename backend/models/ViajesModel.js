@@ -97,6 +97,51 @@ const solicitarViajeParaUsuario = async ({
       ]);
     }
 
+    // Obtener el pontón asociado al viaje
+    const queryPonton = `
+      SELECT p.id AS ponton_id, p.habitabilidad_general, p.habitabilidad_interna, p.habitabilidad_externa
+      FROM ponton p
+      JOIN centro c ON c.ponton_id = p.id
+      JOIN rutas r ON r.id = c.ruta_id
+      JOIN viajes v ON v.ruta_id = r.id
+      WHERE v.id = $1;
+    `;
+    const responsePonton = await client.query(queryPonton, [viaje_id]);
+
+    if (responsePonton.rows.length > 0) {
+      const { ponton_id, habitabilidad_general } = responsePonton.rows[0];
+
+      // Validar habitabilidad general del pontón
+      const queryUsuariosEnPonton = `
+        SELECT COUNT(*) AS total_usuarios
+        FROM usuarios_pontones
+        WHERE ponton_id = $1;
+      `;
+      const responseUsuariosEnPonton = await client.query(
+        queryUsuariosEnPonton,
+        [ponton_id]
+      );
+
+      const totalUsuarios = parseInt(
+        responseUsuariosEnPonton.rows[0].total_usuarios
+      );
+
+      if (totalUsuarios >= habitabilidad_general) {
+        throw new Error(
+          "El pontón ya alcanzó su capacidad máxima de habitabilidad general"
+        );
+      }
+
+      // Insertar al usuario en la lista de usuarios del pontón
+      const queryUsuarioPonton = `
+        INSERT INTO usuarios_pontones (ponton_id, usuario_id, estado)
+        VALUES ($1, $2, 'Pendiente');
+      `;
+      await client.query(queryUsuarioPonton, [ponton_id, usuario_id]);
+    } else {
+      throw new Error("No se encontró un pontón asociado al viaje");
+    }
+
     await client.query("COMMIT");
     return {
       message: "Viaje solicitado exitosamente para el usuario",
@@ -110,7 +155,7 @@ const solicitarViajeParaUsuario = async ({
     client.release();
   }
 };
-//Cancelar viaje usuario
+//Cancelar viaje usuario -  usuarios o contratista
 const cancelarViajeUsuarioYTrabajadores = async (solicitudId) => {
   const client = await pool.connect();
   try {
@@ -147,6 +192,32 @@ const cancelarViajeUsuarioYTrabajadores = async (solicitudId) => {
       trabajador_id,
       viaje_id,
     ]);
+
+    // Obtener el pontón asociado al viaje a través de la ruta y el centro
+    const pontonQuery = `
+      SELECT p.id AS ponton_id
+      FROM ponton p
+      JOIN centro c ON c.ponton_id = p.id
+      JOIN rutas r ON r.id = c.ruta_id
+      JOIN viajes v ON v.ruta_id = r.id
+      WHERE v.id = $1;
+    `;
+    const pontonResult = await client.query(pontonQuery, [viaje_id]);
+
+    if (pontonResult.rows.length > 0) {
+      const { ponton_id } = pontonResult.rows[0];
+
+      // Eliminar al usuario o trabajador del pontón
+      const deleteUsuarioPontonQuery = `
+        DELETE FROM usuarios_pontones
+        WHERE ponton_id = $1 AND (usuario_id = $2 OR trabajador_id = $3);
+      `;
+      await client.query(deleteUsuarioPontonQuery, [
+        ponton_id,
+        usuario_id,
+        trabajador_id,
+      ]);
+    }
 
     // Eliminar la solicitud de la tabla usuarios_viajes
     const deleteSolicitudQuery = `
@@ -244,6 +315,30 @@ const agendarViajeParaTrabajadores = async ({
       }
     }
 
+    // Obtener el pontón asociado al viaje
+    const pontonQuery = `
+     SELECT p.id AS ponton_id
+     FROM ponton p
+     JOIN centro c ON c.ponton_id = p.id
+     JOIN rutas r ON r.id = c.ruta_id
+     JOIN viajes v ON v.ruta_id = r.id
+     WHERE v.id = $1;
+   `;
+    const pontonResult = await client.query(pontonQuery, [viaje_id]);
+
+    if (pontonResult.rows.length > 0) {
+      const { ponton_id } = pontonResult.rows[0];
+
+      // Asignar trabajadores al pontón
+      for (const trabajador_id of trabajadoresValidos) {
+        const pontonUsuariosQuery = `
+         INSERT INTO usuarios_pontones (ponton_id, trabajador_id, estado)
+         VALUES ($1, $2, 'Pendiente');
+       `;
+        await client.query(pontonUsuariosQuery, [ponton_id, trabajador_id]);
+      }
+    }
+
     await client.query("COMMIT");
     return {
       message: "Viaje agendado exitosamente para los trabajadores",
@@ -257,7 +352,7 @@ const agendarViajeParaTrabajadores = async ({
     client.release();
   }
 };
-//Rechazar la solicitud de un viaje
+//Rechazar la solicitud de un viaje - admin
 const rechazarSolicitudViaje = async (solicitudId) => {
   const client = await pool.connect();
   try {
@@ -302,6 +397,32 @@ const rechazarSolicitudViaje = async (solicitudId) => {
       trabajador_id,
       viaje_id,
     ]);
+
+    // Obtener el pontón asociado al viaje a través de la ruta y el centro
+    const pontonQuery = `
+      SELECT p.id AS ponton_id
+      FROM ponton p
+      JOIN centro c ON c.ponton_id = p.id
+      JOIN rutas r ON r.id = c.ruta_id
+      JOIN viajes v ON v.ruta_id = r.id
+      WHERE v.id = $1;
+    `;
+    const pontonResult = await client.query(pontonQuery, [viaje_id]);
+
+    if (pontonResult.rows.length > 0) {
+      const { ponton_id } = pontonResult.rows[0];
+
+      // Eliminar al usuario o trabajador del pontón
+      const deleteUsuarioPontonQuery = `
+        DELETE FROM usuarios_pontones
+        WHERE ponton_id = $1 AND (usuario_id = $2 OR trabajador_id = $3);
+      `;
+      await client.query(deleteUsuarioPontonQuery, [
+        ponton_id,
+        usuario_id,
+        trabajador_id,
+      ]);
+    }
 
     await client.query("COMMIT");
     return {
@@ -439,6 +560,7 @@ const obtenerSolicitudesTrabajadores = async () => {
     throw new Error("Hubo un error al obtener las solicitudes de trabajadores");
   }
 };
+// admin
 const aprobarSolicitudViaje = async (solicitudId) => {
   const client = await pool.connect();
   try {
@@ -509,5 +631,5 @@ export const ViajesModel = {
   obtenerSolicitudesUsuariosNaturales,
   aprobarSolicitudViaje,
   obtenerSolicitudesTrabajadores,
-  cancelarViajeUsuarioYTrabajadores
+  cancelarViajeUsuarioYTrabajadores,
 };

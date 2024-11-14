@@ -39,7 +39,7 @@ router.post(
   ViajesController.agendarViajeParaTrabajadores
 );
 
-//Rechazar solicitud de viaje del usuario
+//Rechazar solicitud de viaje del usuario - Funcion Admin
 router.patch(
   "/solicitud/:solicitudId/rechazar",
   ViajesController.rechazarSolicitudViaje
