@@ -37,7 +37,9 @@ import contratistaRoutes from "./routes/contratista.routes.js";
 //Choferes
 import choferesRoutes from "./routes/chofer.routes.js";
 //Roles
-import rolesRoutes from './routes/roles.routes.js'
+import rolesRoutes from "./routes/roles.routes.js";
+//Notificaciones
+import notificacionRoutes from "./routes/notificaciones.routes.js";
 
 //Definiciones y variables globales
 dotenv.config();
@@ -105,8 +107,9 @@ app.use("/api/contratista", contratistaRoutes);
 //Rutas para los choferes
 app.use("/api/choferes", choferesRoutes);
 //Rutas para los roles
-app.use("/api/roles", rolesRoutes)
-
+app.use("/api/roles", rolesRoutes);
+//Rutas para las notificaciones
+app.use("/api/notificaciones", notificacionRoutes);
 //Node cron para obtener los vuelos
 const cronJob = cron.schedule("*/10 * * * *", async () => {
   console.log("Iniciando la actualizacion de vuelos");
