@@ -87,8 +87,7 @@ create table proveedores(
 	frencuencia_servicio varchar(100),
 	descripcion_servicio varchar(100),
 	cantidad_usuarios_autorizados integer
-)
---Luego la tabla vehiculos
+) --Luego la tabla vehiculos
 create table vehiculos(
 	id serial primary key,
 	proveedor_id integer references proveedor(id) on delete cascade,
@@ -116,14 +115,14 @@ create table rutas(
 );
 --Luego la tabla trayectos
 CREATE TABLE trayectos (
-    id SERIAL PRIMARY KEY,
-    ruta_id INTEGER REFERENCES rutas(id) ON DELETE CASCADE,
-    origen VARCHAR(255) NOT NULL,
-    destino VARCHAR(255) NOT NULL,
-    duracion_estimada INTERVAL,
-    orden INTEGER NOT NULL,
+	id SERIAL PRIMARY KEY,
+	ruta_id INTEGER REFERENCES rutas(id) ON DELETE CASCADE,
+	origen VARCHAR(255) NOT NULL,
+	destino VARCHAR(255) NOT NULL,
+	duracion_estimada INTERVAL,
+	orden INTEGER NOT NULL,
 	estado varchar(50) default 'Pendiente',
-    created_at TIMESTAMPTZ DEFAULT NOW(),
+	created_at TIMESTAMPTZ DEFAULT NOW(),
 	vehiculo_id integer references vehiculos(id) on delete cascade
 );
 --Luego se crea la tabla de centro
@@ -151,7 +150,7 @@ create table usuarios(
 	telefono varchar(20),
 	google_id varchar(100) not null,
 	-- El email debe ser unico
-	email varchar(100) not null ,
+	email varchar(100) not null,
 	fecha_nacimiento date,
 	ciudad_origen varchar(100),
 	estado varchar(100),
@@ -165,9 +164,8 @@ create table viajes(
 	ruta_id integer references rutas(id) on delete cascade,
 	-- faltan los created y los updated
 	created_at TIMESTAMPTZ DEFAULT NOW(),
-    updated_at TIMESTAMPTZ DEFAULT NOW()
-)
-create table usuarios_viajes(
+	updated_at TIMESTAMPTZ DEFAULT NOW()
+) create table usuarios_viajes(
 	id serial primary key,
 	usuario_id integer references usuarios(id) on delete cascade,
 	viaje_id integer references viajes(id) on delete cascade,
@@ -177,10 +175,10 @@ create table usuarios_viajes(
 	estado varchar(50),
 	-- faltan los created y los updates
 	created_at TIMESTAMPTZ DEFAULT NOW(),
-    updated_at TIMESTAMPTZ DEFAULT NOW()
+	updated_at TIMESTAMPTZ DEFAULT NOW()
 ),
 create table vuelos(
-	id serial primary key, 
+	id serial primary key,
 	numero_vuelo varchar(50),
 	aerolinea varchar(100),
 	aeropuerto_salida varchar(100),
@@ -191,43 +189,44 @@ create table vuelos(
 	horario_llegada timestamp,
 	duracion_estimada integer,
 	estado_vuelo varchar(50)
-)
-CREATE TABLE vehiculo_usuarios (
-    id SERIAL PRIMARY KEY,
-    vehiculo_id INTEGER REFERENCES vehiculos(id) ON DELETE CASCADE,
-    usuario_id INTEGER REFERENCES usuarios(id) ON DELETE CASCADE,
-    trayecto_id INTEGER REFERENCES trayectos(id) ON DELETE CASCADE,
-    estado VARCHAR(50) DEFAULT 'Pendiente', -- Pendiente, Confirmado
-    fecha_confirmacion TIMESTAMPTZ,
-    created_at TIMESTAMPTZ DEFAULT NOW(),
-    updated_at TIMESTAMPTZ DEFAULT NOW()
+) CREATE TABLE vehiculo_usuarios (
+	id SERIAL PRIMARY KEY,
+	vehiculo_id INTEGER REFERENCES vehiculos(id) ON DELETE CASCADE,
+	usuario_id INTEGER REFERENCES usuarios(id) ON DELETE CASCADE,
+	trayecto_id INTEGER REFERENCES trayectos(id) ON DELETE CASCADE,
+	estado VARCHAR(50) DEFAULT 'Pendiente',
+	-- Pendiente, Confirmado
+	fecha_confirmacion TIMESTAMPTZ,
+	created_at TIMESTAMPTZ DEFAULT NOW(),
+	updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 -- Tabla de choferes
 CREATE TABLE choferes (
-    id SERIAL PRIMARY KEY,
-    nombre VARCHAR(255) NOT NULL,
-    telefono VARCHAR(15),
-    email VARCHAR(255) UNIQUE,
-    vehiculo_id INTEGER REFERENCES vehiculos(id) ON DELETE CASCADE,
-    estado VARCHAR(50) DEFAULT 'Activo',
-    created_at TIMESTAMPTZ DEFAULT NOW(),
-    updated_at TIMESTAMPTZ DEFAULT NOW()
+	id SERIAL PRIMARY KEY,
+	nombre VARCHAR(255) NOT NULL,
+	telefono VARCHAR(15),
+	email VARCHAR(255) UNIQUE,
+	vehiculo_id INTEGER REFERENCES vehiculos(id) ON DELETE CASCADE,
+	estado VARCHAR(50) DEFAULT 'Activo',
+	created_at TIMESTAMPTZ DEFAULT NOW(),
+	updated_at TIMESTAMPTZ DEFAULT NOW()
 );
-
 -- Tabla para asignar choferes a trayectos
 CREATE TABLE chofer_trayecto (
-    id SERIAL PRIMARY KEY,
-    chofer_id INTEGER REFERENCES choferes(id) ON DELETE CASCADE,
-    trayecto_id INTEGER REFERENCES trayectos(id) ON DELETE CASCADE,
-    qr_validacion VARCHAR(255), -- Código QR para validar usuarios
-    estado VARCHAR(50) DEFAULT 'Pendiente', -- Pendiente, Confirmado
-    fecha_confirmacion TIMESTAMPTZ,
-    created_at TIMESTAMPTZ DEFAULT NOW(),
-    updated_at TIMESTAMPTZ DEFAULT NOW()
+	id SERIAL PRIMARY KEY,
+	chofer_id INTEGER REFERENCES choferes(id) ON DELETE CASCADE,
+	trayecto_id INTEGER REFERENCES trayectos(id) ON DELETE CASCADE,
+	qr_validacion VARCHAR(255),
+	-- Código QR para validar usuarios
+	estado VARCHAR(50) DEFAULT 'Pendiente',
+	-- Pendiente, Confirmado
+	fecha_confirmacion TIMESTAMPTZ,
+	created_at TIMESTAMPTZ DEFAULT NOW(),
+	updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 ALTER TABLE centro
 ADD COLUMN latitud DECIMAL(10, 8),
-ADD COLUMN longitud DECIMAL(11, 8);
+	ADD COLUMN longitud DECIMAL(11, 8);
 create table lanchas(
 	id serial primary key,
 	nombre varchar(100) not null,
@@ -235,19 +234,43 @@ create table lanchas(
 	disponible boolean default true
 );
 create table movimientosintercentro (
-  id SERIAL PRIMARY KEY,
-  fecha TIMESTAMP NOT NULL,
-  centro_origen_id INT REFERENCES Centro(id) on delete cascade,
-  centro_destino_id INT REFERENCES Centro(id) on delete cascade,
-  lancha_id INT REFERENCES Lanchas(id),
-  estado VARCHAR(20) DEFAULT 'pendiente', --Si el movimiento esta terminado, limpiar la lista de usuarios que esta en la lancha
-  comentarios TEXT
+	id SERIAL PRIMARY KEY,
+	fecha TIMESTAMP NOT NULL,
+	centro_origen_id INT REFERENCES Centro(id) on delete cascade,
+	centro_destino_id INT REFERENCES Centro(id) on delete cascade,
+	lancha_id INT REFERENCES Lanchas(id),
+	estado VARCHAR(20) DEFAULT 'pendiente',
+	--Si el movimiento esta terminado, limpiar la lista de usuarios que esta en la lancha
+	comentarios TEXT
 );
 create table usuariosmovimientosintercentro (
-  id SERIAL PRIMARY KEY,
-  movimiento_id INT REFERENCES MovimientosIntercentro(id) on delete cascade,
-  usuario_id INT REFERENCES Usuarios(id) on delete cascade,
-  trabajador_id int REFERENCES 
-  estado VARCHAR(20) DEFAULT 'pendiente', --Aprobado o rechazado, en la lista de la lancha solo se muestran los usuarios con estado "Aprobado" y "Pendiente", la que es tan rechazados no.
+	id SERIAL PRIMARY KEY,
+	movimiento_id INT REFERENCES MovimientosIntercentro(id) on delete cascade,
+	usuario_id INT REFERENCES Usuarios(id) on delete cascade,
+	trabajador_id int REFERENCES estado VARCHAR(20) DEFAULT 'pendiente',
+	--Aprobado o rechazado, en la lista de la lancha solo se muestran los usuarios con estado "Aprobado" y "Pendiente", la que es tan rechazados no.
 	comentario text
+);
+create table usuarios_pontones(
+	id serial primary key,
+	ponton_id references ponton(id) on delete
+	set null,
+		usuario_id references usuarios(id) on delete
+	set null,
+		trabajador_id references trabajadores(id) on delete
+	set null,
+		estado varchar(200) default "Pediente"
+) CREATE TABLE notificaciones (
+	id SERIAL PRIMARY KEY,
+	titulo VARCHAR(255) NOT NULL,
+	descripcion TEXT NOT NULL,
+	tipo VARCHAR(50) NOT NULL,
+	fecha_creacion TIMESTAMP DEFAULT NOW()
+);
+CREATE TABLE notificaciones_usuarios (
+	id SERIAL PRIMARY KEY,
+	usuario_id INTEGER NOT NULL REFERENCES usuarios(id) ON DELETE CASCADE,
+	notificacion_id INTEGER NOT NULL REFERENCES notificaciones(id) ON DELETE CASCADE,
+	leida BOOLEAN DEFAULT FALSE,
+	fecha_recibida TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
