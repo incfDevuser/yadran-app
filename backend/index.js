@@ -40,6 +40,8 @@ import choferesRoutes from "./routes/chofer.routes.js";
 import rolesRoutes from "./routes/roles.routes.js";
 //Notificaciones
 import notificacionRoutes from "./routes/notificaciones.routes.js";
+//Qrs
+import qrRoutes from "./routes/qe.routes.js";
 
 //Definiciones y variables globales
 dotenv.config();
@@ -110,6 +112,9 @@ app.use("/api/choferes", choferesRoutes);
 app.use("/api/roles", rolesRoutes);
 //Rutas para las notificaciones
 app.use("/api/notificaciones", notificacionRoutes);
+//Rutas para los QR
+app.use("/api/qr", qrRoutes);
+
 //Node cron para obtener los vuelos
 const cronJob = cron.schedule("*/10 * * * *", async () => {
   console.log("Iniciando la actualizacion de vuelos");

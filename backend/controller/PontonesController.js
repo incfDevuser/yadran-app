@@ -81,6 +81,30 @@ const crearPonton = async (req, res) => {
     });
   }
 };
+const registrarEnPonton = async (req, res) => {
+  console.log("Cuerpo del request:", req.body); 
+  const { ponton_id, usuario_id } = req.body;
+  try {
+    const registro = await PontonesModel.registrarEnPonton({ ponton_id, usuario_id });
+
+    if (!registro) {
+      return res.status(404).json({
+        message: "No se encontró el registro del usuario o trabajador en el pontón",
+      });
+    }
+
+    return res.status(200).json({
+      message: "Usuario o trabajador registrado exitosamente en el pontón",
+      registro,
+    });
+  } catch (error) {
+    console.error("Error en registrarEnPonton:", error.message);
+    return res.status(500).json({
+      message: "Hubo un error al registrar al usuario o trabajador en el pontón",
+    });
+  }
+};
+
 //Eliminar un ponton
 const eliminarPonton = async (req, res) => {
   const { id } = req.params;
@@ -110,4 +134,5 @@ export const PontonesController = {
   obtenerPonton,
   crearPonton,
   eliminarPonton,
+  registrarEnPonton,
 };

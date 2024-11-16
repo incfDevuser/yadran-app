@@ -98,7 +98,7 @@ const Navbar = () => {
           </ul>
 
           {/* Enlace adicional para administradores */}
-          {isAdmin && (
+          {isAdmin && rol !== "Colaborador" && (
             <Link
               to="/admin"
               className="text-[#605DEC] py-2 px-4 rounded-md transition-all duration-200"

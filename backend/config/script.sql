@@ -274,3 +274,5 @@ CREATE TABLE notificaciones_usuarios (
 	leida BOOLEAN DEFAULT FALSE,
 	fecha_recibida TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+ALTER TABLE ponton
+ADD COLUMN qr_code TEXT;
