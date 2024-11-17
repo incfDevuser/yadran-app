@@ -106,6 +106,11 @@ const Navbar = () => {
               Admin Panel
             </Link>
           )}
+          { rol === "Contratista"&& (
+            <Link to="/contratista-dashboard">
+              Mis Trabajadores
+            </Link>
+          )}
 
           {/* Botón de Sign In o Cerrar Sesión */}
           {!usuarios ? (

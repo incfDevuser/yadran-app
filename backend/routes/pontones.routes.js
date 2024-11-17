@@ -9,8 +9,7 @@ router.get("/", PontonesController.obtenerPontones);
 router.get("/:id", PontonesController.obtenerPonton);
 //Crear Ponton
 router.post("/create", PontonesController.crearPonton);
-//Registrar usuario en ponton
-router.post("/registrar-usuario", PontonesController.registrarEnPonton)
+
 //Acutalizar un Ponton
 
 //Eliminar un Ponton

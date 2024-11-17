@@ -125,6 +125,7 @@ const cronJob = cron.schedule("*/10 * * * *", async () => {
     console.error("Error al actualizar vuelos", error.message);
   }
 });
+
 //Ejecutar el Start
 // cronJob.start();
 //Ejecutar el stop al cronJob

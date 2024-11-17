@@ -51,6 +51,10 @@ import ConfirmacionVuelo from "./pages/Flight/ConfirmacionVuelo";
 //Pagina de Espera
 import WaitingPage from "./pages/User/WaitingPage";
 
+//Contratista
+import ContratistaDashboard from "./pages/Contratista/ContratistaDashboard";
+import { ContratistaProvider } from "./Context/ContratistaContext";
+
 const App = () => {
   return (
     <UsuariosProvider>
@@ -62,6 +66,15 @@ const App = () => {
           <Routes>
             {/* Home Page */}
             <Route path="/" element={<Flights />} />
+
+            <Route
+              path="/contratista-dashboard"
+              element={
+                <ContratistaProvider>
+                  <ContratistaDashboard />
+                </ContratistaProvider>
+              }
+            />
 
             {/* Pagina de espera */}
 

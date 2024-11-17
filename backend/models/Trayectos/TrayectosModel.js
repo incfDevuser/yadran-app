@@ -1,4 +1,5 @@
 import pool from "../../config/db.js";
+import QRCode from "qrcode";
 
 const obtenerTrayectos = async () => {
   try {
@@ -29,12 +30,16 @@ const crearTrayecto = async ({
   estado,
   vehiculo_id,
 }) => {
+  const client = await pool.connect();
   try {
+    await client.query("BEGIN");
+
+    // Crear el trayecto
     const query = `
-        INSERT INTO trayectos (
-          ruta_id, origen, destino, duracion_estimada, orden, estado, vehiculo_id
-        ) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *
-      `;
+      INSERT INTO trayectos (
+        ruta_id, origen, destino, duracion_estimada, orden, estado, vehiculo_id
+      ) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *;
+    `;
     const values = [
       ruta_id,
       origen,
@@ -44,11 +49,33 @@ const crearTrayecto = async ({
       estado,
       vehiculo_id,
     ];
-    const response = await pool.query(query, values);
-    return response.rows[0];
+    const response = await client.query(query, values);
+    const trayecto = response.rows[0];
+    const qrData = {
+      trayecto_id: trayecto.id,
+      vehiculo_id: trayecto.vehiculo_id,
+    };
+    const qrCode = await QRCode.toDataURL(JSON.stringify(qrData));
+    const queryActualizarQR = `
+      UPDATE trayectos
+      SET qr_code = $1
+      WHERE id = $2
+      RETURNING *;
+    `;
+    const responseQR = await client.query(queryActualizarQR, [
+      qrCode,
+      trayecto.id,
+    ]);
+    const trayectoConQR = responseQR.rows[0];
+
+    await client.query("COMMIT");
+    return trayectoConQR;
   } catch (error) {
-    console.error(error);
-    throw new Error("Error al crear el trayecto");
+    await client.query("ROLLBACK");
+    console.error("Error al crear el trayecto:", error);
+    throw new Error("Error al crear el trayecto con QR");
+  } finally {
+    client.release();
   }
 };
 

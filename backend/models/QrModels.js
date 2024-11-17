@@ -74,8 +74,124 @@ const eliminarQRPonton = async (ponton_id) => {
     client.release();
   }
 };
+const registrarEnTrayecto = async ({
+  trayecto_id,
+  vehiculo_id,
+  usuario_id,
+}) => {
+  try {
+    const queryUsuario = `SELECT id FROM usuarios WHERE id = $1`;
+    const resultadoUsuario = await pool.query(queryUsuario, [usuario_id]);
+
+    const queryTrabajador = `SELECT id FROM trabajadores WHERE id = $1`;
+    const resultadoTrabajador = await pool.query(queryTrabajador, [usuario_id]);
+
+    if (resultadoUsuario.rows.length > 0) {
+      const queryRegistroUsuario = `
+        UPDATE vehiculo_usuarios 
+        SET estado = 'Confirmado', fecha_confirmacion = NOW()
+        WHERE trayecto_id = $1 AND vehiculo_id = $2 AND usuario_id = $3
+        RETURNING *;
+      `;
+      const registroUsuario = await pool.query(queryRegistroUsuario, [
+        trayecto_id,
+        vehiculo_id,
+        usuario_id,
+      ]);
+
+      if (registroUsuario.rows.length === 0) {
+        throw new Error(
+          "No se encontró el registro del usuario en este trayecto y vehículo"
+        );
+      }
+      return { tipo: "usuario", registro: registroUsuario.rows[0] };
+    } else if (resultadoTrabajador.rows.length > 0) {
+      const queryRegistroTrabajador = `
+        UPDATE vehiculo_usuarios 
+        SET estado = 'Confirmado', fecha_confirmacion = NOW()
+        WHERE trayecto_id = $1 AND vehiculo_id = $2 AND trabajador_id = $3
+        RETURNING *;
+      `;
+      const registroTrabajador = await pool.query(queryRegistroTrabajador, [
+        trayecto_id,
+        vehiculo_id,
+        usuario_id,
+      ]);
+
+      if (registroTrabajador.rows.length === 0) {
+        throw new Error(
+          "No se encontró el registro del trabajador en este trayecto y vehículo"
+        );
+      }
+      return { tipo: "trabajador", registro: registroTrabajador.rows[0] };
+    } else {
+      throw new Error(
+        "El ID proporcionado no pertenece a un usuario ni a un trabajador"
+      );
+    }
+  } catch (error) {
+    console.error(error.message);
+    throw new Error("Hubo un error al registrar en el trayecto");
+  }
+};
+const registrarEnPonton = async ({ ponton_id, usuario_id }) => {
+  try {
+    const queryUsuario = `SELECT id FROM usuarios WHERE id = $1`;
+    const resultadoUsuario = await pool.query(queryUsuario, [usuario_id]);
+
+    const queryTrabajador = `SELECT id FROM trabajadores WHERE id = $1`;
+    const resultadoTrabajador = await pool.query(queryTrabajador, [usuario_id]);
+
+    if (resultadoUsuario.rows.length > 0) {
+      const queryRegistroUsuario = `
+        UPDATE usuarios_pontones 
+        SET estado = 'Confirmado'
+        WHERE ponton_id = $1 AND usuario_id = $2
+        RETURNING *;
+      `;
+      const registroUsuario = await pool.query(queryRegistroUsuario, [
+        ponton_id,
+        usuario_id,
+      ]);
+
+      if (registroUsuario.rows.length === 0) {
+        throw new Error(
+          "No se encontró el registro del usuario en este pontón"
+        );
+      }
+      return { tipo: "usuario", registro: registroUsuario.rows[0] };
+    } else if (resultadoTrabajador.rows.length > 0) {
+      const queryRegistroTrabajador = `
+        UPDATE usuarios_pontones 
+        SET estado = 'Confirmado'
+        WHERE ponton_id = $1 AND trabajador_id = $2
+        RETURNING *;
+      `;
+      const registroTrabajador = await pool.query(queryRegistroTrabajador, [
+        ponton_id,
+        usuario_id,
+      ]);
+
+      if (registroTrabajador.rows.length === 0) {
+        throw new Error(
+          "No se encontró el registro del trabajador en este pontón"
+        );
+      }
+      return { tipo: "trabajador", registro: registroTrabajador.rows[0] };
+    } else {
+      throw new Error(
+        "El ID proporcionado no pertenece a un usuario ni a un trabajador"
+      );
+    }
+  } catch (error) {
+    console.error(error.message);
+    throw new Error("Hubo un error al registrar en el pontón");
+  }
+};
 
 export const QrModel = {
   asignarQRAPonton,
-  eliminarQRPonton
+  eliminarQRPonton,
+  registrarEnTrayecto,
+  registrarEnPonton
 };
