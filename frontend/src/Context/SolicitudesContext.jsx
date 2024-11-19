@@ -4,75 +4,113 @@ import axios from "axios";
 const SolicitudesContext = createContext();
 
 export const SolicitudesProvider = ({ children }) => {
-  const [solicitudes, setSolicitudes] = useState([]);
-  const [loadingSolicitudes, setLoadingSolicitudes] = useState(true);
+  const [solicitudesNormales, setSolicitudesNormales] = useState([]);
+  const [solicitudesTrabajadores, setSolicitudesTrabajadores] = useState([]);
+  const [solicitudesIntercentro, setSolicitudesIntercentro] = useState([]);
+  const [loadingSolicitudes, setLoadingSolicitudes] = useState(false);
   const [errorSolicitudes, setErrorSolicitudes] = useState(null);
 
-  useEffect(() => {
-    const obtenerSolicitudes = async () => {
-      try {
-        const response = await axios.get(
-          "http://localhost:5000/api/viajes/solicitudes-usuarios"
-        );
-        setSolicitudes(response.data.solicitudes);
-      } catch (error) {
-        setErrorSolicitudes(error.message);
-      } finally {
-        setLoadingSolicitudes(false);
-      }
-    };
-
-    obtenerSolicitudes();
-  }, []);
-
-  const aprobarSolicitud = async (id) => {
+  const obtenerSolicitudesNormales = async () => {
     try {
-      const response = await axios.put(
-        `http://localhost:5000/api/viajes/${id}`,
-        {
-          estado: "Aprobado",
-        }
+      setLoadingSolicitudes(true);
+      const response = await axios.get(
+        "http://localhost:5000/api/viajes/solicitudes-usuarios"
       );
-      setSolicitudes((prevSolicitudes) =>
-        prevSolicitudes.map((solicitud) =>
-          solicitud.id === id ? { ...solicitud, estado: "Aprobado" } : solicitud
-        )
-      );
-      return response.data;
+      setSolicitudesNormales(response.data.solicitudes);
     } catch (error) {
-      console.error("Error al aprobar la solicitud", error);
+      setErrorSolicitudes(error.message);
+    } finally {
+      setLoadingSolicitudes(false);
     }
   };
 
-  const rechazarSolicitud = async (id) => {
+  const obtenerSolicitudesTrabajadores = async () => {
+    try {
+      setLoadingSolicitudes(true);
+      const response = await axios.get(
+        "http://localhost:5000/api/viajes/solicitudes-trabajadores"
+      );
+      setSolicitudesTrabajadores(response.data.solicitudes);
+    } catch (error) {
+      setErrorSolicitudes(error.message);
+    } finally {
+      setLoadingSolicitudes(false);
+    }
+  };
+
+  const obtenerSolicitudesIntercentro = async () => {
+    try {
+      setLoadingSolicitudes(true);
+      const response = await axios.get(
+        "http://localhost:5000/api/intercentro/solicitudes"
+      );
+      setSolicitudesIntercentro(response.data.solicitudes);
+    } catch (error) {
+      setErrorSolicitudes(error.message);
+    } finally {
+      setLoadingSolicitudes(false);
+    }
+  };
+
+  const aprobarViaje = async (id) => {
     try {
       const response = await axios.put(
-        `http://localhost:5000/api/viajes/${id}`,
-        {
-          estado: "Rechazado",
-        }
-      );
-      setSolicitudes((prevSolicitudes) =>
-        prevSolicitudes.map((solicitud) =>
-          solicitud.id === id
-            ? { ...solicitud, estado: "Rechazado" }
-            : solicitud
-        )
+        `http://localhost:5000/api/viajes/solicitud/${id}/aprobar`
       );
       return response.data;
     } catch (error) {
-      console.error("Error al rechazar la solicitud", error);
+      console.error("Error al aprobar la solicitud de viaje", error);
+    }
+  };
+
+  const rechazarViaje = async (id) => {
+    try {
+      const response = await axios.patch(
+        `http://localhost:5000/api/viajes/solicitud/${id}/rechazar`
+      );
+      return response.data;
+    } catch (error) {
+      console.error("Error al rechazar la solicitud de viaje", error);
+    }
+  };
+
+  const aprobarIntercentro = async (id) => {
+    try {
+      const response = await axios.put(
+        `http://localhost:5000/api/intercentro/solicitudes/${id}/aprobar`
+      );
+      return response.data;
+    } catch (error) {
+      console.error("Error al aprobar la solicitud de intercentro", error);
+    }
+  };
+
+  const rechazarIntercentro = async (id) => {
+    try {
+      const response = await axios.patch(
+        `http://localhost:5000/api/intercentro/solicitudes/${id}/cancelar`
+      );
+      return response.data;
+    } catch (error) {
+      console.error("Error al rechazar la solicitud de intercentro", error);
     }
   };
 
   return (
     <SolicitudesContext.Provider
       value={{
-        solicitudes,
+        solicitudesNormales,
+        solicitudesTrabajadores,
+        solicitudesIntercentro,
         loadingSolicitudes,
         errorSolicitudes,
-        aprobarSolicitud,
-        rechazarSolicitud,
+        obtenerSolicitudesNormales,
+        obtenerSolicitudesTrabajadores,
+        obtenerSolicitudesIntercentro,
+        aprobarViaje,
+        rechazarViaje,
+        aprobarIntercentro,
+        rechazarIntercentro,
       }}
     >
       {children}

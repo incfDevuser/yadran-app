@@ -101,14 +101,7 @@ const AdminViajes = () => {
               </div>
             ))}
           </div>
-        </div>
-        {/* Lista de viajes rechazados */}
-        <div className="mt-8">
-          <h1 className="font-bold text-2xl text-gray-700 mb-4">
-            Lista de Solicitudes
-          </h1>
-          <AdminSolicitudes />
-        </div>
+        </div>        
         {/* Modal para mostrar los trayectos */}
         {selectedViaje && (
           <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
@@ -220,13 +213,6 @@ const AdminViajes = () => {
             </div>
           </div>
         )}
-        {/* Lista de viajes cancelados */}
-        <div className="mt-8">
-          <h1 className="font-bold text-xl text-gray-700 mb-4">
-            Lista de Viajes <span className="text-red-600">Cancelados</span>
-          </h1>
-          {/* Aca se renderizan los viajes con estado = "CANCELADO" */}
-        </div>
       </main>
     </div>
   );

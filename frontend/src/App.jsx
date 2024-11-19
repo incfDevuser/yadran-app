@@ -144,9 +144,7 @@ const App = () => {
               element={
                 <RutasProvider>
                   <ViajesProvider>
-                    <SolicitudesProvider>
-                      <AdminViajes />
-                    </SolicitudesProvider>
+                    <AdminViajes />
                   </ViajesProvider>
                 </RutasProvider>
               }
