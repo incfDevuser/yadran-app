@@ -101,7 +101,9 @@ const App = () => {
               path="/confirmacion-intercentro/:id"
               element={
                 <IntercentrosProvider>
-                  <ConfirmacionIntercentro />
+                  <ContratistaProvider>
+                    <ConfirmacionIntercentro />
+                  </ContratistaProvider>
                 </IntercentrosProvider>
               }
             />
@@ -117,7 +119,9 @@ const App = () => {
               path="/confirmacion-vuelo/:viajeId"
               element={
                 <ViajesProvider>
-                  <ConfirmacionVuelo />
+                  <ContratistaProvider>
+                    <ConfirmacionVuelo />
+                  </ContratistaProvider>
                 </ViajesProvider>
               }
             />

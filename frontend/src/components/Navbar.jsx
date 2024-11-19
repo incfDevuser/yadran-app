@@ -107,7 +107,7 @@ const Navbar = () => {
             </Link>
           )}
           { rol === "Contratista"&& (
-            <Link to="/contratista-dashboard">
+            <Link to="/contratista-dashboard" className="text-[#7C8DB0]">
               Mis Trabajadores
             </Link>
           )}

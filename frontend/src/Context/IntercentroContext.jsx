@@ -91,7 +91,23 @@ export const IntercentrosProvider = ({ children }) => {
       throw new Error(err.message || "Error al agendar la ruta de intercentro");
     }
   };
-
+  //Funcion para agendar una ruta de intercentro para mis trabajadores
+  const agendarIntercentroTrabajadores = async (nuevaSolicitud) => {
+    try {
+      const response = await axios.post(
+        "http://localhost:5000/api/contratista/agendarTrabajadores",
+        nuevaSolicitud,
+        {
+          withCredentials: true,
+        }
+      );
+      return response.data;
+    } catch (error) {
+      throw new Error(
+        error.message || "Error al agendar la ruta de intercentro"
+      );
+    }
+  };
   //Función para obtener solicitudes de intercentros
   const obtenerSolicitudesIntercentro = async () => {
     setLoading(true);
@@ -170,6 +186,7 @@ export const IntercentrosProvider = ({ children }) => {
         obtenerRutasIntercentro,
         crearRutaIntercentro,
         agendarRutaIntercentro,
+        agendarIntercentroTrabajadores,
         obtenerSolicitudesIntercentro,
         aprobarSolicitudIntercentro,
         rechazarSolicitudIntercentro,

@@ -1,14 +1,15 @@
 import axios from "axios";
-import React, { createContext, useEffect, useState, useContext } from "react";
+import React, { createContext, useCallback, useState, useContext } from "react";
 
 const ContratistaContext = createContext();
 
 export const ContratistaProvider = ({ children }) => {
   const [trabajadores, setTrabajadores] = useState([]);
   const [solicitudes, setSolicitudes] = useState([]);
-  const [ solicitudesIntercentro, setSolicitudesIntercentro ] = useState([])
+  const [solicitudesIntercentro, setSolicitudesIntercentro] = useState([]);
 
-  const obtenerTrabajadores = async () => {
+  // Obtener trabajadores (memoizado)
+  const obtenerTrabajadores = useCallback(async () => {
     try {
       const response = await axios.get(
         "http://localhost:5000/api/contratista/misTrabajadores",
@@ -18,9 +19,10 @@ export const ContratistaProvider = ({ children }) => {
     } catch (error) {
       console.error("Error al obtener trabajadores:", error.message);
     }
-  };
-  //Obtener solicitudes de viajes normales
-  const obtenerSolicitudes = async () => {
+  }, []); // Dependencias vacías para asegurar que no se recrea
+
+  // Obtener solicitudes (memoizado)
+  const obtenerSolicitudes = useCallback(async () => {
     try {
       const response = await axios.get(
         `http://localhost:5000/api/contratista/solicitudes-trabajadores`,
@@ -30,9 +32,10 @@ export const ContratistaProvider = ({ children }) => {
     } catch (error) {
       console.error("Error al obtener las solicitudes de trabajadores:", error);
     }
-  };
-  //Agregar trabajadores
-  const agregarTrabajadores = async (nuevoTrabajador) => {
+  }, []);
+
+  // Agregar trabajadores
+  const agregarTrabajadores = useCallback(async (nuevoTrabajador) => {
     try {
       const response = await axios.post(
         `http://localhost:5000/api/contratista/trabajadores`,
@@ -44,41 +47,23 @@ export const ContratistaProvider = ({ children }) => {
     } catch (error) {
       console.error("Error al agregar trabajador:", error.message);
     }
-  };
-  //Agendar ruta de intercentro
-  const agendarTrabajadores = async (
-    movimientoId,
-    trabajadoresIds,
-    comentario
-  ) => {
+  }, []);
+
+  // Obtener solicitudes intercentro (memoizado)
+  const obtenerSolicitudesIntercentro = useCallback(async () => {
     try {
-      const response = await axios.post(
-        `http://localhost:5000/api/contratista/agendarTrabajadores`,
-        {
-          movimientoId,
-          trabajadoresIds,
-          comentario,
-        },
-        { withCredentials: true }
-      );
-      return response.data;
-    } catch (error) {
-      console.error("Error al agendar viaje para trabajadores:", error.message);
-    }
-  };
-  const obtenerSolicitudesIntercentro = async () => {
-    try {
-      const response = await axios.post(
+      const response = await axios.get(
         `http://localhost:5000/api/contratista/solicitudes-trabajadores/intercentro`,
         { withCredentials: true }
       );
-      setSolicitudesIntercentro(response.data)
+      setSolicitudesIntercentro(response.data.solicitudes);
     } catch (error) {
-      console.error("Error al agendar intercentro:", error.message);
+      console.error("Error al obtener solicitudes intercentro:", error.message);
     }
-  };
-  //Cancelar solicitud viaje normal 
-  const cancelarSolicitudTrabajador = async (solicitudId) => {
+  }, []);
+
+  // Cancelar solicitud viaje normal
+  const cancelarSolicitudTrabajador = useCallback(async (solicitudId) => {
     try {
       const response = await axios.delete(
         `http://localhost:5000/api/viajes/cancelar-solicitud/${solicitudId}`,
@@ -91,9 +76,10 @@ export const ContratistaProvider = ({ children }) => {
         error.message
       );
     }
-  };
-  //Agendar para viajes normales
-  const agendarNormal = async (solicitud) => {
+  }, []);
+
+  // Agendar para viajes normales
+  const agendarNormal = useCallback(async (solicitud) => {
     try {
       const response = await axios.post(
         `http://localhost:5000/api/viajes/solicitar-trabajadores`,
@@ -104,12 +90,13 @@ export const ContratistaProvider = ({ children }) => {
     } catch (error) {
       console.error("Error al agendar viaje normal:", error.message);
     }
-  };
-  //Cancelar solicitud normal
-  const cancelarSolicitudNormal = async (solicitudId) => {
+  }, []);
+
+  // Cancelar solicitud intercentro
+  const cancelarSolicitudIntercentro = useCallback(async (solicitudId) => {
     try {
       const response = await axios.delete(
-        `http://localhost:5000/api/viajes/cancelar-solicitud/${solicitudId}`,
+        `http://localhost:5000/api/intercentro/cancelarSolicitud/trabajador/${solicitudId}`,
         { withCredentials: true }
       );
       return response.data;
@@ -119,7 +106,8 @@ export const ContratistaProvider = ({ children }) => {
         error.message
       );
     }
-  };
+  }, []);
+
   return (
     <ContratistaContext.Provider
       value={{
@@ -129,17 +117,17 @@ export const ContratistaProvider = ({ children }) => {
         obtenerTrabajadores,
         obtenerSolicitudes,
         agregarTrabajadores,
-        agendarTrabajadores,
         obtenerSolicitudesIntercentro,
         cancelarSolicitudTrabajador,
         agendarNormal,
-        cancelarSolicitudNormal,
+        cancelarSolicitudIntercentro,
       }}
     >
       {children}
     </ContratistaContext.Provider>
   );
 };
+
 export const useContratista = () => {
   return useContext(ContratistaContext);
 };

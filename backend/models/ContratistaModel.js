@@ -28,28 +28,39 @@ const agendarTrabajadoresParaMovimiento = async (
   trabajadoresIds,
   comentario
 ) => {
+  const client = await pool.connect();
   try {
+    await client.query("BEGIN");
+
     // Paso 1: Verificar la lancha y su capacidad
-    const movimientoQuery = `SELECT lancha_id FROM movimientosintercentro WHERE id = $1`;
-    const movimientoResult = await pool.query(movimientoQuery, [movimientoId]);
+    const movimientoQuery = `
+      SELECT lancha_id, centro_destino_id
+      FROM movimientosintercentro
+      WHERE id = $1
+    `;
+    const movimientoResult = await client.query(movimientoQuery, [movimientoId]);
 
     if (movimientoResult.rows.length === 0) {
       throw new Error("Movimiento no encontrado o no tiene lancha asignada");
     }
-    const lanchaId = movimientoResult.rows[0].lancha_id;
+
+    const { lancha_id: lanchaId, centro_destino_id: centroDestinoId } =
+      movimientoResult.rows[0];
 
     // Obtener la capacidad actual de la lancha y cuántos usuarios están asignados
     const capacidadQuery = `
-        SELECT l.capacidad, COUNT(umi.trabajador_id) AS trabajadores_actuales
-        FROM lanchas l
-        LEFT JOIN usuariosmovimientosintercentro umi ON umi.movimiento_id = $1 AND umi.estado = 'aprobado'
-        WHERE l.id = $2
-        GROUP BY l.capacidad;
-      `;
-    const capacidadResult = await pool.query(capacidadQuery, [
+      SELECT l.capacidad, COUNT(umi.trabajador_id) AS trabajadores_actuales
+      FROM lanchas l
+      LEFT JOIN usuariosmovimientosintercentro umi 
+      ON umi.movimiento_id = $1 AND umi.estado = 'aprobado'
+      WHERE l.id = $2
+      GROUP BY l.capacidad;
+    `;
+    const capacidadResult = await client.query(capacidadQuery, [
       movimientoId,
       lanchaId,
     ]);
+
     const { capacidad, trabajadores_actuales } = capacidadResult.rows[0];
     const cuposDisponibles = capacidad - trabajadores_actuales;
 
@@ -59,28 +70,67 @@ const agendarTrabajadoresParaMovimiento = async (
       );
     }
 
-    // Paso 2: Agregar trabajadores al movimiento
-    const query = `
-        INSERT INTO usuariosmovimientosintercentro (movimiento_id, trabajador_id, estado, comentario)
-        VALUES ($1, $2, 'pendiente', $3)
-        RETURNING *;
-      `;
+    // Paso 2: Obtener el pontón asociado al centro destino (relación directa)
+    const pontonQuery = `
+      SELECT ponton_id
+      FROM centro
+      WHERE id = $1
+    `;
+    const pontonResult = await client.query(pontonQuery, [centroDestinoId]);
+
+    if (pontonResult.rows.length === 0) {
+      throw new Error("El centro destino no tiene un pontón asociado");
+    }
+    const pontonId = pontonResult.rows[0].ponton_id;
+
+    // Paso 3: Registrar trabajadores en el movimiento y en el pontón si no existen
+    const movimientoQueryInsert = `
+      INSERT INTO usuariosmovimientosintercentro (movimiento_id, trabajador_id, estado, comentario)
+      SELECT $1, $2, 'pendiente', $3
+      WHERE NOT EXISTS (
+        SELECT 1 FROM usuariosmovimientosintercentro
+        WHERE movimiento_id = $1 AND trabajador_id = $2
+      )
+      RETURNING *;
+    `;
+
+    const pontonQueryInsert = `
+      INSERT INTO usuarios_pontones (ponton_id, trabajador_id, estado)
+      SELECT $1, $2, 'pendiente'
+      WHERE NOT EXISTS (
+        SELECT 1 FROM usuarios_pontones
+        WHERE ponton_id = $1 AND trabajador_id = $2
+      )
+      RETURNING *;
+    `;
+
     const reservas = [];
     for (const trabajadorId of trabajadoresIds) {
-      const response = await pool.query(query, [
+      // Registrar trabajador en el movimiento si no existe
+      const movimientoResponse = await client.query(movimientoQueryInsert, [
         movimientoId,
         trabajadorId,
         comentario,
       ]);
-      reservas.push(response.rows[0]);
+      if (movimientoResponse.rows.length > 0) {
+        reservas.push(movimientoResponse.rows[0]);
+      }
+
+      // Registrar trabajador en el pontón si no existe
+      await client.query(pontonQueryInsert, [pontonId, trabajadorId]);
     }
 
+    await client.query("COMMIT");
     return reservas;
   } catch (error) {
+    await client.query("ROLLBACK");
     console.error("Error al agendar trabajadores para el movimiento:", error);
     throw new Error("Hubo un error al agendar trabajadores para el movimiento");
+  } finally {
+    client.release();
   }
 };
+
 //Obtener la lista de solicitudes de trabajadores para un contratista ( Intercentro )
 const obtenerSolicitudesIntercentro = async (contratistaId) => {
   try {

@@ -1,7 +1,13 @@
 import React, { useEffect, useMemo, useState } from "react";
 import SolicitudCard from "./SolicitudCard";
+import SolicitudIntercentroCard from "./SolicitudIntercentroCard";
 import { useContratista } from "../../Context/ContratistaContext";
-import { FaUser, FaCalendarAlt, FaSuitcaseRolling, FaMapMarkerAlt } from "react-icons/fa";
+import {
+  FaUser,
+  FaCalendarAlt,
+  FaSuitcaseRolling,
+  FaMapMarkerAlt,
+} from "react-icons/fa";
 
 const ListaSolicitudes = () => {
   const {
@@ -9,6 +15,8 @@ const ListaSolicitudes = () => {
     solicitudesIntercentro,
     obtenerSolicitudes,
     obtenerSolicitudesIntercentro,
+    cancelarSolicitudTrabajador,
+    cancelarSolicitudIntercentro,
   } = useContratista();
 
   const [filtrosNormales, setFiltrosNormales] = useState({
@@ -28,24 +36,46 @@ const ListaSolicitudes = () => {
     obtenerSolicitudesIntercentro();
   }, []);
 
-  // Manejo de filtros para solicitudes normales
   const handleFiltroNormalesChange = (e) => {
     const { name, value } = e.target;
     setFiltrosNormales((prev) => ({ ...prev, [name]: value }));
   };
 
-  // Manejo de filtros para solicitudes intercentro
   const handleFiltroIntercentroChange = (e) => {
     const { name, value } = e.target;
     setFiltrosIntercentro((prev) => ({ ...prev, [name]: value }));
   };
 
-  // Filtrar solicitudes normales
+  const handleCancelSolicitudNormal = async (solicitudId) => {
+    if (!window.confirm("¿Estás seguro de que deseas cancelar esta solicitud?"))
+      return;
+
+    try {
+      await cancelarSolicitudTrabajador(solicitudId);
+      await obtenerSolicitudes(); // Actualizamos la lista de solicitudes normales
+    } catch (error) {
+      console.error("Error al cancelar la solicitud normal:", error);
+    }
+  };
+  const handleCancelIntercentro = async (solicitudId) => {
+    if (!window.confirm("¿Estás seguro de que deseas cancelar esta solicitud?"))
+      return;
+
+    try {
+      await cancelarSolicitudIntercentro(solicitudId);
+      await obtenerSolicitudesIntercentro(); // Actualizamos la lista de solicitudes intercentro
+    } catch (error) {
+      console.error("Error al cancelar la solicitud de intercentro:", error);
+    }
+  };
+
   const solicitudesFiltradas = useMemo(() => {
     return solicitudes.filter((solicitud) => {
       const { trabajador, viaje, fecha_inicio } = solicitud;
-      const fechaSolicitud = new Date(fecha_inicio).toISOString().split("T")[0];
-
+      const fechaSolicitud =
+        fecha_inicio && !isNaN(new Date(fecha_inicio).getTime())
+          ? new Date(fecha_inicio).toISOString().split("T")[0]
+          : null;
       return (
         (!filtrosNormales.nombre ||
           trabajador.nombre
@@ -53,16 +83,20 @@ const ListaSolicitudes = () => {
             .includes(filtrosNormales.nombre.toLowerCase())) &&
         (!filtrosNormales.fecha || fechaSolicitud === filtrosNormales.fecha) &&
         (!filtrosNormales.viaje ||
-          viaje.nombre.toLowerCase().includes(filtrosNormales.viaje.toLowerCase()))
+          viaje.nombre
+            .toLowerCase()
+            .includes(filtrosNormales.viaje.toLowerCase()))
       );
     });
   }, [filtrosNormales, solicitudes]);
 
-  // Filtrar solicitudes intercentro
   const solicitudesIntercentroFiltradas = useMemo(() => {
     return solicitudesIntercentro.filter((solicitud) => {
       const { trabajador, centro_origen, fecha_inicio } = solicitud;
-      const fechaSolicitud = new Date(fecha_inicio).toISOString().split("T")[0];
+      const fechaSolicitud =
+        fecha_inicio && !isNaN(new Date(fecha_inicio).getTime())
+          ? new Date(fecha_inicio).toISOString().split("T")[0]
+          : null;
 
       return (
         (!filtrosIntercentro.nombre ||
@@ -72,7 +106,7 @@ const ListaSolicitudes = () => {
         (!filtrosIntercentro.fecha ||
           fechaSolicitud === filtrosIntercentro.fecha) &&
         (!filtrosIntercentro.centro ||
-          centro_origen.nombre
+          centro_origen
             .toLowerCase()
             .includes(filtrosIntercentro.centro.toLowerCase()))
       );
@@ -82,10 +116,10 @@ const ListaSolicitudes = () => {
   return (
     <div className="p-6 min-h-screen space-y-8">
       <h1 className="text-2xl font-bold text-gray-900">Lista de Solicitudes</h1>
-
-      {/* Filtros para Solicitudes Normales */}
       <div className="bg-white rounded-lg shadow p-4">
-        <h2 className="text-lg font-semibold text-gray-700 mb-4">Filtrar Solicitudes Normales</h2>
+        <h2 className="text-lg font-semibold text-gray-700 mb-4">
+          Filtrar Solicitudes Normales
+        </h2>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           <FiltroInput
             id="nombre"
@@ -113,14 +147,18 @@ const ListaSolicitudes = () => {
           />
         </div>
       </div>
-
-      {/* Lista de Solicitudes Normales */}
       <div>
-        <h2 className="text-xl font-bold text-gray-800 mb-4">Solicitudes Normales</h2>
-        <div className="space-y-4">
+        <h2 className="text-xl font-bold text-gray-800 mb-4">
+          Solicitudes Normales
+        </h2>
+        <div className="max-h-96 overflow-y-auto space-y-4">
           {solicitudesFiltradas.length > 0 ? (
             solicitudesFiltradas.map((solicitud) => (
-              <SolicitudCard key={solicitud.solicitud_id} solicitud={solicitud} />
+              <SolicitudCard
+                key={solicitud.solicitud_id}
+                solicitud={solicitud}
+                onCancel={handleCancelSolicitudNormal} // Función para cancelar solicitudes normales
+              />
             ))
           ) : (
             <div className="bg-white rounded-lg shadow p-6 text-center">
@@ -129,8 +167,6 @@ const ListaSolicitudes = () => {
           )}
         </div>
       </div>
-
-      {/* Filtros para Solicitudes Intercentro */}
       <div className="bg-white rounded-lg shadow p-4">
         <h2 className="text-lg font-semibold text-gray-700 mb-4">
           Filtrar Solicitudes Intercentro
@@ -162,18 +198,24 @@ const ListaSolicitudes = () => {
           />
         </div>
       </div>
-
-      {/* Lista de Solicitudes Intercentro */}
       <div>
-        <h2 className="text-xl font-bold text-gray-800 mb-4">Solicitudes Intercentro</h2>
-        <div className="space-y-4">
+        <h2 className="text-xl font-bold text-gray-800 mb-4">
+          Solicitudes Intercentro
+        </h2>
+        <div className="max-h-96 overflow-y-auto space-y-4">
           {solicitudesIntercentroFiltradas.length > 0 ? (
             solicitudesIntercentroFiltradas.map((solicitud) => (
-              <SolicitudCard key={solicitud.solicitud_id} solicitud={solicitud} />
+              <SolicitudIntercentroCard
+                key={solicitud.solicitud_id}
+                solicitud={solicitud}
+                onCancel={handleCancelIntercentro}
+              />
             ))
           ) : (
             <div className="bg-white rounded-lg shadow p-6 text-center">
-              <p className="text-gray-500">No hay solicitudes intercentro disponibles.</p>
+              <p className="text-gray-500">
+                No hay solicitudes intercentro disponibles.
+              </p>
             </div>
           )}
         </div>

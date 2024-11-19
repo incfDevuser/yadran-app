@@ -1,35 +1,68 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useLocation, useNavigate, Link } from "react-router-dom";
-import { FiCalendar, FiFileText, FiMapPin, FiArrowLeft } from "react-icons/fi";
+import { FiCalendar, FiFileText, FiMapPin, FiArrowLeft, FiUserCheck } from "react-icons/fi";
 import { useViajes } from "../../Context/ViajesContext";
+import { useContratista } from "../../Context/ContratistaContext";
 
 const ConfirmacionVuelo = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const { viaje } = location.state;
-  const { solicitarViaje } = useViajes();
+  const { solicitarViaje } = useViajes(); // Función para usuarios normales
+  const { trabajadores, obtenerTrabajadores, agendarNormal } = useContratista(); // Función para contratistas
 
   const [fechaInicio, setFechaInicio] = useState("");
   const [fechaFin, setFechaFin] = useState("");
   const [comentario, setComentario] = useState("");
   const [mensaje, setMensaje] = useState("");
+  const [trabajadoresSeleccionados, setTrabajadoresSeleccionados] = useState([]);
+
+  // Cargar trabajadores al montar el componente (solo contratistas)
+  useEffect(() => {
+    obtenerTrabajadores();
+  }, [obtenerTrabajadores]);
+
+  // Toggle para seleccionar/deseleccionar trabajadores
+  const toggleTrabajador = (id) => {
+    setTrabajadoresSeleccionados((prev) =>
+      prev.includes(id)
+        ? prev.filter((trabajadorId) => trabajadorId !== id)
+        : [...prev, id]
+    );
+  };
 
   const handleConfirmarAgendamiento = async () => {
-    const nuevaSolicitud = {
-      viaje_id: viaje.id,
-      fecha_inicio: fechaInicio,
-      fecha_fin: fechaFin,
-      comentario_usuario: comentario,
-    };
+    const nuevaSolicitud = trabajadoresSeleccionados.length
+      ? {
+          viaje_id: viaje.id,
+          trabajadores: trabajadoresSeleccionados,
+          fecha_inicio: fechaInicio,
+          fecha_fin: fechaFin,
+          comentario_contratista: comentario,
+        }
+      : {
+          viaje_id: viaje.id,
+          fecha_inicio: fechaInicio,
+          fecha_fin: fechaFin,
+          comentario_usuario: comentario,
+        };
 
     try {
-      await solicitarViaje(nuevaSolicitud);
+      if (trabajadoresSeleccionados.length) {
+        // Agendamiento para contratistas
+        await agendarNormal(nuevaSolicitud);
+      } else {
+        // Agendamiento para usuarios normales
+        await solicitarViaje(nuevaSolicitud);
+      }
       setMensaje("Viaje agendado con éxito.");
       setTimeout(() => navigate("/miPerfil"), 2000);
     } catch (error) {
+      console.error("Error al agendar el viaje:", error);
       setMensaje("Error al agendar el viaje. Inténtalo nuevamente.");
     }
   };
+
   return (
     <div className="max-w-lg mx-auto p-8 bg-white shadow-lg rounded-lg mt-8 transition-transform duration-300 ease-in-out">
       <h1 className="text-3xl font-bold mb-6 text-center text-gray-800">
@@ -61,6 +94,45 @@ const ConfirmacionVuelo = () => {
           </div>
         )}
       </div>
+
+      {/* Sección para selección de trabajadores (solo contratistas) */}
+      {trabajadores.length > 0 && (
+        <div className="bg-gray-100 p-4 rounded-lg mb-6 shadow-sm">
+          <h2 className="text-lg font-semibold text-gray-700 flex items-center">
+            <FiUserCheck className="mr-2 text-green-600" />
+            Seleccionar Trabajadores
+          </h2>
+          <div
+            className="flex flex-col items-center gap-2 max-h-64 overflow-y-auto border border-gray-300 rounded-lg p-4"
+            style={{ scrollbarWidth: "thin" }}
+          >
+            {trabajadores.map((trabajador) => (
+              <div
+                key={trabajador.trabajador_id}
+                className="flex gap-2 items-center justify-between bg-white p-2 rounded-lg shadow hover:shadow-md transition duration-200"
+              >
+                <div className="flex flex-col">
+                  <p className="text-gray-800 font-medium">{trabajador.trabajador_nombre}</p>
+                  <p className="text-gray-600 text-sm">{trabajador.trabajador_email}</p>
+                </div>
+                <button
+                  className={`px-4 py-2 rounded ${
+                    trabajadoresSeleccionados.includes(trabajador.trabajador_id)
+                      ? "bg-green-500 text-white"
+                      : "bg-gray-200 text-gray-800"
+                  }`}
+                  onClick={() => toggleTrabajador(trabajador.trabajador_id)}
+                >
+                  {trabajadoresSeleccionados.includes(trabajador.trabajador_id)
+                    ? "Seleccionado"
+                    : "Seleccionar"}
+                </button>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
       <div className="space-y-4">
         <div className="flex items-center">
           <FiCalendar className="text-blue-600 mr-2" />

@@ -1,7 +1,7 @@
 import React from "react";
 import GmailIcon from "../../Icons/GmailIcon";
 
-const SolicitudCard = ({ solicitud }) => {
+const SolicitudCard = ({ solicitud, onCancel }) => {
   const {
     solicitud_id,
     estado,
@@ -22,11 +22,15 @@ const SolicitudCard = ({ solicitud }) => {
   return (
     <div className="border border-gray-200 rounded-lg shadow p-4 bg-white hover:shadow-lg transition-shadow duration-200">
       <div className="flex items-center justify-between">
-        <h3 className="text-lg font-semibold text-gray-800">{trabajador.nombre}</h3>
+        <h3 className="text-lg font-semibold text-gray-800">
+          {trabajador.nombre}
+        </h3>
         <span
           className={`px-3 py-1 text-sm font-bold rounded-full ${
             estado === "Aprobado"
               ? "bg-green-100 text-green-800"
+              : estado === "Pendiente"
+              ? "bg-yellow-100 text-yellow-800"
               : "bg-red-100 text-red-800"
           }`}
         >
@@ -39,17 +43,30 @@ const SolicitudCard = ({ solicitud }) => {
           {trabajador.email}
         </p>
         <p className="text-sm text-gray-700">
-          <span className="font-semibold">Viaje:</span> {viaje.nombre} - {viaje.descripcion}
+          <span className="font-semibold">Viaje:</span> {viaje.nombre} -{" "}
+          {viaje.descripcion}
         </p>
         <p className="text-sm text-gray-700">
-          <span className="font-semibold">Duración:</span> Desde {formatearFecha(fecha_inicio)} hasta {formatearFecha(fecha_fin)}
+          <span className="font-semibold">Duración:</span> Desde{" "}
+          {formatearFecha(fecha_inicio)} hasta {formatearFecha(fecha_fin)}
         </p>
         {comentario_contratista && (
           <p className="text-sm text-gray-700">
-            <span className="font-semibold">Comentario:</span> {comentario_contratista}
+            <span className="font-semibold">Comentario:</span>{" "}
+            {comentario_contratista}
           </p>
         )}
       </div>
+      {estado === "Pendiente" && (
+        <div className="mt-4">
+          <button
+            className="bg-red-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-red-700 transition"
+            onClick={() => onCancel(solicitud_id)}
+          >
+            Cancelar Solicitud
+          </button>
+        </div>
+      )}
     </div>
   );
 };
