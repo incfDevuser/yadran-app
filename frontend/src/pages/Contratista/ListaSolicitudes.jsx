@@ -157,7 +157,7 @@ const ListaSolicitudes = () => {
               <SolicitudCard
                 key={solicitud.solicitud_id}
                 solicitud={solicitud}
-                onCancel={handleCancelSolicitudNormal} // Función para cancelar solicitudes normales
+                onCancel={handleCancelSolicitudNormal}
               />
             ))
           ) : (

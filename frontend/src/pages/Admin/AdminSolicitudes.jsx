@@ -1,13 +1,8 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { useSolicitudes } from "../../Context/SolicitudesContext";
-import {
-  FiCheckCircle,
-  FiXCircle,
-  FiEye,
-  FiClock,
-  FiUser,
-  FiCalendar,
-} from "react-icons/fi";
+import SolicitudNormalCard from "./Cards/SolicitudNormalCard";
+import SolicitudTrabajadoresCard from "./Cards/SolicitudTrabajadoresCard";
+import SolicitudIntercentroCard from "./Cards/SolicitudIntercentroCard";
 import AdminAside from "./AdminAside";
 
 const AdminSolicitudes = () => {
@@ -15,8 +10,6 @@ const AdminSolicitudes = () => {
     solicitudesNormales,
     solicitudesTrabajadores,
     solicitudesIntercentro,
-    loadingSolicitudes,
-    errorSolicitudes,
     obtenerSolicitudesNormales,
     obtenerSolicitudesTrabajadores,
     obtenerSolicitudesIntercentro,
@@ -35,127 +28,92 @@ const AdminSolicitudes = () => {
     obtenerSolicitudesIntercentro();
   }, []);
 
-  const filtrarPorEstado = (solicitudes, estado) => {
-    return solicitudes.filter((solicitud) => solicitud.estado === estado);
-  };
+  const filtrarPorEstado = (solicitudes) =>
+    solicitudes.filter(
+      (s) => s.estado.toLowerCase() === estadoFiltro.toLowerCase()
+    );
 
   const solicitudesFiltradasNormales = useMemo(
-    () => filtrarPorEstado(solicitudesNormales, estadoFiltro),
+    () => filtrarPorEstado(solicitudesNormales),
     [solicitudesNormales, estadoFiltro]
   );
-
   const solicitudesFiltradasTrabajadores = useMemo(
-    () => filtrarPorEstado(solicitudesTrabajadores, estadoFiltro),
+    () => filtrarPorEstado(solicitudesTrabajadores),
     [solicitudesTrabajadores, estadoFiltro]
   );
-
   const solicitudesFiltradasIntercentro = useMemo(
-    () => filtrarPorEstado(solicitudesIntercentro, estadoFiltro),
+    () => filtrarPorEstado(solicitudesIntercentro),
     [solicitudesIntercentro, estadoFiltro]
   );
 
-  const handleAprobar = async (solicitud, tipo) => {
+  const aprobarViajeNormal = async (solicitud_id) => {
     try {
-      if (tipo === "normal") await aprobarViaje(solicitud.solicitud_id);
-      else if (tipo === "trabajadores") await aprobarViaje(solicitud.solicitud_id);
-      else if (tipo === "intercentro") await aprobarIntercentro(solicitud.solicitud_id);
-
+      await aprobarViaje(solicitud_id);
       obtenerSolicitudesNormales();
-      obtenerSolicitudesTrabajadores();
-      obtenerSolicitudesIntercentro();
     } catch (error) {
-      console.error("Error al aprobar la solicitud:", error);
+      console.error("Error al aprobar el viaje normal:", error);
     }
   };
 
-  const handleRechazar = async (solicitud, tipo) => {
+  const rechazarViajeNormal = async (solicitud_id) => {
     try {
-      if (tipo === "normal") await rechazarViaje(solicitud.solicitud_id);
-      else if (tipo === "trabajadores") await rechazarViaje(solicitud.solicitud_id);
-      else if (tipo === "intercentro") await rechazarIntercentro(solicitud.solicitud_id);
-
+      await rechazarViaje(solicitud_id);
       obtenerSolicitudesNormales();
-      obtenerSolicitudesTrabajadores();
-      obtenerSolicitudesIntercentro();
     } catch (error) {
-      console.error("Error al rechazar la solicitud:", error);
+      console.error("Error al rechazar el viaje normal:", error);
     }
   };
 
-  const renderSolicitudCard = (solicitud, tipo) => (
-    <div
-      key={solicitud.solicitud_id}
-      className="bg-white shadow-lg rounded-lg p-6 hover:shadow-xl transition-shadow duration-300"
-    >
-      <h2 className="text-xl font-semibold text-gray-800">
-        {tipo === "trabajadores"
-          ? `${solicitud.trabajador.nombre} (${solicitud.trabajador.email})`
-          : solicitud.nombre_viaje}
-      </h2>
-      <p className="text-sm text-gray-600 mt-4 flex items-center">
-        <FiUser className="mr-2" />{" "}
-        {tipo === "trabajadores"
-          ? `Contratista: ${solicitud.contratista.nombre}`
-          : `Solicitante: ${solicitud.nombre_solicitante}`}
-      </p>
-      <p className="text-sm text-gray-600 flex items-center mt-2">
-        <FiCalendar className="mr-2" />
-        Fecha de solicitud: {new Date(solicitud.created_at).toLocaleDateString()}
-      </p>
-      <p className="text-sm text-gray-600 mt-2">
-        <strong>Comentario:</strong> {solicitud.comentario_usuario || "Sin comentario"}
-      </p>
-      {tipo === "trabajadores" && (
-        <p className="text-sm text-gray-600 mt-2">
-          <strong>Viaje:</strong> {solicitud.viaje.nombre} - {solicitud.viaje.descripcion}
-        </p>
-      )}
-      <div className="mt-6 flex justify-between items-center">
-        <button
-          className="text-blue-500 p-3 rounded-lg hover:text-blue-300 flex items-center text-lg"
-          onClick={() => setSelectedSolicitud(solicitud)}
-        >
-          <FiEye className="mr-1" /> Ver detalles
-        </button>
-        {solicitud.estado === "Pendiente" && (
-          <div className="flex items-center space-x-4">
-            <button
-              className="text-green-500 p-3 rounded-lg hover:text-green-300 flex items-center text-lg"
-              onClick={() => handleAprobar(solicitud, tipo)}
-            >
-              <FiCheckCircle className="mr-1" /> Aprobar
-            </button>
-            <button
-              className="text-red-500 p-3 rounded-lg hover:text-red-300 flex items-center text-lg"
-              onClick={() => handleRechazar(solicitud, tipo)}
-            >
-              <FiXCircle className="mr-1" /> Rechazar
-            </button>
-          </div>
-        )}
-      </div>
-    </div>
-  );
+  const aprobarViajeTrabajadores = async (solicitud_id) => {
+    try {
+      await aprobarViaje(solicitud_id);
+      obtenerSolicitudesTrabajadores();
+    } catch (error) {
+      console.error("Error al aprobar el viaje de trabajadores:", error);
+    }
+  };
 
-  if (loadingSolicitudes) {
-    return <div>Cargando solicitudes...</div>;
-  }
+  const rechazarViajeTrabajadores = async (solicitud_id) => {
+    try {
+      await rechazarViaje(solicitud_id);
+      obtenerSolicitudesTrabajadores();
+    } catch (error) {
+      console.error("Error al rechazar el viaje de trabajadores:", error);
+    }
+  };
 
-  if (errorSolicitudes) {
-    return <div>Error al cargar solicitudes: {errorSolicitudes}</div>;
-  }
+  const aprobarViajeIntercentro = async (solicitud_id) => {
+    try {
+      await aprobarIntercentro(solicitud_id);
+      obtenerSolicitudesIntercentro();
+    } catch (error) {
+      console.error("Error al aprobar el viaje intercentro:", error);
+    }
+  };
+
+  const rechazarViajeIntercentro = async (solicitud_id) => {
+    try {
+      await rechazarIntercentro(solicitud_id);
+      obtenerSolicitudesIntercentro();
+    } catch (error) {
+      console.error("Error al rechazar el viaje intercentro:", error);
+    }
+  };
 
   return (
     <div className="p-6 flex gap-4">
       <AdminAside />
       <div className="flex-1 space-y-8">
-        <h1 className="text-3xl font-extrabold text-gray-900">Solicitudes de Viaje</h1>
-
-        {/* Filtro por estado */}
+        <h1 className="text-3xl font-extrabold text-gray-900">
+          Solicitudes de Viaje
+        </h1>
+        {/* Filtro de estados */}
         <div className="mb-6 flex items-center gap-4">
           <button
             className={`px-4 py-2 rounded-lg ${
-              estadoFiltro === "Pendiente" ? "bg-yellow-500 text-white" : "bg-gray-200"
+              estadoFiltro === "Pendiente"
+                ? "bg-yellow-500 text-white"
+                : "bg-gray-200"
             }`}
             onClick={() => setEstadoFiltro("Pendiente")}
           >
@@ -163,7 +121,9 @@ const AdminSolicitudes = () => {
           </button>
           <button
             className={`px-4 py-2 rounded-lg ${
-              estadoFiltro === "Aprobado" ? "bg-green-500 text-white" : "bg-gray-200"
+              estadoFiltro === "Aprobado"
+                ? "bg-green-500 text-white"
+                : "bg-gray-200"
             }`}
             onClick={() => setEstadoFiltro("Aprobado")}
           >
@@ -171,62 +131,89 @@ const AdminSolicitudes = () => {
           </button>
           <button
             className={`px-4 py-2 rounded-lg ${
-              estadoFiltro === "Rechazado" ? "bg-red-500 text-white" : "bg-gray-200"
+              estadoFiltro === "Rechazado"
+                ? "bg-red-500 text-white"
+                : "bg-gray-200"
             }`}
             onClick={() => setEstadoFiltro("Rechazado")}
           >
             Rechazado
           </button>
         </div>
-
         {/* Solicitudes Normales */}
         <section>
-          <h2 className="text-2xl font-bold text-yellow-600 mb-4">Solicitudes Normales</h2>
+          <h2 className="text-2xl font-bold text-yellow-600 mb-4">
+            Solicitudes Normales
+          </h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-8">
-            {solicitudesFiltradasNormales.map((solicitud) =>
-              renderSolicitudCard(solicitud, "normal")
-            )}
+            {solicitudesFiltradasNormales.map((solicitud) => (
+              <SolicitudNormalCard
+                key={solicitud.solicitud_id}
+                solicitud={solicitud}
+                onAprobar={() => aprobarViajeNormal(solicitud.solicitud_id)}
+                onRechazar={() => rechazarViajeNormal(solicitud.solicitud_id)}
+                onVerDetalles={() => setSelectedSolicitud(solicitud)}
+              />
+            ))}
           </div>
         </section>
-
         {/* Solicitudes de Trabajadores */}
         <section>
-          <h2 className="text-2xl font-bold text-blue-600 mb-4">Solicitudes de Trabajadores</h2>
+          <h2 className="text-2xl font-bold text-blue-600 mb-4">
+            Solicitudes de Trabajadores
+          </h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-8">
-            {solicitudesFiltradasTrabajadores.map((solicitud) =>
-              renderSolicitudCard(solicitud, "trabajadores")
-            )}
+            {solicitudesFiltradasTrabajadores.map((solicitud) => (
+              <SolicitudTrabajadoresCard
+                key={solicitud.solicitud_id}
+                solicitud={solicitud}
+                onAprobar={() =>
+                  aprobarViajeTrabajadores(solicitud.solicitud_id)
+                }
+                onRechazar={() =>
+                  rechazarViajeTrabajadores(solicitud.solicitud_id)
+                }
+                onVerDetalles={() => setSelectedSolicitud(solicitud)}
+              />
+            ))}
           </div>
         </section>
-
         {/* Solicitudes Intercentro */}
         <section>
-          <h2 className="text-2xl font-bold text-purple-600 mb-4">Solicitudes Intercentro</h2>
+          <h2 className="text-2xl font-bold text-purple-600 mb-4">
+            Solicitudes Intercentro
+          </h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-8">
-            {solicitudesFiltradasIntercentro.map((solicitud) =>
-              renderSolicitudCard(solicitud, "intercentro")
-            )}
+            {solicitudesFiltradasIntercentro.map((solicitud) => (
+              <SolicitudIntercentroCard
+                key={solicitud.solicitud_id}
+                solicitud={solicitud}
+                onAprobar={() =>
+                  aprobarViajeIntercentro(solicitud.solicitud_id)
+                }
+                onRechazar={() =>
+                  rechazarViajeIntercentro(solicitud.solicitud_id)
+                }
+                onVerDetalles={() => setSelectedSolicitud(solicitud)}
+              />
+            ))}
           </div>
         </section>
-
-        {/* Modal para mostrar detalles */}
+        {/* Modal de Detalles */}
         {selectedSolicitud && (
           <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
             <div className="bg-white p-8 rounded-lg max-w-2xl w-full shadow-xl overflow-y-auto max-h-[80vh]">
-              <h2 className="text-2xl font-bold mb-6">Detalles de la Solicitud</h2>
+              <h2 className="text-2xl font-bold mb-6">
+                Detalles de la Solicitud
+              </h2>
               <p>
                 <strong>Estado:</strong> {selectedSolicitud.estado}
               </p>
               <p>
-                <strong>Comentario:</strong> {selectedSolicitud.comentario_usuario || "N/A"}
-              </p>
-              <p>
-                <strong>Fecha Inicio:</strong>{" "}
-                {new Date(selectedSolicitud.fecha_inicio).toLocaleDateString()}
-              </p>
-              <p>
-                <strong>Fecha Fin:</strong>{" "}
-                {new Date(selectedSolicitud.fecha_fin).toLocaleDateString()}
+                <strong>Comentario:</strong>{" "}
+                {selectedSolicitud.comentario_usuario ||
+                  selectedSolicitud.comentario ||
+                  "N/A"}
               </p>
               <button
                 className="mt-4 bg-red-500 text-white px-4 py-2 rounded-lg"

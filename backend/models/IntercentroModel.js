@@ -236,51 +236,89 @@ const aprobarSolicitud = async (solicitud_id) => {
   }
 };
 const rechazarSolicitud = async (solicitudId) => {
+  const client = await pool.connect();
   try {
-    // Paso 1: Seleccionamos el movimiento y verificamos si es usuario o trabajador
+    await client.query("BEGIN");
+
+    // Paso 1: Obtener los detalles de la solicitud (usuario o trabajador y movimiento)
     const solicitudQuery = `
-      SELECT movimiento_id, usuario_id, trabajador_id
+      SELECT usuario_id, trabajador_id, movimiento_id
       FROM usuariosmovimientosintercentro
       WHERE id = $1 AND estado = 'pendiente';
     `;
-    const solicitudResult = await pool.query(solicitudQuery, [solicitudId]);
+    const solicitudResult = await client.query(solicitudQuery, [solicitudId]);
 
     if (solicitudResult.rows.length === 0) {
       throw new Error("Solicitud no encontrada o ya procesada");
     }
 
-    const { movimiento_id, usuario_id, trabajador_id } =
+    const { usuario_id, trabajador_id, movimiento_id } =
       solicitudResult.rows[0];
 
-    // Paso 2: Cambiamos el estado de la solicitud a "rechazado"
-    const updateQuery = `
+    // Paso 2: Actualizar el estado de la solicitud a "Rechazado"
+    const updateSolicitudQuery = `
       UPDATE usuariosmovimientosintercentro
       SET estado = 'rechazado'
       WHERE id = $1
-      RETURNING movimiento_id, usuario_id, trabajador_id;
+      RETURNING *;
     `;
-    const updateResponse = await pool.query(updateQuery, [solicitudId]);
+    const updatedSolicitud = await client.query(updateSolicitudQuery, [
+      solicitudId,
+    ]);
 
-    // Paso 3: Mantener la solicitud en la tabla, pero liberando el cupo de la lancha asociada
-    const liberarCupoQuery = `
-      UPDATE usuariosmovimientosintercentro
-      SET movimiento_id = NULL
-      WHERE id = $1 
-      AND estado = 'rechazado';
+    // Paso 3: Eliminar al usuario o trabajador de la lancha asociada al movimiento
+    const deleteLanchaUsuarioQuery = `
+      DELETE FROM usuariosmovimientosintercentro
+      WHERE movimiento_id = $1 AND (usuario_id = $2 OR trabajador_id = $3) AND estado = 'rechazado';
     `;
-    await pool.query(liberarCupoQuery, [solicitudId]);
+    await client.query(deleteLanchaUsuarioQuery, [
+      movimiento_id,
+      usuario_id,
+      trabajador_id,
+    ]);
 
+    // Paso 4: Obtener el pontón asociado al movimiento (a través del centro destino)
+    const pontonQuery = `
+      SELECT p.id AS ponton_id
+      FROM ponton p
+      JOIN centro c ON c.ponton_id = p.id
+      JOIN movimientosintercentro mi ON mi.centro_destino_id = c.id
+      WHERE mi.id = $1;
+    `;
+    const pontonResult = await client.query(pontonQuery, [movimiento_id]);
+
+    if (pontonResult.rows.length > 0) {
+      const { ponton_id } = pontonResult.rows[0];
+
+      // Paso 5: Eliminar al usuario o trabajador del pontón
+      const deleteUsuarioPontonQuery = `
+        DELETE FROM usuarios_pontones
+        WHERE ponton_id = $1 AND (usuario_id = $2 OR trabajador_id = $3);
+      `;
+      await client.query(deleteUsuarioPontonQuery, [
+        ponton_id,
+        usuario_id,
+        trabajador_id,
+      ]);
+    }
+
+    await client.query("COMMIT");
     return {
-      message: "Solicitud rechazada y cupo liberado de la lancha",
-      solicitud: updateResponse.rows[0],
+      message:
+        "Solicitud de intercentro rechazada, cupos liberados de lancha y pontón",
+      solicitud: updatedSolicitud.rows[0],
     };
   } catch (error) {
-    console.error("Error al rechazar la solicitud:", error);
+    await client.query("ROLLBACK");
+    console.error("Error al rechazar la solicitud de intercentro:", error);
     throw new Error(
-      "Hubo un error al rechazar la solicitud y liberar el cupo en la lancha"
+      "Hubo un error al rechazar la solicitud de intercentro y liberar cupos"
     );
+  } finally {
+    client.release();
   }
 };
+
 //Finalizar el viaje de los intercentro y eliminar los usuarios asociados
 const completarMovimiento = async (movimientoId) => {
   try {
@@ -322,7 +360,7 @@ const obtenerSolicitudesIntercentro = async () => {
       JOIN movimientosintercentro mi ON umi.movimiento_id = mi.id
       LEFT JOIN lanchas l ON mi.lancha_id = l.id
       LEFT JOIN centro co ON mi.centro_origen_id = co.id
-      LEFT JOIN centro cd ON mi.centro_destino_id = cd.id
+      LEFT JOIN centro cd ON mi.centro_destino_id = cd.id;
     `;
     const response = await pool.query(query);
     return response.rows;
@@ -331,6 +369,7 @@ const obtenerSolicitudesIntercentro = async () => {
     throw new Error("Hubo un error al obtener las solicitudes de intercentro");
   }
 };
+
 const cancelarSolicitudUsuario = async (solicitudId) => {
   const client = await pool.connect();
   try {

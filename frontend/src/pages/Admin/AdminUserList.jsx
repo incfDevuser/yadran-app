@@ -1,6 +1,7 @@
 import React from 'react'
 import AdminAside from './AdminAside';
 import ListaDeUsuarios from '../User/ListaDeUsuarios';
+
 const AdminUserList = () => {
   return (
     <div className="flex w-full h-full mt-11">

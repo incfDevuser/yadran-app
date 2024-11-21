@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { useUsuario } from "../../Context/UsuarioContext";
-import { Card, Badge, Icon, Text, Title, Grid } from "@tremor/react";
+import { Card, Badge, Icon, Text, Grid } from "@tremor/react";
 import { UserIcon, ShieldCheckIcon } from "@heroicons/react/24/solid";
 
 const ListaDeUsuarios = () => {
@@ -10,48 +10,45 @@ const ListaDeUsuarios = () => {
     obtenerUsuarios();
   }, []);
 
-  if (loading) return <Text>Cargando usuarios...</Text>;
-  if (error) return <Text>Error: {error}</Text>;
+  if (loading) return <Text className="text-center text-gray-700">Cargando usuarios...</Text>;
+  if (error) return <Text className="text-center text-red-500">Error: {error}</Text>;
 
   return (
-    <div>
+    <div className="mt-5">
       <Grid
         numCols={1}
         numColsMd={2}
         numColsLg={3}
         gap={6}
-        className="flex flex-col gap-2"
+        className="gap-6"
       >
         {listaUsuarios.map((usuario) => (
           <Card
             key={usuario.id}
-            className="p-5 border border-gray-200 rounded-2xl shadow-md hover:shadow-lg transition-shadow duration-300 bg-white"
+            className="p-5 border border-gray-300 rounded-2xl shadow-md hover:shadow-lg transition-shadow duration-300 bg-white"
           >
             <div className="flex items-center space-x-4 mb-4">
-              <Icon icon={UserIcon} className="w-6 h-6 text-blue-500" />
+              <div className="flex items-center justify-center w-12 h-12 bg-blue-100 rounded-full">
+                <Icon icon={UserIcon} className="w-6 h-6 text-blue-500" />
+              </div>
               <div>
-                <Text className="text-xl font-semibold text-gray-800">
-                  {usuario.nombre}
-                </Text>
-                <Text className="text-sm text-gray-500">{usuario.email}</Text>
+                <Text className="text-lg font-semibold text-gray-800">{usuario.nombre}</Text>
+                <Text className="text-sm text-gray-500 italic">{usuario.email}</Text>
               </div>
             </div>
-            <div className="mb-4 flex items-center space-x-2">
+            <div className="mb-4 flex items-center space-x-3">
               <Badge
                 color="blue"
-                className="text-xs bg-blue-100 text-blue-600 px-2 py-1 rounded-full"
+                className="text-xs bg-blue-100 text-blue-600 px-3 py-1 rounded-lg"
               >
                 {usuario.nombre_rol}
               </Badge>
               {usuario.isadmin && (
                 <Badge
                   color="green"
-                  className="text-xs bg-green-100 text-green-600 px-2 py-1  flex flex-row justify-center items-center rounded-full"
+                  className="text-xs bg-green-100 text-green-600 px-3 py-1 flex items-center gap-1 rounded-lg"
                 >
-                  <div className="flex justify-center items-center gap-2">
-                  <p>Admin</p>
-                  <Icon icon={ShieldCheckIcon} />
-                  </div>
+                  <Icon icon={ShieldCheckIcon} className="w-4 h-4" />
                 </Badge>
               )}
             </div>

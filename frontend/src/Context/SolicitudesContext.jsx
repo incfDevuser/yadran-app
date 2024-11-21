@@ -87,7 +87,7 @@ export const SolicitudesProvider = ({ children }) => {
 
   const rechazarIntercentro = async (id) => {
     try {
-      const response = await axios.patch(
+      const response = await axios.put(
         `http://localhost:5000/api/intercentro/solicitudes/${id}/cancelar`
       );
       return response.data;
