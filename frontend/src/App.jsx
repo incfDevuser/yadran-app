@@ -51,6 +51,9 @@ import ConfirmacionVuelo from "./pages/Flight/ConfirmacionVuelo";
 //Pagina de Espera
 import WaitingPage from "./pages/User/WaitingPage";
 
+//Roles
+import { RolesProvider } from "./Context/RolesContext";
+
 //Contratista
 import ContratistaDashboard from "./pages/Contratista/ContratistaDashboard";
 import { ContratistaProvider } from "./Context/ContratistaContext";
@@ -154,9 +157,9 @@ const App = () => {
             <Route
               path="/adminUserList"
               element={
-                <UsuariosProvider>
+                <RolesProvider>
                   <AdminUserList />
-                </UsuariosProvider>
+                </RolesProvider>
               }
             />
 

@@ -27,7 +27,6 @@ export const UsuariosProvider = ({ children }) => {
           }
         );
         const data = response.data;
-        console.log("Perfil del usuario:", data);
         setUsuarios(data);
         setIsAutenticado(true);
         setIsAdmin(data.isadmin);
@@ -40,15 +39,12 @@ export const UsuariosProvider = ({ children }) => {
     };
     miPerfil();
   }, []);
-
-  // Obtener la lista de usuarios
   const obtenerUsuarios = async () => {
     setLoading(true);
     try {
       const response = await axios.get("http://localhost:5000/api/usuarios", {
         withCredentials: true,
       });
-      console.log("Lista de usuarios:", response.data);
       setListaUsuarios(response.data);
     } catch (error) {
       setError(error.message || "Hubo un error al cargar los usuarios");
@@ -56,8 +52,6 @@ export const UsuariosProvider = ({ children }) => {
       setLoading(false);
     }
   };
-
-  // Iniciar sesión con Google
   const iniciarSesion = async () => {
     try {
       const googleAuthUrl = "http://localhost:5000/auth/google";
@@ -70,8 +64,6 @@ export const UsuariosProvider = ({ children }) => {
       throw new Error("Login failed. Please check your credentials.");
     }
   };
-
-  // Cerrar sesión
   const cerrarSesion = async () => {
     try {
       await axios.post(
@@ -89,8 +81,6 @@ export const UsuariosProvider = ({ children }) => {
       console.error("Error al cerrar sesión:", error);
     }
   };
-
-  // Cancelar un viaje por parte del usuario
   const cancelarViaje = async (solicitudId) => {
     try {
       const response = await axios.delete(
@@ -106,8 +96,6 @@ export const UsuariosProvider = ({ children }) => {
       throw new Error("Error al cancelar el viaje. Intenta de nuevo.");
     }
   };
-
-  // Proveedor del contexto
   return (
     <UsuariosContext.Provider
       value={{
@@ -127,6 +115,4 @@ export const UsuariosProvider = ({ children }) => {
     </UsuariosContext.Provider>
   );
 };
-
-// Hook para usar el contexto
 export const useUsuario = () => useContext(UsuariosContext);

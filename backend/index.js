@@ -42,6 +42,8 @@ import rolesRoutes from "./routes/roles.routes.js";
 import notificacionRoutes from "./routes/notificaciones.routes.js";
 //Qrs
 import qrRoutes from "./routes/qe.routes.js";
+//Seguimiento de viaje
+import seguimientoViajes from "./routes/seguimiento.routes.js"
 
 //Definiciones y variables globales
 dotenv.config();
@@ -114,6 +116,8 @@ app.use("/api/roles", rolesRoutes);
 app.use("/api/notificaciones", notificacionRoutes);
 //Rutas para los QR
 app.use("/api/qr", qrRoutes);
+//Rutas para seguimiento de viaje
+app.use("/api/seguimiento", seguimientoViajes);
 
 //Node cron para obtener los vuelos
 const cronJob = cron.schedule("*/10 * * * *", async () => {
