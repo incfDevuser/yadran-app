@@ -9,7 +9,6 @@ import AdminRoutes from "./pages/Admin/AdminRoutes";
 import AdminReportes from "./pages/Admin/AdminReportes";
 import AdminProveedores from "./pages/Admin/AdminProveedores";
 import AdminDashboard from "./pages/Admin/AdminDashboard";
-import AdminConfiguracion from "./pages/Admin/AdminConfiguracion";
 import AdminVehiculos from "./pages/Admin/AdminVehiculos";
 import AdminViajes from "./pages/Admin/AdminViajes";
 import AdminSolicitudes from "./pages/Admin/AdminSolicitudes";
@@ -57,6 +56,9 @@ import { RolesProvider } from "./Context/RolesContext";
 //Contratista
 import ContratistaDashboard from "./pages/Contratista/ContratistaDashboard";
 import { ContratistaProvider } from "./Context/ContratistaContext";
+
+//Seguimiento
+
 
 const App = () => {
   return (
@@ -214,10 +216,6 @@ const App = () => {
                   </ZonasProvider>
                 </JurisdiccionProvider>
               }
-            />
-            <Route
-              path="/adminConfiguracion"
-              element={<AdminConfiguracion />}
             />
             <Route
               path="/adminVehiculos"
