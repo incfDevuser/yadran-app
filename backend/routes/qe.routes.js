@@ -10,6 +10,7 @@ router.post("/asignar-qr/:ponton_id", QrController.asignarQRAPonton);
 //Ruta para eliminar QR del pontón
 router.delete("/eliminar-qr/:ponton_id", QrController.eliminarQRPonton);
 
+
 //Ruta para registrarse en vehiculo - trayecto, UNICO DE CADA TRAYECTO
 router.post(
   "/registrar-en-trayecto",

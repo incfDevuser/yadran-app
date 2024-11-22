@@ -146,14 +146,13 @@ const CreateCentroModal = ({ isOpen, onClose }) => {
               >
                 <option value="">Selecciona un Ponton</option>
                 {pontones.map((ponton) => (
-                  <option key={ponton.id} value={ponton.id}>
+                  <option key={ponton.ponton_id} value={ponton.ponton_id}>
                     {ponton.nombre_ponton}
                   </option>
                 ))}
               </select>
             )}
           </div>
-
           <div className="mb-4">
             <label className="block text-gray-700 mb-2">Ruta Asociada</label>
             {loadingRutas ? (

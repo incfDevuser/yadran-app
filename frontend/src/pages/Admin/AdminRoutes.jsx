@@ -47,6 +47,13 @@ const AdminRoutes = () => {
     estado: "Pendiente",
     vehiculo_id: "",
   });
+  const descargarPDF = (trayecto) => {
+    const doc = new jsPDF();
+    doc.setFontSize(16);
+    doc.text(`Trayecto: ${trayecto.origen} → ${trayecto.destino}`, 10, 20);
+    doc.addImage(trayecto.qr_code, "JPEG", 10, 30, 100, 100);
+    doc.save(`Trayecto_${trayecto.id}.pdf`);
+  };
   const filteredVuelos = vuelos.filter((vuelo) =>
     vuelo.numero_vuelo.toLowerCase().includes(searchTerm.toLowerCase())
   );
@@ -516,6 +523,23 @@ const AdminRoutes = () => {
                             </div>
                           </div>
                         </div>
+
+                        {/* Mostrar QR si está disponible */}
+                        {trayecto.qr_code && (
+                          <div className="mt-4 flex flex-col items-center">
+                            <img
+                              src={trayecto.qr_code}
+                              alt={`QR Trayecto ${trayecto.id}`}
+                              className="w-32 h-32"
+                            />
+                            <button
+                              onClick={() => descargarPDF(trayecto)}
+                              className="mt-4 bg-blue-500 text-white px-4 py-2 rounded"
+                            >
+                              Descargar QR en PDF
+                            </button>
+                          </div>
+                        )}
                       </div>
                     ))}
                   </div>
