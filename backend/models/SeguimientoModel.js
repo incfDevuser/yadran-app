@@ -35,8 +35,8 @@ const getDetalleCompletoViaje = async (viajeId) => {
       vu.usuario_id,
       vu.trabajador_id,
       vu.estado AS estado_usuario,
-      u.nombre AS nombre_usuario,
-      u.email AS email_usuario,
+      COALESCE(u.nombre, t2.nombre) AS nombre_usuario,
+      COALESCE(u.email, t2.email) AS email_usuario,
       t.origen AS trayecto_origen,
       t.destino AS trayecto_destino,
       v.tipo_vehiculo AS tipo_vehiculo
@@ -51,11 +51,9 @@ const getDetalleCompletoViaje = async (viajeId) => {
   const usuariosPontonQuery = `
     SELECT 
       up.usuario_id,
-      u.nombre AS nombre_usuario,
-      u.email AS email_usuario,
+      COALESCE(u.nombre, t.nombre) AS nombre_usuario,
+      COALESCE(u.email, t.email) AS email_usuario,
       up.trabajador_id,
-      t.nombre AS nombre_trabajador,
-      t.email AS email_trabajador,
       p.id AS ponton_id,
       p.nombre_ponton AS nombre_ponton
     FROM usuarios_pontones up
