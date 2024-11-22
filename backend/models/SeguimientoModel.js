@@ -26,7 +26,7 @@ const getDetalleCompletoViaje = async (viajeId) => {
     FROM trayectos t
     LEFT JOIN vehiculos v ON t.vehiculo_id = v.id
     LEFT JOIN choferes c ON v.chofer_id = c.id
-    WHERE t.ruta_id = (SELECT ruta_id FROM viajes WHERE id = $1);
+    WHERE t.ruta_id = (SELECT ruta_id FROM viajes WHERE id = $1 LIMIT 1);
   `;
 
   const usuariosVehiculosQuery = `
@@ -45,7 +45,7 @@ const getDetalleCompletoViaje = async (viajeId) => {
     LEFT JOIN usuarios u ON vu.usuario_id = u.id
     LEFT JOIN trabajadores t2 ON vu.trabajador_id = t2.id
     LEFT JOIN vehiculos v ON vu.vehiculo_id = v.id
-    WHERE t.ruta_id = (SELECT ruta_id FROM viajes WHERE id = $1);
+    WHERE t.ruta_id = (SELECT ruta_id FROM viajes WHERE id = $1 LIMIT 1);
   `;
 
   const usuariosPontonQuery = `
@@ -66,11 +66,17 @@ const getDetalleCompletoViaje = async (viajeId) => {
       JOIN rutas r ON c.ruta_id = r.id
       JOIN viajes v ON r.id = v.ruta_id
       WHERE v.id = $1
+      LIMIT 1
     );
   `;
 
   // Ejecutar todas las consultas en paralelo
-  const [viajeResult, trayectosResult, usuariosVehiculosResult, usuariosPontonResult] = await Promise.all([
+  const [
+    viajeResult,
+    trayectosResult,
+    usuariosVehiculosResult,
+    usuariosPontonResult,
+  ] = await Promise.all([
     pool.query(viajeQuery, [viajeId]),
     pool.query(trayectosQuery, [viajeId]),
     pool.query(usuariosVehiculosQuery, [viajeId]),

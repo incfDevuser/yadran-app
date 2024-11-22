@@ -6,6 +6,7 @@ const ViajesContext = createContext();
 export const ViajesProvider = ({ children }) => {
   const [viajes, setViajes] = useState([]);
   const [solicitudes, setSolicitudes] = useState([]);
+  const [detalleViaje, setDetalleViaje] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -17,6 +18,7 @@ export const ViajesProvider = ({ children }) => {
           withCredentials: true,
         });
         const data = response.data.viajes;
+        console.log(data)
         setViajes(data);
       } catch (error) {
         setError(error.message || "Hubo un error al cargar los viajes");
@@ -73,7 +75,25 @@ export const ViajesProvider = ({ children }) => {
       throw error;
     }
   };
-  //
+  const obtenerDetalleViaje = async (idViaje) => {
+    setLoading(true);
+    try {
+      const response = await axios.get(
+        `http://localhost:5000/api/seguimiento/viajes/${idViaje}/detalle`,
+        {
+          withCredentials: true,
+        }
+      );
+      setDetalleViaje(response.data.detalleViaje);
+      return response.data.detalleViaje;
+    } catch (error) {
+      console.error("Error al obtener el detalle del viaje:", error.message);
+      setError(error.message || "Hubo un error al cargar el detalle del viaje");
+      throw error;
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <ViajesContext.Provider
@@ -82,6 +102,8 @@ export const ViajesProvider = ({ children }) => {
         solicitudes,
         loading,
         error,
+        detalleViaje,
+        obtenerDetalleViaje,
         solicitarViaje,
         crearViaje,
       }}

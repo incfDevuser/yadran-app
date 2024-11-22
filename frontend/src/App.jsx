@@ -58,7 +58,7 @@ import ContratistaDashboard from "./pages/Contratista/ContratistaDashboard";
 import { ContratistaProvider } from "./Context/ContratistaContext";
 
 //Seguimiento
-
+import AdminSegumientosViaje from "./pages/Admin/AdminSegumientosViaje";
 
 const App = () => {
   return (
@@ -225,6 +225,15 @@ const App = () => {
                     <AdminVehiculos />
                   </ProveedoresProvider>
                 </VehiculosProvider>
+              }
+            />
+            {/* Admin seguimiento viaje */}
+            <Route
+              path="/adminSeguimientoViajes"
+              element={
+                <ViajesProvider>
+                  <AdminSegumientosViaje />
+                </ViajesProvider>
               }
             />
             <Route
