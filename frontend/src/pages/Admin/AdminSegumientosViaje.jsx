@@ -109,7 +109,6 @@ const AdminSegumientosViaje = () => {
               </div>
 
               {/* Trayectos con usuarios */}
-              {/* Trayectos con usuarios */}
               <div className="mb-6">
                 <h3 className="text-lg font-semibold text-gray-700 mb-3">
                   Trayectos y Usuarios
@@ -165,7 +164,8 @@ const AdminSegumientosViaje = () => {
                               </div>
                               <div
                                 className={`px-3 py-1 text-sm font-semibold rounded-full ${
-                                  usuario.estado_usuario === "Aprobado"
+                                  usuario.estado_usuario === "Aprobado" ||
+                                  usuario.estado_usuario === "Confirmado"
                                     ? "bg-green-100 text-green-600"
                                     : "bg-red-100 text-red-600"
                                 }`}
