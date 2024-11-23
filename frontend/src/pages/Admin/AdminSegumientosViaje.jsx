@@ -210,9 +210,20 @@ const AdminSegumientosViaje = () => {
                           </p>
                         </div>
 
-                        {/* Nombre del pontón */}
-                        <div className="px-3 py-1 text-sm font-semibold bg-indigo-100 text-indigo-600 rounded-full">
-                          {usuario.nombre_ponton}
+                        <div className="flex flex-col gap-2 justify-center">
+                          {/* Nombre del pontón */}
+                          <div className="px-3 py-1 text-sm font-semibold bg-indigo-100 text-indigo-600 rounded-full">
+                            {usuario.nombre_ponton}
+                          </div>
+                          <div
+                            className={`px-3 py-1 text-sm font-semibold rounded-full ${
+                              usuario.estado_usuario === "pendiente"
+                                ? "bg-green-100 text-green-600"
+                                : "bg-red-100 text-red-600"
+                            }`}
+                          >
+                            {usuario.estado_usuario}
+                          </div>
                         </div>
                       </li>
                     ))}

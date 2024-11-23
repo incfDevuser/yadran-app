@@ -54,6 +54,7 @@ const getDetalleCompletoViaje = async (viajeId) => {
       COALESCE(u.nombre, t.nombre) AS nombre_usuario,
       COALESCE(u.email, t.email) AS email_usuario,
       up.trabajador_id,
+      up.estado AS estado_usuario, -- Agregamos el estado del usuario en el pontón
       p.id AS ponton_id,
       p.nombre_ponton AS nombre_ponton
     FROM usuarios_pontones up

@@ -6,7 +6,6 @@ import { useVehiculos } from "../../Context/VehiculosContext";
 import { useVuelos } from "../../Context/VuelosContext";
 //Iconos
 import { IoTrashOutline } from "react-icons/io5";
-import { HiPencilSquare } from "react-icons/hi2";
 import { BsInfoSquare } from "react-icons/bs";
 import { FaLongArrowAltRight } from "react-icons/fa";
 import { FiClock } from "react-icons/fi";
