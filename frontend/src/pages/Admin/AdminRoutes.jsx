@@ -12,6 +12,7 @@ import { FaLongArrowAltRight } from "react-icons/fa";
 import { FiClock } from "react-icons/fi";
 import { IoAddCircleOutline } from "react-icons/io5";
 import { IoAirplaneOutline } from "react-icons/io5";
+import { FaQrcode } from "react-icons/fa";
 import VueloCard from "./components/VueloCard";
 
 const AdminRoutes = () => {
@@ -170,7 +171,7 @@ const AdminRoutes = () => {
                 <th className="py-2 px-4 border-b">Escalas</th>
                 <th className="py-2 px-4 border-b">Tiempo Estimado</th>
                 <th className="py-2 px-4 border-b">Mov Interno</th>
-                <th className="py-2 px-4 border-b">Fecha Creacion</th>
+                {/* <th className="py-2 px-4 border-b">Fecha Creacion</th> */}
                 <th className="py-2 px-4 border-b">Acciones</th>
               </tr>
             </thead>
@@ -189,9 +190,9 @@ const AdminRoutes = () => {
                   <td className="py-2 px-4 border-b">
                     {ruta.mov_interno ? "Si" : "No"}
                   </td>
-                  <td className="py-2 px-4 border-b">
-                    {ruta.fecha_agendamiento}
-                  </td>
+                  {/* <td className="py-2 px-4 border-b">
+                      {ruta.fecha_agendamiento}
+                    </td> */}
                   <td className="py-2 px-4 border-b">
                     <div className="flex justify-center space-x-2 text-xl">
                       <button
@@ -199,9 +200,6 @@ const AdminRoutes = () => {
                         className="text-red-500 px-3 py-1 rounded"
                       >
                         <IoTrashOutline />
-                      </button>
-                      <button className="text-blue-500 px-3 py-1 rounded">
-                        <HiPencilSquare />
                       </button>
                       <button
                         className="text-green-500 px-3 py-1 rounded"
@@ -479,11 +477,17 @@ const AdminRoutes = () => {
               <h2 className="text-xl font-bold mb-4">
                 Información de Trayectos de la Ruta
               </h2>
-              {/* Mapeo de los trayectos */}
+
+              {/* Contenedor para los trayectos */}
               <div className="flex flex-col mt-6">
                 <h3 className="text-lg font-semibold mb-2">Trayectos</h3>
                 {selectedRuta.trayectos.length > 0 ? (
-                  <div className="flex flex-col flex-wrap justify-center items-start gap-4">
+                  <div
+                    className="flex flex-col gap-4 overflow-y-auto max-h-[350px] pr-2"
+                    style={{
+                      scrollbarWidth: "thin", // Soporte para Firefox
+                    }}
+                  >
                     {selectedRuta.trayectos.map((trayecto) => (
                       <div
                         key={trayecto.id}
@@ -505,41 +509,37 @@ const AdminRoutes = () => {
                             </div>
                           </div>
 
+                          {/* Duración estimada */}
                           <div className="text-center ml-3">
-                            <p className="font-semibold">Duracion Estimada</p>
+                            <p className="font-semibold">Duración Estimada</p>
                             <div className="flex justify-center items-center gap-2 text-gray-500">
                               <FiClock />
-                              <div className="flex justify-center items-center gap-2 text-gray-500">
-                                <p>{trayecto.duracion_estimada}</p>
-                                <p>Min</p>
-                              </div>
+                              <p>{trayecto.duracion_estimada} Min</p>
                             </div>
                           </div>
 
+                          {/* Vehículo Asociado */}
                           <div className="text-center ml-3">
-                            <p className="font-semibold">Vehiculo Asociado</p>
-                            <div className="flex justify-center items-center gap-2 text-gray-500">
-                              <p>{trayecto.nombre_vehiculo}</p>
-                            </div>
+                            <p className="font-semibold">Vehículo Asociado</p>
+                            <p className="text-gray-500">
+                              {trayecto.nombre_vehiculo}
+                            </p>
                           </div>
-                        </div>
 
-                        {/* Mostrar QR si está disponible */}
-                        {trayecto.qr_code && (
-                          <div className="mt-4 flex flex-col items-center">
-                            <img
-                              src={trayecto.qr_code}
-                              alt={`QR Trayecto ${trayecto.id}`}
-                              className="w-32 h-32"
-                            />
-                            <button
-                              onClick={() => descargarPDF(trayecto)}
-                              className="mt-4 bg-blue-500 text-white px-4 py-2 rounded"
-                            >
-                              Descargar QR en PDF
-                            </button>
-                          </div>
-                        )}
+                          {/* QR Code */}
+                          {trayecto.qr_code && (
+                            <div className="mb-5 flex flex-col items-center">
+                              <a
+                                href={trayecto.qr_code}
+                                download={`QR_Trayecto_${trayecto.id}.png`}
+                                className="mt-4 flex items-center gap-2 text-blue-500 hover:text-blue-700"
+                              >
+                                <FaQrcode className="text-2xl" />
+                                QR
+                              </a>
+                            </div>
+                          )}
+                        </div>
                       </div>
                     ))}
                   </div>
@@ -547,6 +547,8 @@ const AdminRoutes = () => {
                   <p>Esta ruta no tiene trayectos asociados</p>
                 )}
               </div>
+
+              {/* Botón de Cerrar */}
               <div className="mt-6 flex justify-end">
                 <button
                   onClick={closeModal}

@@ -14,8 +14,6 @@ const Navbar = () => {
   const { usuarios, isAdmin, rol, cerrarSesion } = useUsuario();
 
   const locationPath = (route) => route === location.pathname;
-
-  // Enlaces para colaboradores
   const colaboradorNavBar = [
     { id: 1, label: "Inicio", path: "/" },
     { id: 2, label: "Proceso de Espera", path: "/proceso-espera" },
@@ -106,10 +104,13 @@ const Navbar = () => {
               Admin Panel
             </Link>
           )}
-          { rol === "Contratista"&& (
+          {rol === "Contratista" && (
             <Link to="/contratista-dashboard" className="text-[#7C8DB0]">
               Mis Trabajadores
             </Link>
+          )}
+          {rol === "Colaborador Autorizado" && !isAdmin && (
+            <Link className="text-gray-500" to="/validar">Validar</Link>
           )}
 
           {/* Botón de Sign In o Cerrar Sesión */}

@@ -126,6 +126,7 @@ const obtenerRutasConTrayectos = async () => {
         t.duracion_estimada,
         t.orden,
         t.vehiculo_id,
+        t.qr_code,
         t.created_at, -- Campo para ordenar los trayectos
         v.tipo_vehiculo AS nombre_vehiculo -- Obtener el nombre del vehículo
       FROM rutas r
@@ -162,6 +163,7 @@ const obtenerRutasConTrayectos = async () => {
           orden: row.orden,
           vehiculo_id: row.vehiculo_id,
           nombre_vehiculo: row.nombre_vehiculo,
+          qr_code: row.qr_code,
         });
       }
     });

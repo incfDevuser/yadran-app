@@ -41,7 +41,7 @@ const AdminSegumientosViaje = () => {
   }
 
   return (
-    <div className="flex bg-gray-50 min-h-screen">
+    <div className="flex min-h-screen">
       <AdminAside />
 
       <div className="flex-grow p-8">

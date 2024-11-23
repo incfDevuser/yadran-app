@@ -60,6 +60,10 @@ import { ContratistaProvider } from "./Context/ContratistaContext";
 //Seguimiento
 import AdminSegumientosViaje from "./pages/Admin/AdminSegumientosViaje";
 
+//Validar presencia en los dintintos puntos de control
+import Validaciones from "./pages/User/Validaciones";
+import { QrProvider } from "./Context/QrContext";
+
 const App = () => {
   return (
     <UsuariosProvider>
@@ -112,7 +116,15 @@ const App = () => {
                 </IntercentrosProvider>
               }
             />
-
+            {/* Ruta para validad la identidad */}
+            <Route
+              path="/validar"
+              element={
+                <QrProvider>
+                  <Validaciones />
+                </QrProvider>
+              }
+            />
             {/* Solicitudes del Usuario */}
             <Route path="/trips" element={<Trips />} />
 
