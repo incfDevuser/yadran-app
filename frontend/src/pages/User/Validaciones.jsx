@@ -3,33 +3,41 @@ import { Html5QrcodeScanner } from "html5-qrcode";
 import { useQr } from "../../Context/QrContext";
 
 const Validaciones = () => {
-  const { validarTrayecto } = useQr(); // Usa la función del contexto para validar trayectos
+  const { validarTrayecto, validarPonton } = useQr(); 
   const [mensaje, setMensaje] = useState(null);
   const [error, setError] = useState(null);
-  const [isScanning, setIsScanning] = useState(false); // Controla si la cámara está activa
-
+  const [isScanning, setIsScanning] = useState(false); 
+  const [tipoValidacion, setTipoValidacion] = useState("trayecto"); 
   useEffect(() => {
     let scanner;
 
     if (isScanning) {
-      // Inicia el escáner cuando isScanning es verdadero
       scanner = new Html5QrcodeScanner(
-        "reader", // ID del contenedor
-        { fps: 10, qrbox: 250 }, // Opciones
+        "reader",
+        { fps: 10, qrbox: 250 },
         false
       );
 
       scanner.render(
         async (text) => {
           try {
-            const qrContent = JSON.parse(text); // Procesa el QR como JSON
-            const response = await validarTrayecto({
-              trayecto_id: qrContent.trayecto_id,
-              vehiculo_id: qrContent.vehiculo_id,
-            });
-            setMensaje(response.message); // Muestra el mensaje de éxito
-            setError(null); // Limpia cualquier error previo
-            scanner.clear(); // Detiene el escaneo después de un resultado
+            const qrContent = JSON.parse(text);
+            if (tipoValidacion === "trayecto") {
+              // Validación para trayectos
+              const response = await validarTrayecto({
+                trayecto_id: qrContent.trayecto_id,
+                vehiculo_id: qrContent.vehiculo_id,
+              });
+              setMensaje(response.message);
+            } else if (tipoValidacion === "ponton") {
+              // Validación para pontones
+              const response = await validarPonton({
+                ponton_id: qrContent.ponton_id,
+              });
+              setMensaje(response.message); 
+            }
+            setError(null);
+            scanner.clear();
             setIsScanning(false);
           } catch (err) {
             console.error("Error al procesar el QR:", err);
@@ -43,19 +51,37 @@ const Validaciones = () => {
         }
       );
     }
-
     return () => {
       if (scanner) {
-        scanner.clear(); // Limpia el escáner al desmontar el componente
+        scanner.clear();
       }
     };
-  }, [isScanning, validarTrayecto]);
+  }, [isScanning, tipoValidacion, validarTrayecto, validarPonton]);
 
   return (
     <div className="max-w-5xl mx-auto p-6 bg-white shadow-lg rounded-lg mt-10">
       <h1 className="text-xl font-bold text-gray-900 mb-4">
         Escanea tu Código QR para validar tu presencia
       </h1>
+
+      <div className="flex gap-4 mb-4">
+        <button
+          className={`px-4 py-2 rounded ${
+            tipoValidacion === "trayecto" ? "bg-blue-500 text-white" : "bg-gray-200"
+          }`}
+          onClick={() => setTipoValidacion("trayecto")}
+        >
+          Validar Trayecto
+        </button>
+        <button
+          className={`px-4 py-2 rounded ${
+            tipoValidacion === "ponton" ? "bg-blue-500 text-white" : "bg-gray-200"
+          }`}
+          onClick={() => setTipoValidacion("ponton")}
+        >
+          Validar Pontón
+        </button>
+      </div>
 
       {!isScanning ? (
         <button

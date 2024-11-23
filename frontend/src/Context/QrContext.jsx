@@ -30,7 +30,7 @@ export const QrProvider = ({ children }) => {
   const validarPonton = async ({ ponton_id }) => {
     try {
       const response = await axios.post(
-        "/api/registrar-ponton",
+        "http://localhost:5000/api/qr/registrar-ponton",
         { ponton_id },
         {
           withCredentials: true,

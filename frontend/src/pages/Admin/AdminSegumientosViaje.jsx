@@ -218,8 +218,8 @@ const AdminSegumientosViaje = () => {
                           <div
                             className={`px-3 py-1 text-sm font-semibold rounded-full ${
                               usuario.estado_usuario === "pendiente"
-                                ? "bg-green-100 text-green-600"
-                                : "bg-red-100 text-red-600"
+                                ? "bg-red-100 text-red-600" // Rojo si es pendiente
+                                : "bg-green-100 text-green-600" // Verde si no es pendiente
                             }`}
                           >
                             {usuario.estado_usuario}
