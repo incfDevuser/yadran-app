@@ -3,6 +3,8 @@ import AdminAside from "./AdminAside";
 //Importar el contexto
 import { useVehiculos } from "../../Context/VehiculosContext";
 import { useProveedores } from "../../Context/ProveedoresContext";
+import { useChofer } from "../../Context/ChoferContext";
+import CrearChoferModal from "./Modals/CrearChoferModal";
 
 const AdminVehiculos = () => {
   const { vehiculos, crearVehiculo, eliminarVehiculo } = useVehiculos();
@@ -11,9 +13,12 @@ const AdminVehiculos = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isCreateModelOpen, setIsCreateModelOpen] = useState(false);
   const [selectedVehiculo, setSelectedVehiculo] = useState(null);
+  const [isChoferModalOpen, setIsChoferModalOpen] = useState(false);
+  const { choferes, loading: loadingChoferes } = useChofer();
   //Estado para crear el nuevo vehiculos
   const [nuevoVehiculo, setNuevoVehiculo] = useState({
     proveedor_id: null,
+    chofer_id: null,
     num_tripulantes: 0,
     tipo_vehiculo: "",
     tipo_servicio: "",
@@ -23,7 +28,7 @@ const AdminVehiculos = () => {
     documentacion_ok: true,
     velocidad_promedio: 0,
   });
-  //Modal para ver la informacion del vehiculo
+
   const handleViewInfo = (vehiculo) => {
     setSelectedVehiculo(vehiculo);
     setIsModalOpen(true);
@@ -32,15 +37,15 @@ const AdminVehiculos = () => {
     setIsModalOpen(false);
     setSelectedVehiculo(null);
   };
-  //Modals para crear el vehiculo
+
   const openCreateModal = () => {
     setIsCreateModelOpen(true);
   };
-  //Cerrar el modal para crear el vehiculo
+
   const closeCreateModal = () => {
     setIsCreateModelOpen(false);
   };
-  //Agregar el vehiculo a los proveedores
+
   const handleChange = (e) => {
     setNuevoVehiculo({
       ...nuevoVehiculo,
@@ -66,12 +71,20 @@ const AdminVehiculos = () => {
             <h1 className="text-2xl font-bold text-gray-700">
               Lista de Vehículos
             </h1>
-            <button
-              className="border rounded-lg p-2 bg-blue-500 text-white font-semibold"
-              onClick={() => setIsCreateModelOpen(true)}
-            >
-              Agregar un vehículo
-            </button>
+            <div className="flex gap-2">
+              <button
+                className="border rounded-lg p-2 bg-blue-500 text-white font-semibold"
+                onClick={() => setIsCreateModelOpen(true)}
+              >
+                Agregar Vehículo
+              </button>
+              <button
+                className="border rounded-lg p-2 bg-green-500 text-white font-semibold"
+                onClick={() => setIsChoferModalOpen(true)}
+              >
+                Crear Chofer
+              </button>
+            </div>
           </div>
 
           {/* Modal para crear vehículo */}
@@ -236,6 +249,38 @@ const AdminVehiculos = () => {
                       <option value={false}>No</option>
                     </select>
                   </div>
+                  {/* Selección de Chofer */}
+                  <div className="mb-4">
+                    <label className="block text-gray-700 font-bold mb-2">
+                      Chofer:
+                    </label>
+                    {loadingChoferes ? (
+                      <p>Cargando choferes...</p>
+                    ) : (
+                      <select
+                        name="chofer_id"
+                        value={nuevoVehiculo.chofer_id || ""}
+                        onChange={(e) =>
+                          setNuevoVehiculo({
+                            ...nuevoVehiculo,
+                            chofer_id:
+                              e.target.value === ""
+                                ? null
+                                : Number(e.target.value),
+                          })
+                        }
+                        className="w-full border border-gray-300 p-2 rounded"
+                        required
+                      >
+                        <option value="">Selecciona un chofer</option>
+                        {choferes.map((chofer) => (
+                          <option key={chofer.id} value={chofer.id}>
+                            {chofer.nombre}
+                          </option>
+                        ))}
+                      </select>
+                    )}
+                  </div>
 
                   {/* BOTONES DE ACCIÓN */}
                   <div className="flex justify-end">
@@ -308,8 +353,11 @@ const AdminVehiculos = () => {
               </tbody>
             </table>
           </div>
-
-          {/* Formulario para crear el vehiculo */}
+          {/* Modal para crear chofer */}
+          <CrearChoferModal
+            isOpen={isChoferModalOpen}
+            onClose={() => setIsChoferModalOpen(false)}
+          />
         </main>
       </div>
     </div>

@@ -63,6 +63,7 @@ import AdminSegumientosViaje from "./pages/Admin/AdminSegumientosViaje";
 //Validar presencia en los dintintos puntos de control
 import Validaciones from "./pages/User/Validaciones";
 import { QrProvider } from "./Context/QrContext";
+import { ChoferProvider } from "./Context/ChoferContext";
 
 const App = () => {
   return (
@@ -234,7 +235,9 @@ const App = () => {
               element={
                 <VehiculosProvider>
                   <ProveedoresProvider>
-                    <AdminVehiculos />
+                    <ChoferProvider>
+                      <AdminVehiculos />
+                    </ChoferProvider>
                   </ProveedoresProvider>
                 </VehiculosProvider>
               }
