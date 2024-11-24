@@ -46,7 +46,7 @@ const Modal = ({ isOpen, onClose, title, data, entityType }) => {
             <p>Zona Asociada: {item.nombre_zona || "No disponible"}</p>
           </div>
         );
-        case "ponton":
+      case "ponton":
         return (
           <div key={item.id} className="bg-gray-100 p-3 rounded-md shadow-sm">
             <p>Nombre: {item.nombre_ponton}</p>
@@ -62,6 +62,14 @@ const Modal = ({ isOpen, onClose, title, data, entityType }) => {
             <p>
               Habitabilidad General:{" "}
               {item.habitabilidad_general || "No disponible"}
+            </p>
+            <p>
+              Habitabilidad Externa:{" "}
+              {item.habitabilidad_externa || "No disponible"}
+            </p>
+            <p>
+              Habitabilidad Interna:{" "}
+              {item.habitabilidad_interna || "No disponible"}
             </p>
             <p>
               Concesión Asociada: {item.nombre_concesion || "No disponible"}

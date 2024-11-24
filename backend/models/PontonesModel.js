@@ -1,4 +1,5 @@
 import pool from "../config/db.js";
+import QRCode from "qrcode";
 
 //Obtener todos los pontones
 const obtenerPontones = async () => {
@@ -9,6 +10,8 @@ const obtenerPontones = async () => {
         p.nombre_ponton,
         p.ubicacion,
         p.qr_code,  
+        p.fecha_apertura_operacional,
+        p.fecha_cierre_operacional,
         p.habitabilidad_general,
         p.habitabilidad_interna,
         p.habitabilidad_externa,
@@ -69,21 +72,25 @@ const crearPonton = async ({
   habitabilidad_interna,
   habitabilidad_externa,
 }) => {
+  const client = await pool.connect();
   try {
-    const query = `
-      INSERT INTO ponton(
-      nombre_ponton,
-      ubicacion,
-      concesion_id,
-      fecha_apertura_operacional,
-      fecha_cierre_operacional,
-      tipo_ponton,
-      habitabilidad_general,
-      habitabilidad_interna,
-      habitabilidad_externa) 
-      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING *
+    await client.query("BEGIN"); 
+    const insertQuery = `
+      INSERT INTO ponton (
+        nombre_ponton,
+        ubicacion,
+        concesion_id,
+        fecha_apertura_operacional,
+        fecha_cierre_operacional,
+        tipo_ponton,
+        habitabilidad_general,
+        habitabilidad_interna,
+        habitabilidad_externa,
+        qr_code
+      ) 
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, NULL) RETURNING *;
     `;
-    const values = [
+    const insertValues = [
       nombre_ponton,
       ubicacion,
       concesion_id,
@@ -94,11 +101,31 @@ const crearPonton = async ({
       habitabilidad_interna,
       habitabilidad_externa,
     ];
-    const response = await pool.query(query, values);
-    return response.rows[0];
+    const insertResponse = await client.query(insertQuery, insertValues);
+    const nuevoPonton = insertResponse.rows[0];
+    const qrData = {
+      ponton_id: nuevoPonton.id,
+      nombre_ponton: nuevoPonton.nombre_ponton,
+      fecha: new Date().toISOString(),
+    };
+    const qrCode = await QRCode.toDataURL(JSON.stringify(qrData));
+    const updateQuery = `
+      UPDATE ponton
+      SET qr_code = $1
+      WHERE id = $2
+      RETURNING *;
+    `;
+    const updateValues = [qrCode, nuevoPonton.id];
+    const updateResponse = await client.query(updateQuery, updateValues);
+
+    await client.query("COMMIT");
+    return updateResponse.rows[0];
   } catch (error) {
-    console.error(error);
-    throw new Error("Hubo un error con la operacion crearPonton");
+    await client.query("ROLLBACK");
+    console.error("Error al crear el pontón con QR:", error.message);
+    throw new Error("Hubo un error al crear el pontón con QR");
+  } finally {
+    client.release();
   }
 };
 const actualizarPonton = async () => {
@@ -121,5 +148,5 @@ export const PontonesModel = {
   obtenerPonton,
   crearPonton,
   actualizarPonton,
-  eliminarPonton
+  eliminarPonton,
 };

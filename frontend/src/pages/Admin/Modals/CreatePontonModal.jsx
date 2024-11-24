@@ -14,9 +14,9 @@ const CreatePontonModal = ({ isOpen, onClose }) => {
     fecha_apertura_operacional: "",
     fecha_cierre_operacional: "",
     tipo_ponton: "",
-    habitabilidad_general: "",
-    habitabilidad_interna: "",
-    habitabilidad_externa: "",
+    habitabilidad_general: 0,
+    habitabilidad_interna: 0,
+    habitabilidad_externa: 0,
   });
   //Manejar cambios en el formulario
   const handleInputChange = (e) => {
@@ -137,7 +137,7 @@ const CreatePontonModal = ({ isOpen, onClose }) => {
               Habitabilidad General
             </label>
             <input
-              type="text"
+              type="number"
               name="habitabilidad_general"
               value={nuevoPonton.habitabilidad_general}
               onChange={handleInputChange}
@@ -151,7 +151,7 @@ const CreatePontonModal = ({ isOpen, onClose }) => {
               Habitabilidad Interna
             </label>
             <input
-              type="text"
+              type="number"
               name="habitabilidad_interna"
               value={nuevoPonton.habitabilidad_interna}
               onChange={handleInputChange}
@@ -165,7 +165,7 @@ const CreatePontonModal = ({ isOpen, onClose }) => {
               Habitabilidad Externa
             </label>
             <input
-              type="text"
+              type="number"
               name="habitabilidad_externa"
               value={nuevoPonton.habitabilidad_externa}
               onChange={handleInputChange}
