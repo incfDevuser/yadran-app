@@ -4,9 +4,6 @@ import AdminSolicitudes from "./AdminSolicitudes";
 import { useViajes } from "../../Context/ViajesContext";
 import { useRutas } from "../../Context/RoutesContext";
 
-//Solicitudes de viajes
-// import AdminSolicitudes from "./AdminSolicitudes";
-
 const AdminViajes = () => {
   const { viajes, loading, error, crearViaje } = useViajes();
   const { rutas, loading: loadingRutas } = useRutas();
