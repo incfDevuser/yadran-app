@@ -1,5 +1,6 @@
 import pool from "../config/db.js";
 
+
 const crearViaje = async ({ nombre, descripcion, ruta_id }) => {
   try {
     const query = `

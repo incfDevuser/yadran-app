@@ -14,6 +14,24 @@ const obtenerNotificaciones = async (req, res) => {
     });
   }
 };
+//Guardar la suscripcion
+const guardarSuscripcion = async (req, res) => {
+  const { subscription } = req.body;
+  const usuario_id = req.user.id;
+
+  try {
+    await NotificacionesModel.guardarSuscripcion(usuario_id, subscription);
+    return res
+      .status(200)
+      .json({ message: "Suscripción guardada correctamente." });
+  } catch (error) {
+    console.error("Error al guardar la suscripción:", error);
+    return res.status(500).json({
+      message: "Error interno al guardar la suscripción.",
+    });
+  }
+};
+
 const crearNotificacion = async (req, res) => {
   const { titulo, descripcion, tipo } = req.body;
   const nuevaNotificacion = {
@@ -109,6 +127,7 @@ const marcarNotificacionComoLeida = async (req, res) => {
 };
 export const NotificacionesController = {
   obtenerNotificaciones,
+  guardarSuscripcion,
   crearNotificacion,
   eliminarNotificacion,
   crearNotificacionGlobal,

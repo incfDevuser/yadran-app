@@ -7,7 +7,12 @@ const getDetalleCompletoViaje = async (viajeId) => {
       v.nombre AS nombre_viaje,
       v.descripcion AS descripcion_viaje,
       r.id AS ruta_id,
-      r.nombre_ruta
+      r.nombre_ruta,
+      (SELECT p.nombre_ponton
+       FROM centro c
+       JOIN ponton p ON c.ponton_id = p.id
+       WHERE c.ruta_id = r.id
+       LIMIT 1) AS nombre_ponton -- Agregar nombre del pontón
     FROM viajes v
     JOIN rutas r ON v.ruta_id = r.id
     WHERE v.id = $1;
@@ -54,7 +59,7 @@ const getDetalleCompletoViaje = async (viajeId) => {
       COALESCE(u.nombre, t.nombre) AS nombre_usuario,
       COALESCE(u.email, t.email) AS email_usuario,
       up.trabajador_id,
-      up.estado AS estado_usuario, -- Agregamos el estado del usuario en el pontón
+      up.estado AS estado_usuario,
       p.id AS ponton_id,
       p.nombre_ponton AS nombre_ponton
     FROM usuarios_pontones up
