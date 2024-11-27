@@ -1,6 +1,6 @@
 import { ViajesModel } from "../models/ViajesModel.js";
 import { SeguimientoModel } from "../models/SeguimientoModel.js";
-import sendEmail from "../Services/MailHelper.js";
+import { emailHelper } from "../Services/MailHelper.js";
 
 const crearViaje = async (req, res) => {
   const { nombre, descripcion, ruta_id } = req.body;
@@ -74,7 +74,7 @@ const solicitarViajeUsuarioNatural = async (req, res) => {
       trayectos: detallesViaje.trayectos,
       ponton: detallesViaje.viaje.nombre_ponton || "No especificado", 
     };
-    await sendEmail(emailCliente, emailData);
+    await emailHelper.sendEmail(emailCliente, emailData);
     res.status(201).json({
       message: "Viaje solicitado exitosamente y detalles enviados al correo.",
       solicitud,

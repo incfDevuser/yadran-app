@@ -1,4 +1,5 @@
 import { IntercentroModel } from "../models/IntercentroModel.js";
+import { emailHelper } from "../Services/MailHelper.js";
 
 const obtenerLanchas = async (req, res) => {
   try {
@@ -124,25 +125,55 @@ const crearRutaIntercentro = async (req, res) => {
 };
 //Solicitar intercetro para usuario - hacer nodemailer
 const solicitarRuta = async (req, res) => {
-  const { movimiento_id, comentario, estado } = req.body;
-  const { id } = req.user;
+  const { movimiento_id, comentario } = req.body;
+  const usuario_id = req.user.id;
+  const emailCliente = req.user.email; // Aquí obtienes el email directamente de req.user
+
+  if (!emailCliente) {
+    return res.status(400).json({ message: "El usuario no tiene un correo registrado" });
+  }
 
   try {
+    // Crear la solicitud de intercentro
     const solicitud = await IntercentroModel.solicitarRutaConUsuario({
       movimiento_id,
-      usuario_id: id,
+      usuario_id,
       comentario,
     });
+
+    // Obtener los detalles completos del viaje solicitado
+    const detallesSolicitud = await IntercentroModel.getDetalleIntercentro(solicitud.id);
+
+    // Construir los datos para el correo
+    const emailData = {
+      solicitud_id: detallesSolicitud.solicitud_id,
+      nombre: detallesSolicitud.nombre,
+      email: emailCliente, // Usa el email del usuario autenticado
+      fecha: detallesSolicitud.fecha,
+      centro_origen_nombre: detallesSolicitud.centro_origen_nombre,
+      centro_destino_nombre: detallesSolicitud.centro_destino_nombre,
+      estado_movimiento: detallesSolicitud.estado_movimiento,
+      comentario: detallesSolicitud.comentario,
+      lancha_nombre: detallesSolicitud.lancha_nombre,
+    };
+
+    // Enviar el correo
+    await emailHelper.sendEmailIntercentro(emailCliente, emailData);
+
     return res.status(201).json({
-      message: "Ruta de intercentro solicitada y usuario agregado a la lancha",
+      message: "Ruta de intercentro solicitada exitosamente y correo enviado.",
       solicitud,
     });
   } catch (error) {
-    return res
-      .status(500)
-      .json({ message: "Error interno del servidor", error: error.message });
+    console.error("Error al solicitar ruta de intercentro:", error);
+    return res.status(500).json({
+      message: "Error interno del servidor",
+      error: error.message,
+    });
   }
 };
+
+
 const aprobarSolicitud = async (req, res) => {
   const { solicitud_id } = req.params;
   try {

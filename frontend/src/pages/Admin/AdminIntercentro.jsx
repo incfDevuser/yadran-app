@@ -48,7 +48,7 @@ const AdminIntercentro = () => {
   };
 
   return (
-    <div className="p-6">
+    <div className="flex w-full h-full mt-11">
       <div className="flex justify-center gap-7">
         <AdminAside />
         <div className="mt-7">

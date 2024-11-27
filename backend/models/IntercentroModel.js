@@ -611,6 +611,47 @@ const obtenerSolicitudPorId = async (solicitudId) => {
     );
   }
 };
+const getDetalleIntercentro = async (solicitudId) => {
+  try {
+    const query = `
+      SELECT 
+        umi.id AS solicitud_id,
+        umi.movimiento_id,
+        umi.usuario_id,
+        COALESCE(u.nombre, 'Usuario no registrado') AS nombre_usuario,
+        COALESCE(u.email, 'Email no disponible') AS email_usuario,
+        umi.estado AS estado_solicitud,
+        umi.comentario AS comentario_usuario,
+        mi.fecha AS fecha_movimiento,
+        mi.estado AS estado_movimiento,
+        co.nombre_centro AS centro_origen_nombre,
+        cd.nombre_centro AS centro_destino_nombre,
+        l.nombre AS lancha_nombre,
+        l.capacidad AS lancha_capacidad
+      FROM usuariosmovimientosintercentro umi
+      JOIN movimientosintercentro mi ON umi.movimiento_id = mi.id
+      LEFT JOIN usuarios u ON umi.usuario_id = u.id
+      LEFT JOIN centro co ON mi.centro_origen_id = co.id
+      LEFT JOIN centro cd ON mi.centro_destino_id = cd.id
+      LEFT JOIN lanchas l ON mi.lancha_id = l.id
+      WHERE umi.id = $1;
+    `;
+
+    const response = await pool.query(query, [solicitudId]);
+    if (response.rows.length === 0) {
+      throw new Error("La solicitud no existe o no se encontró");
+    }
+
+    return response.rows[0];
+  } catch (error) {
+    console.error(
+      "Error al obtener los detalles de la solicitud de intercentro:",
+      error
+    );
+    throw new Error("Hubo un error al obtener los detalles de la solicitud");
+  }
+};
+
 export const IntercentroModel = {
   obtenerLanchas,
   obtenerLanchasPorMovimiento,
@@ -626,4 +667,5 @@ export const IntercentroModel = {
   cancelarSolicitudUsuario,
   obtenerSolicitudPorId,
   cancelarSolicitudTrabajador,
+  getDetalleIntercentro,
 };
