@@ -104,7 +104,7 @@ const cancelarViajeUsuarioHandler = async (req, res) => {
     });
   }
 };
-//Agendar viaje para trabajadores
+//Agendar viaje para trabajadores - hacer nodemailer
 const agendarViajeParaTrabajadores = async (req, res) => {
   const contratista_id = req.user.id;
   const {

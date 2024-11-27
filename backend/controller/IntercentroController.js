@@ -10,6 +10,54 @@ const obtenerLanchas = async (req, res) => {
       .json({ message: "Error interno del servidor", error: error.message });
   }
 };
+const obtenerLanchasPorMovimiento = async (req, res) => {
+  const { movimientoId } = req.params;
+
+  try {
+    const lanchas = await IntercentroModel.obtenerLanchasPorMovimiento(
+      movimientoId
+    );
+
+    if (!lanchas || lanchas.length === 0) {
+      return res.status(404).json({
+        message: `No se encontraron lanchas asociadas al movimiento con ID ${movimientoId}.`,
+      });
+    }
+
+    res.status(200).json({
+      message: `Lanchas del movimiento ${movimientoId} obtenidas exitosamente.`,
+      lanchas,
+    });
+  } catch (error) {
+    console.error(
+      "Error al obtener las lanchas por movimiento:",
+      error.message
+    );
+    res.status(500).json({
+      error: "Hubo un error al obtener las lanchas por movimiento.",
+    });
+  }
+};
+//Obtener ponones por movimiento
+const obtenerPontonesPorMovimiento = async (req, res) => {
+  const { movimientoId } = req.params;
+
+  try {
+    const pontones = await IntercentroModel.obtenerPontonesPorMovimiento(
+      movimientoId
+    );
+    res.status(200).json({
+      message: `Pontones del movimiento ${movimientoId} obtenidos exitosamente.`,
+      pontones,
+    });
+  } catch (error) {
+    console.error("Error al obtener los pontones por movimiento:", error);
+    res.status(500).json({
+      message: "Hubo un error al obtener los pontones por movimiento.",
+    });
+  }
+};
+
 //Crear lanchas
 const crearLanchas = async (req, res) => {
   const { nombre, capacidad, disponible } = req.body;
@@ -74,6 +122,7 @@ const crearRutaIntercentro = async (req, res) => {
     });
   }
 };
+//Solicitar intercetro para usuario - hacer nodemailer
 const solicitarRuta = async (req, res) => {
   const { movimiento_id, comentario, estado } = req.body;
   const { id } = req.user;
@@ -196,6 +245,8 @@ const cancelarSolicitudTrabajador = async (req, res) => {
 };
 export const IntercentroController = {
   obtenerLanchas,
+  obtenerLanchasPorMovimiento,
+  obtenerPontonesPorMovimiento,
   crearLanchas,
   obtenerRutasIntercentro,
   crearRutaIntercentro,
@@ -205,5 +256,5 @@ export const IntercentroController = {
   finalizarMovimiento,
   obtenerSolicitudes,
   cancelarSolicitudUsuario,
-  cancelarSolicitudTrabajador
+  cancelarSolicitudTrabajador,
 };

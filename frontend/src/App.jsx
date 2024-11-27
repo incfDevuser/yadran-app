@@ -42,6 +42,8 @@ import { ViajesProvider } from "./Context/ViajesContext";
 import { IntercentrosProvider } from "./Context/IntercentroContext";
 import IntercentroExplore from "./pages/Flight/IntercentroExplore";
 import ConfirmacionIntercentro from "./pages/Flight/ConfirmacionIntercentro";
+//Intercentro para admins
+import AdminIntercentro from "./pages/Admin/AdminIntercentro";
 //Vuelos
 import { VuelosProvider } from "./Context/VuelosContext";
 import AdminVuelos from "./pages/Admin/AdminVuelos";
@@ -167,7 +169,17 @@ const App = () => {
                 </RutasProvider>
               }
             />
-
+            {/* Administracion de los Viajes (rutas) de intercentro */}
+            <Route
+              path="/adminIntercentro"
+              element={
+                <IntercentrosProvider>
+                  <CentrosProvider>
+                    <AdminIntercentro />
+                  </CentrosProvider>
+                </IntercentrosProvider>
+              }
+            />
             {/*  Rutas para el panel de administrador */}
             <Route
               path="/adminUserList"

@@ -173,6 +173,33 @@ export const IntercentrosProvider = ({ children }) => {
     }
   };
 
+  const obtenerLanchasPorMovimiento = async (movimientoId) => {
+    try {
+      const response = await axios.get(
+        `http://localhost:5000/api/intercentro/movimientos/${movimientoId}/lanchas`,
+        { withCredentials: true }
+      );
+      return response.data.lanchas;
+    } catch (err) {
+      throw new Error(
+        err.message || "Error al obtener las lanchas del movimiento"
+      );
+    }
+  };
+  const obtenerPontonesPorMovimiento = async (movimientoId) => {
+    try {
+      const response = await axios.get(
+        `http://localhost:5000/api/intercentro/movimientos/${movimientoId}/pontones`,
+        { withCredentials: true }
+      );
+      return response.data.pontones;
+    } catch (err) {
+      throw new Error(
+        err.message || "Error al obtener las lanchas del movimiento"
+      );
+    }
+  };
+
   return (
     <IntercentrosContext.Provider
       value={{
@@ -191,6 +218,8 @@ export const IntercentrosProvider = ({ children }) => {
         aprobarSolicitudIntercentro,
         rechazarSolicitudIntercentro,
         cancelarSolicitudIntercentro,
+        obtenerLanchasPorMovimiento,
+        obtenerPontonesPorMovimiento
       }}
     >
       {children}

@@ -37,6 +37,84 @@ const obtenerLanchas = async () => {
     throw new Error("Hubo un error al obtener las lanchas");
   }
 };
+const obtenerLanchasPorMovimiento = async (movimientoId) => {
+  try {
+    const query = `
+      SELECT 
+        l.id AS lancha_id,
+        l.nombre AS lancha_nombre,
+        l.capacidad AS lancha_capacidad,
+        l.disponible AS lancha_disponible,
+        (l.capacidad - COUNT(umi.id)) AS capacidad_disponible,
+        COALESCE(
+          json_agg(
+            json_build_object(
+              'persona_id', COALESCE(u.id, t.id),
+              'nombre', COALESCE(u.nombre, t.nombre),
+              'email', COALESCE(u.email, t.email),
+              'tipo', CASE 
+                         WHEN u.id IS NOT NULL THEN 'usuario' 
+                         ELSE 'trabajador' 
+                      END,
+              'estado', umi.estado -- Agregar el estado desde la tabla usuariosmovimientosintercentro
+            )
+          ) FILTER (WHERE u.id IS NOT NULL OR t.id IS NOT NULL),
+          '[]'
+        ) AS usuarios
+      FROM lanchas l
+      LEFT JOIN movimientosintercentro mi ON mi.lancha_id = l.id
+      LEFT JOIN usuariosmovimientosintercentro umi ON umi.movimiento_id = mi.id
+      LEFT JOIN usuarios u ON umi.usuario_id = u.id
+      LEFT JOIN trabajadores t ON umi.trabajador_id = t.id
+      WHERE mi.id = $1
+      GROUP BY l.id;
+    `;
+    const response = await pool.query(query, [movimientoId]);
+    return response.rows;
+  } catch (error) {
+    console.error("Error al obtener las lanchas por movimiento:", error);
+    throw new Error("Hubo un error al obtener las lanchas por movimiento.");
+  }
+};
+//Obtener pontones por movimiento
+const obtenerPontonesPorMovimiento = async (movimientoId) => {
+  try {
+    const query = `
+      SELECT 
+        p.id AS ponton_id,
+        p.nombre_ponton,
+        COALESCE(
+          json_agg(
+            json_build_object(
+              'persona_id', COALESCE(u.id, t.id),
+              'nombre', COALESCE(u.nombre, t.nombre),
+              'email', COALESCE(u.email, t.email),
+              'tipo', CASE 
+                         WHEN u.id IS NOT NULL THEN 'usuario' 
+                         ELSE 'trabajador' 
+                      END,
+              'estado', up.estado -- Agregar el estado desde la tabla usuarios_pontones
+            )
+          ) FILTER (WHERE u.id IS NOT NULL OR t.id IS NOT NULL),
+          '[]'
+        ) AS personas
+      FROM ponton p
+      LEFT JOIN centro c ON p.id = c.ponton_id
+      LEFT JOIN movimientosintercentro mi ON mi.centro_destino_id = c.id
+      LEFT JOIN usuarios_pontones up ON up.ponton_id = p.id
+      LEFT JOIN usuarios u ON up.usuario_id = u.id
+      LEFT JOIN trabajadores t ON up.trabajador_id = t.id
+      WHERE mi.id = $1
+      GROUP BY p.id;
+    `;
+    const response = await pool.query(query, [movimientoId]);
+    return response.rows;
+  } catch (error) {
+    console.error("Error al obtener los pontones por movimiento:", error);
+    throw new Error("Hubo un error al obtener los pontones por movimiento");
+  }
+};
+
 //Crear lanchas
 const crearLanchas = async ({ nombre, capacidad, disponible }) => {
   try {
@@ -535,6 +613,8 @@ const obtenerSolicitudPorId = async (solicitudId) => {
 };
 export const IntercentroModel = {
   obtenerLanchas,
+  obtenerLanchasPorMovimiento,
+  obtenerPontonesPorMovimiento,
   crearLanchas,
   obtenerRutasIntercentro,
   crearRuta,

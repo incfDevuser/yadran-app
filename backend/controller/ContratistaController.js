@@ -24,7 +24,7 @@ const agregarTrabajador = async (req, res) => {
     });
   }
 };
-//Controlador para agendar varios trabajadores en un movimiento intercentro
+//Controlador para agendar varios trabajadores en un movimiento intercentro - hacer nodemailer
 const agendarTrabajadoresParaMovimiento = async (req, res) => {
   const { movimientoId, trabajadoresIds, comentario } = req.body;
   try {

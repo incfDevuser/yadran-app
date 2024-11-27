@@ -157,6 +157,27 @@ const AdminSolicitudes = () => {
             ))}
           </div>
         </section>
+        {/* Solicitudes de intercentro */}
+        <section>
+          <h2 className="text-2xl font-bold text-purple-600 mb-4">
+            Solicitudes Intercentro
+          </h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-8">
+            {solicitudesFiltradasIntercentro.map((solicitud) => (
+              <SolicitudIntercentroCard
+                key={solicitud.solicitud_id}
+                solicitud={solicitud}
+                onAprobar={() =>
+                  aprobarViajeIntercentro(solicitud.solicitud_id)
+                }
+                onRechazar={() =>
+                  rechazarViajeIntercentro(solicitud.solicitud_id)
+                }
+                onVerDetalles={() => setSelectedSolicitud(solicitud)}
+              />
+            ))}
+          </div>
+        </section>
         {/* Solicitudes de Trabajadores */}
         <section>
           <h2 className="text-2xl font-bold text-blue-600 mb-4">
