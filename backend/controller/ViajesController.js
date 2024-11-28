@@ -65,14 +65,16 @@ const solicitarViajeUsuarioNatural = async (req, res) => {
       fecha_fin,
       comentario_usuario,
     });
-    const detallesViaje = await SeguimientoModel.getDetalleCompletoViaje(viaje_id);
+    const detallesViaje = await SeguimientoModel.getDetalleCompletoViaje(
+      viaje_id
+    );
     const emailData = {
       fechaInicio: fecha_inicio,
       fechaFin: fecha_fin,
       estadoSolicitud: "Pendiente",
       viaje: detallesViaje.viaje,
       trayectos: detallesViaje.trayectos,
-      ponton: detallesViaje.viaje.nombre_ponton || "No especificado", 
+      ponton: detallesViaje.viaje.nombre_ponton || "No especificado",
     };
     await emailHelper.sendEmail(emailCliente, emailData);
     res.status(201).json({
@@ -95,7 +97,9 @@ const cancelarViajeUsuarioHandler = async (req, res) => {
     if (!solicitudId) {
       throw new Error("El ID de la solicitud es requerido");
     }
-    const response = await ViajesModel.cancelarViajeUsuarioYTrabajadores(solicitudId);
+    const response = await ViajesModel.cancelarViajeUsuarioYTrabajadores(
+      solicitudId
+    );
     res.status(200).json(response);
   } catch (error) {
     res.status(500).json({
@@ -107,6 +111,7 @@ const cancelarViajeUsuarioHandler = async (req, res) => {
 //Agendar viaje para trabajadores - hacer nodemailer
 const agendarViajeParaTrabajadores = async (req, res) => {
   const contratista_id = req.user.id;
+  const emailCliente = req.user.email; // Email del contratista
   const {
     viaje_id,
     trabajadores,
@@ -115,7 +120,14 @@ const agendarViajeParaTrabajadores = async (req, res) => {
     comentario_contratista,
   } = req.body;
 
+  if (!emailCliente) {
+    return res.status(400).json({
+      message: "El contratista no tiene un correo registrado",
+    });
+  }
+
   try {
+    // Agendar viaje para trabajadores
     const response = await ViajesModel.agendarViajeParaTrabajadores({
       contratista_id,
       viaje_id,
@@ -124,8 +136,44 @@ const agendarViajeParaTrabajadores = async (req, res) => {
       fecha_fin,
       comentario_contratista,
     });
+
+    // Obtener detalles del viaje y trabajadores asociados
+    const detallesViaje = await ViajesModel.getDetallesViajeConTrabajadores(
+      viaje_id
+    );
+
+    if (!detallesViaje || detallesViaje.length === 0) {
+      return res.status(404).json({
+        message: "No se encontraron detalles del viaje o trabajadores asociados.",
+      });
+    }
+
+    const viaje = {
+      nombre: detallesViaje[0]?.nombre_viaje,
+      descripcion: detallesViaje[0]?.descripcion_viaje,
+      fecha_inicio,
+      fecha_fin,
+    };
+
+    const trabajadoresInfo = detallesViaje
+      .filter((item) => item.trabajador_id)
+      .map((item) => ({
+        id: item.trabajador_id,
+        nombre: item.nombre_trabajador,
+        email: item.email_trabajador,
+        estado: item.estado_trabajador || "Pendiente",
+      }));
+
+    const emailData = {
+      ...viaje,
+      trabajadores: trabajadoresInfo,
+    };
+
+    // Enviar correo al contratista
+    await emailHelper.sendEmailContratista(emailCliente, emailData);
+
     res.status(201).json({
-      message: response.message,
+      message: "Viaje para trabajadores agendado exitosamente y correo enviado.",
       solicitudes: response.solicitudes,
     });
   } catch (error) {
@@ -136,6 +184,7 @@ const agendarViajeParaTrabajadores = async (req, res) => {
     });
   }
 };
+
 
 //Rechazar la solicitud de viaje
 const rechazarSolicitudViaje = async (req, res) => {
@@ -175,5 +224,5 @@ export const ViajesController = {
   aprobarSolicitudViaje,
   agendarViajeParaTrabajadores,
   obtenerSolicitudesContratista,
-  cancelarViajeUsuarioHandler
+  cancelarViajeUsuarioHandler,
 };

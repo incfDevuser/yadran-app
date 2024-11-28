@@ -32,14 +32,6 @@ const DetalleLanchaModal = ({ lanchas, closeModal }) => {
                 <strong>Capacidad:</strong> {lancha.lancha_capacidad}
               </p>
               <p>
-                <strong>Disponible:</strong>{" "}
-                {lancha.lancha_disponible ? (
-                  <span className="text-green-500 font-bold">Sí</span>
-                ) : (
-                  <span className="text-red-500 font-bold">No</span>
-                )}
-              </p>
-              <p>
                 <strong>Capacidad Disponible:</strong>{" "}
                 <span className="font-bold">{lancha.capacidad_disponible}</span>
               </p>

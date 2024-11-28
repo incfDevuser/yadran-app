@@ -163,7 +163,7 @@ const ConfirmacionIntercentro = () => {
       </div>
       <div className="mt-4 text-center">
         <Link
-          to="/intercentro"
+          to="/explore-intercentro"
           className="text-blue-600 font-medium hover:underline hover:text-blue-700 flex items-center justify-center"
         >
           <FiArrowLeft className="mr-2" /> Volver a Explorar Otras Rutas

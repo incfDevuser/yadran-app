@@ -622,6 +622,31 @@ const aprobarSolicitudViaje = async (solicitudId) => {
     client.release();
   }
 };
+const getDetallesViajeConTrabajadores = async (viajeId) => {
+  try {
+    const query = `
+      SELECT 
+        v.id AS viaje_id,
+        v.nombre AS nombre_viaje,
+        v.descripcion AS descripcion_viaje,
+        uv.trabajador_id,
+        t.nombre AS nombre_trabajador,
+        t.email AS email_trabajador,
+        uv.estado AS estado_trabajador
+      FROM viajes v
+      LEFT JOIN usuarios_viajes uv ON uv.viaje_id = v.id
+      LEFT JOIN trabajadores t ON uv.trabajador_id = t.id
+      WHERE v.id = $1;
+    `;
+    const response = await pool.query(query, [viajeId]);
+    return response.rows;
+  } catch (error) {
+    console.error("Error al obtener los detalles del viaje y trabajadores:", error);
+    throw new Error("Error al obtener los detalles del viaje y trabajadores.");
+  }
+};
+
+
 
 export const ViajesModel = {
   crearViaje,
@@ -633,4 +658,5 @@ export const ViajesModel = {
   aprobarSolicitudViaje,
   obtenerSolicitudesTrabajadores,
   cancelarViajeUsuarioYTrabajadores,
+  getDetallesViajeConTrabajadores
 };

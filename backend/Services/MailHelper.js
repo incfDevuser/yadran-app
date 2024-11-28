@@ -99,21 +99,18 @@ const sendEmailIntercentro = async (emailCliente, emailData) => {
     comentario,
     lancha_nombre,
   } = emailData;
-
-  // Construir el contenido del correo
   const mailOptions = {
     from: userEmail,
     to: emailCliente,
-    subject: `Detalles de tu solicitud de Intercentro: ${solicitud_id}`,
+    subject: `Detalles de tu solicitud de Intercentro`,
     html: `
       <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
         <h1 style="color: #4CAF50; text-align: center;">¡Detalles de tu Intercentro!</h1>
-        <p style="text-align: center;">Hola ${nombre},</p>
+        <p style="text-align: center;">Hola!</p>
         <p style="text-align: center;">Tu solicitud de movimiento entre centros ha sido registrada. Aquí tienes los detalles:</p>
         <div style="background-color: #f9f9f9; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
           <h2 style="color: #4CAF50;">Información de la Solicitud</h2>
           <ul style="list-style: none; padding: 0;">
-            <li><strong>ID de la Solicitud:</strong> ${solicitud_id}</li>
             <li><strong>Estado del Movimiento:</strong> ${estado_movimiento}</li>
             <li><strong>Comentario:</strong> ${
               comentario || "Sin comentario"
@@ -154,8 +151,138 @@ const sendEmailIntercentro = async (emailCliente, emailData) => {
     throw new Error("Error al enviar el correo");
   }
 };
-const sendEmailContratista = async (emailCliente, emailData) => {};
-const sendEmailContratistaIntercentro = async (emailCliente, emailData) => {};
+const sendEmailContratista = async (emailCliente, emailData) => {
+  const {
+    nombre,
+    descripcion,
+    fecha_inicio,
+    fecha_fin,
+    trabajadores,
+  } = emailData;
+
+  const trabajadoresHtml = trabajadores
+    .map(
+      (trabajador, index) =>
+        `<div>
+          <h3 style="margin: 0;">Trabajador ${index + 1}</h3>
+          <p><strong>Nombre:</strong> ${trabajador.nombre}</p>
+          <p><strong>Email:</strong> ${trabajador.email}</p>
+          <p><strong>Estado:</strong> ${trabajador.estado}</p>
+        </div>`
+    )
+    .join("");
+
+  const mailOptions = {
+    from: userEmail,
+    to: emailCliente,
+    subject: `Detalles del Viaje para Trabajadores: ${nombre}`,
+    html: `
+      <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
+        <h1 style="color: #4CAF50; text-align: center;">¡Detalles de tu Viaje para Trabajadores!</h1>
+        <p style="text-align: center;">Hola Contratista,</p>
+        <p style="text-align: center;">Aquí tienes los detalles del viaje solicitado:</p>
+        <div style="background-color: #f9f9f9; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
+          <h2 style="color: #4CAF50;">Información General del Viaje</h2>
+          <ul style="list-style: none; padding: 0;">
+            <li><strong>Nombre del Viaje:</strong> ${nombre}</li>
+            <li><strong>Descripción:</strong> ${descripcion}</li>
+            <li><strong>Fecha de Inicio:</strong> ${fecha_inicio}</li>
+            <li><strong>Fecha de Fin:</strong> ${fecha_fin}</li>
+          </ul>
+        </div>
+        <div style="background-color: #f1f1f1; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
+          <h2 style="color: #4CAF50;">Trabajadores Asignados</h2>
+          ${trabajadoresHtml || "<p>No hay trabajadores asignados.</p>"}
+        </div>
+        <p style="text-align: center; margin-top: 20px; color: #777;">
+          Gracias por confiar en nuestra plataforma. ¡Buen trabajo!
+        </p>
+      </div>
+    `,
+  };
+
+  try {
+    const transporter = nodemailer.createTransport({
+      service: "gmail",
+      auth: {
+        user: userEmail,
+        pass: userPassword,
+      },
+    });
+    await transporter.sendMail(mailOptions);
+    console.log("Correo enviado exitosamente a:", emailCliente);
+  } catch (error) {
+    console.error("Error al enviar el correo:", error);
+    throw new Error("Error al enviar el correo");
+  }
+};
+
+
+const sendEmailContratistaIntercentro = async (emailCliente, emailData) => {
+  const {
+    fechaInicio,
+    fechaFin,
+    estadoSolicitud,
+    centro_origen_nombre,
+    centro_destino_nombre,
+    lancha_nombre,
+    trabajadores,
+  } = emailData;
+  const trabajadoresHtml = trabajadores
+    .map(
+      (trabajador, index) =>
+        `<div>
+      <h3 style="margin: 0;">Trabajador ${index + 1}</h3>
+          <p><strong>Nombre:</strong> ${trabajador.nombre}</p>
+          <p><strong>Email:</strong> ${trabajador.email}</p>
+          <p><strong>Estado:</strong> ${trabajador.estado || "Sin estado"}</p>
+    <div/>`
+    )
+    .join("");
+  const mailOptions = {
+    from: userEmail,
+    to: emailCliente,
+    subject: `Detalles del Intercentro`,
+    html: `
+      <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
+        <h1 style="color: #4CAF50; text-align: center;">¡Detalles de tu Intercentro!</h1>
+        <p style="text-align: center;">Hola Contratista,</p>
+        <p style="text-align: center;">Aquí tienes los detalles de la solicitud intercentro:</p>
+        <div style="background-color: #f9f9f9; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
+          <h2 style="color: #4CAF50;">Información General</h2>
+          <ul style="list-style: none; padding: 0;">
+            <li><strong>Estado de la Solicitud:</strong> ${estadoSolicitud}</li>
+            <li><strong>Centro de Origen:</strong> ${centro_origen_nombre}</li>
+            <li><strong>Centro de Destino:</strong> ${centro_destino_nombre}</li>
+            <li><strong>Nombre de la Lancha:</strong> ${lancha_nombre}</li>
+          </ul>
+        </div>
+        <div style="background-color: #f1f1f1; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
+          <h2 style="color: #4CAF50;">Trabajadores Asignados</h2>
+          ${trabajadoresHtml || "<p>No hay trabajadores asignados.</p>"}
+        </div>
+        <p style="text-align: center; margin-top: 20px; color: #777;">
+          Gracias por confiar en nuestra plataforma. ¡Buen trabajo!
+        </p>
+      </div>
+    `,
+  };
+  try {
+    const transporter = nodemailer.createTransport({
+      service: "gmail",
+      auth: {
+        user: userEmail,
+        pass: userPassword,
+      },
+    });
+    await transporter.sendMail(mailOptions);
+    console.log("Correo enviado exitosamente a:", emailCliente);
+  } catch (error) {
+    console.error("Error al enviar el correo:", error);
+    throw new Error("Error al enviar el correo");
+  }
+};
+
 export const emailHelper = {
   sendEmail,
   sendEmailIntercentro,

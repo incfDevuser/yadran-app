@@ -15,6 +15,6 @@ export const adminNavBar = [
 ]
 export const mainNavBar = [
     {id:"1",path:"/", label: "Agendar"},
-    {id:"2",path:"/trips", label: "Mis Viajes"},
+    // {id:"2",path:"/trips", label: "Mis Viajes"},
     {id:"3",path:"/miPerfil", label: "Mi Perfil"}
 ]

@@ -38,7 +38,9 @@ const agendarTrabajadoresParaMovimiento = async (
       FROM movimientosintercentro
       WHERE id = $1
     `;
-    const movimientoResult = await client.query(movimientoQuery, [movimientoId]);
+    const movimientoResult = await client.query(movimientoQuery, [
+      movimientoId,
+    ]);
 
     if (movimientoResult.rows.length === 0) {
       throw new Error("Movimiento no encontrado o no tiene lancha asignada");
@@ -320,6 +322,35 @@ const obtenerSolicitudesTrabajadoresPorContratista = async (contratistaId) => {
     throw new Error("Hubo un error al obtener las solicitudes de trabajadores");
   }
 };
+const getDetallesMovimientoConTrabajadores = async (movimientoId) => {
+  try {
+    const query = `
+      SELECT 
+        mi.id AS movimiento_id,
+        mi.fecha AS fecha_movimiento,
+        mi.estado AS estado_movimiento,
+        co.nombre_centro AS centro_origen_nombre, -- Nombre correcto
+        cd.nombre_centro AS centro_destino_nombre, -- Nombre correcto
+        l.nombre AS lancha_nombre,
+        t.id AS trabajador_id,
+        t.nombre AS nombre_trabajador,
+        t.email AS email_trabajador,
+        umi.estado AS estado_trabajador
+      FROM movimientosintercentro mi
+      LEFT JOIN centro co ON mi.centro_origen_id = co.id
+      LEFT JOIN centro cd ON mi.centro_destino_id = cd.id
+      LEFT JOIN lanchas l ON mi.lancha_id = l.id
+      LEFT JOIN usuariosmovimientosintercentro umi ON umi.movimiento_id = mi.id
+      LEFT JOIN trabajadores t ON umi.trabajador_id = t.id
+      WHERE mi.id = $1;
+    `;
+    const response = await pool.query(query, [movimientoId]);
+    return response.rows;
+  } catch (error) {
+    console.error("Error al obtener los detalles del movimiento:", error);
+    throw new Error("Error al obtener los detalles del movimiento");
+  }
+};
 
 export const ContratistaModel = {
   agregarTrabajador,
@@ -328,4 +359,5 @@ export const ContratistaModel = {
   modificarRutaTrabajador,
   obtenerTrabajadoresPorContratista,
   obtenerSolicitudesTrabajadoresPorContratista,
+  getDetallesMovimientoConTrabajadores,
 };

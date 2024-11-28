@@ -127,7 +127,7 @@ const crearRutaIntercentro = async (req, res) => {
 const solicitarRuta = async (req, res) => {
   const { movimiento_id, comentario } = req.body;
   const usuario_id = req.user.id;
-  const emailCliente = req.user.email; // Aquí obtienes el email directamente de req.user
+  const emailCliente = req.user.email;
 
   if (!emailCliente) {
     return res.status(400).json({ message: "El usuario no tiene un correo registrado" });
@@ -148,7 +148,7 @@ const solicitarRuta = async (req, res) => {
     const emailData = {
       solicitud_id: detallesSolicitud.solicitud_id,
       nombre: detallesSolicitud.nombre,
-      email: emailCliente, // Usa el email del usuario autenticado
+      email: emailCliente,
       fecha: detallesSolicitud.fecha,
       centro_origen_nombre: detallesSolicitud.centro_origen_nombre,
       centro_destino_nombre: detallesSolicitud.centro_destino_nombre,
@@ -172,8 +172,6 @@ const solicitarRuta = async (req, res) => {
     });
   }
 };
-
-
 const aprobarSolicitud = async (req, res) => {
   const { solicitud_id } = req.params;
   try {
