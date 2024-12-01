@@ -127,11 +127,17 @@ const obtenerRutasConTrayectos = async () => {
         t.orden,
         t.vehiculo_id,
         t.qr_code,
-        t.created_at, -- Campo para ordenar los trayectos
+        t.hotel_id,
+        h.nombre AS hotel_nombre, -- Nombre del hotel
+        h.ciudad AS hotel_ciudad, -- Ciudad del hotel
+        h.direccion AS hotel_direccion, -- Dirección del hotel
+        h.telefono AS hotel_telefono, -- Teléfono del hotel
+        h.capacidad AS hotel_capacidad, -- Capacidad del hotel
         v.tipo_vehiculo AS nombre_vehiculo -- Obtener el nombre del vehículo
       FROM rutas r
       LEFT JOIN trayectos t ON r.id = t.ruta_id
       LEFT JOIN vehiculos v ON t.vehiculo_id = v.id -- Asociar vehículo al trayecto
+      LEFT JOIN hoteles h ON t.hotel_id = h.id -- Asociar hotel al trayecto
       ORDER BY r.id, t.created_at ASC -- Ordenar trayectos por fecha de creación
     `;
     const response = await pool.query(query);
@@ -164,6 +170,16 @@ const obtenerRutasConTrayectos = async () => {
           vehiculo_id: row.vehiculo_id,
           nombre_vehiculo: row.nombre_vehiculo,
           qr_code: row.qr_code,
+          hotel: row.hotel_id
+            ? {
+                id: row.hotel_id,
+                nombre: row.hotel_nombre,
+                ciudad: row.hotel_ciudad,
+                direccion: row.hotel_direccion,
+                telefono: row.hotel_telefono,
+                capacidad: row.hotel_capacidad,
+              }
+            : null, // Si no hay hotel asociado, devolver null
         });
       }
     });
@@ -174,6 +190,7 @@ const obtenerRutasConTrayectos = async () => {
     throw new Error("Error al obtener las rutas con trayectos");
   }
 };
+
 
 export const RutasModel = {
   obtenerRutas,
