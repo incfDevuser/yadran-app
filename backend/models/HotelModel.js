@@ -77,16 +77,10 @@ const insertarHotelComoTrayecto = async (hotel, ruta_id) => {
     throw new Error("No se pudo insertar el hotel como trayecto.");
   }
 };
-const obtenerHotelesConUsuariosYTrabajadores = async () => {
+const obtenerUsuariosPorHotelId = async (hotel_id) => {
   try {
     const query = `
       SELECT 
-        h.id AS hotel_id,
-        h.nombre AS hotel_nombre,
-        h.ciudad AS hotel_ciudad,
-        h.direccion AS hotel_direccion,
-        h.telefono AS hotel_telefono,
-        h.capacidad AS hotel_capacidad,
         COALESCE(
           json_agg(
             json_build_object(
@@ -101,18 +95,18 @@ const obtenerHotelesConUsuariosYTrabajadores = async () => {
             )
           ) FILTER (WHERE u.id IS NOT NULL OR t.id IS NOT NULL),
           '[]'
-        ) AS personas
-      FROM hoteles h
-      LEFT JOIN usuarios_hoteles uh ON h.id = uh.hotel_id
+        ) AS usuarios
+      FROM usuarios_hoteles uh
       LEFT JOIN usuarios u ON uh.usuario_id = u.id
       LEFT JOIN trabajadores t ON uh.trabajador_id = t.id
-      GROUP BY h.id;
+      WHERE uh.hotel_id = $1
+      GROUP BY uh.hotel_id;
     `;
-    const response = await pool.query(query);
-    return response.rows;
+    const response = await pool.query(query, [hotel_id]);
+    return response.rows[0]?.usuarios || [];
   } catch (error) {
-    console.error("Error al obtener los hoteles con usuarios y trabajadores:", error.message);
-    throw new Error("Error al obtener los hoteles con usuarios y trabajadores.");
+    console.error("Error al obtener los usuarios por hotel ID:", error.message);
+    throw new Error("Error al obtener los usuarios del hotel.");
   }
 };
 
@@ -122,5 +116,5 @@ export const HotelModel = {
   obtenerHotelPorNombre,
   obtenerHotelPorId,
   insertarHotelComoTrayecto,
-  obtenerHotelesConUsuariosYTrabajadores
+  obtenerUsuariosPorHotelId
 };

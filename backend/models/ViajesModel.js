@@ -1,6 +1,5 @@
 import pool from "../config/db.js";
 
-
 const crearViaje = async ({ nombre, descripcion, ruta_id }) => {
   try {
     const query = `
@@ -79,7 +78,7 @@ const solicitarViajeParaUsuario = async ({
     );
     const solicitud = responseSolicitud.rows[0];
     const queryTrayectos = `
-      SELECT t.id AS trayecto_id, t.vehiculo_id
+      SELECT t.id AS trayecto_id, t.vehiculo_id, t.hotel_id
       FROM trayectos t
       JOIN viajes v ON v.ruta_id = t.ruta_id
       WHERE v.id = $1;
@@ -96,6 +95,15 @@ const solicitarViajeParaUsuario = async ({
         usuario_id,
         trayecto.trayecto_id,
       ]);
+
+      // Agregar usuario al hotel si está asociado al trayecto
+      if (trayecto.hotel_id) {
+        const queryUsuarioHotel = `
+          INSERT INTO usuarios_hoteles (hotel_id, usuario_id, estado)
+          VALUES ($1, $2, 'Pendiente');
+        `;
+        await client.query(queryUsuarioHotel, [trayecto.hotel_id, usuario_id]);
+      }
     }
 
     // Obtener el pontón asociado al viaje
@@ -156,6 +164,7 @@ const solicitarViajeParaUsuario = async ({
     client.release();
   }
 };
+
 //Cancelar viaje usuario -  usuarios o contratista
 const cancelarViajeUsuarioYTrabajadores = async (solicitudId) => {
   const client = await pool.connect();
@@ -189,6 +198,24 @@ const cancelarViajeUsuarioYTrabajadores = async (solicitudId) => {
         );
     `;
     await client.query(deleteVehiculoUsuariosQuery, [
+      usuario_id,
+      trabajador_id,
+      viaje_id,
+    ]);
+
+    // Eliminar al usuario o trabajador del hotel asociado al trayecto
+    const deleteUsuarioHotelQuery = `
+      DELETE FROM usuarios_hoteles
+      WHERE 
+        (usuario_id = $1 OR trabajador_id = $2)
+        AND hotel_id IN (
+          SELECT t.hotel_id
+          FROM trayectos t
+          JOIN viajes v ON v.ruta_id = t.ruta_id
+          WHERE v.id = $3
+        );
+    `;
+    await client.query(deleteUsuarioHotelQuery, [
       usuario_id,
       trabajador_id,
       viaje_id,
@@ -294,16 +321,17 @@ const agendarViajeParaTrabajadores = async ({
 
     // Obtener trayectos del viaje
     const trayectosQuery = `
-      SELECT id AS trayecto_id, vehiculo_id 
+      SELECT id AS trayecto_id, vehiculo_id, hotel_id 
       FROM trayectos 
       WHERE ruta_id = (SELECT ruta_id FROM viajes WHERE id = $1);
     `;
     const trayectosResult = await client.query(trayectosQuery, [viaje_id]);
     const trayectos = trayectosResult.rows;
 
-    // Asignar trabajadores a los vehículos
+    // Asignar trabajadores a los vehículos y hoteles
     for (const trayecto of trayectos) {
       for (const trabajador_id of trabajadoresValidos) {
+        // Asignar trabajador al vehículo
         const vehiculoUsuariosQuery = `
           INSERT INTO vehiculo_usuarios (vehiculo_id, trayecto_id, trabajador_id, estado)
           VALUES ($1, $2, $3, 'Pendiente');
@@ -313,6 +341,18 @@ const agendarViajeParaTrabajadores = async ({
           trayecto.trayecto_id,
           trabajador_id,
         ]);
+
+        // Asignar trabajador al hotel si está asociado al trayecto
+        if (trayecto.hotel_id) {
+          const hotelUsuariosQuery = `
+            INSERT INTO usuarios_hoteles (hotel_id, trabajador_id, estado)
+            VALUES ($1, $2, 'Pendiente');
+          `;
+          await client.query(hotelUsuariosQuery, [
+            trayecto.hotel_id,
+            trabajador_id,
+          ]);
+        }
       }
     }
 
@@ -353,6 +393,7 @@ const agendarViajeParaTrabajadores = async ({
     client.release();
   }
 };
+
 //Rechazar la solicitud de un viaje - admin
 const rechazarSolicitudViaje = async (solicitudId) => {
   const client = await pool.connect();
@@ -394,6 +435,23 @@ const rechazarSolicitudViaje = async (solicitudId) => {
       );
     `;
     await client.query(deleteVehiculoUsuariosQuery, [
+      usuario_id,
+      trabajador_id,
+      viaje_id,
+    ]);
+
+    // Eliminar al usuario o trabajador del hotel asociado al trayecto
+    const deleteUsuarioHotelQuery = `
+      DELETE FROM usuarios_hoteles
+      WHERE (usuario_id = $1 OR trabajador_id = $2)
+      AND hotel_id IN (
+        SELECT t.hotel_id
+        FROM trayectos t
+        JOIN viajes v ON v.ruta_id = t.ruta_id
+        WHERE v.id = $3
+      );
+    `;
+    await client.query(deleteUsuarioHotelQuery, [
       usuario_id,
       trabajador_id,
       viaje_id,
@@ -561,7 +619,6 @@ const obtenerSolicitudesTrabajadores = async () => {
     throw new Error("Hubo un error al obtener las solicitudes de trabajadores");
   }
 };
-// admin
 const aprobarSolicitudViaje = async (solicitudId) => {
   const client = await pool.connect();
   try {
@@ -641,12 +698,13 @@ const getDetallesViajeConTrabajadores = async (viajeId) => {
     const response = await pool.query(query, [viajeId]);
     return response.rows;
   } catch (error) {
-    console.error("Error al obtener los detalles del viaje y trabajadores:", error);
+    console.error(
+      "Error al obtener los detalles del viaje y trabajadores:",
+      error
+    );
     throw new Error("Error al obtener los detalles del viaje y trabajadores.");
   }
 };
-
-
 
 export const ViajesModel = {
   crearViaje,
@@ -658,5 +716,5 @@ export const ViajesModel = {
   aprobarSolicitudViaje,
   obtenerSolicitudesTrabajadores,
   cancelarViajeUsuarioYTrabajadores,
-  getDetallesViajeConTrabajadores
+  getDetallesViajeConTrabajadores,
 };

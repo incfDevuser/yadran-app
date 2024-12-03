@@ -276,3 +276,39 @@ CREATE TABLE notificaciones_usuarios (
 );
 ALTER TABLE ponton
 ADD COLUMN qr_code TEXT;
+CREATE TABLE hoteles (
+  id SERIAL PRIMARY KEY,
+  nombre VARCHAR(255) NOT NULL,
+  ciudad VARCHAR(255) NOT NULL,
+  direccion VARCHAR(255) NOT NULL,
+  telefono VARCHAR(20) NOT NULL,
+  capacidad INT NOT NULL
+);
+CREATE TABLE usuarios_hoteles (
+  id SERIAL PRIMARY KEY,
+  usuario_id INT REFERENCES usuarios(id) ON DELETE CASCADE,
+  trabajador_id INT REFERENCES trabajadores(id) ON DELETE CASCADE,
+  hotel_id INT NOT NULL REFERENCES hoteles(id) ON DELETE CASCADE,
+  estado VARCHAR(50) DEFAULT 'Pendiente',
+  fecha_asignacion TIMESTAMP DEFAULT NOW(),
+  CONSTRAINT chk_usuario_o_trabajador CHECK (
+    (usuario_id IS NOT NULL AND trabajador_id IS NULL) OR
+    (usuario_id IS NULL AND trabajador_id IS NOT NULL)
+  )
+);
+ALTER TABLE usuarios_hoteles
+DROP CONSTRAINT IF EXISTS usuarios_hoteles_hotel_id_fkey;
+
+ALTER TABLE usuarios_hoteles
+ADD CONSTRAINT usuarios_hoteles_hotel_id_fkey
+FOREIGN KEY (hotel_id)
+REFERENCES hoteles(id)
+ON DELETE CASCADE;
+ALTER TABLE trayectos
+DROP CONSTRAINT IF EXISTS trayectos_hotel_id_fkey;
+
+ALTER TABLE trayectos
+ADD CONSTRAINT trayectos_hotel_id_fkey
+FOREIGN KEY (hotel_id)
+REFERENCES hoteles(id)
+ON DELETE CASCADE;

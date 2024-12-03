@@ -6,10 +6,7 @@ const router = express.Router();
 // Ruta para obtener la lista de hoteles
 router.get("/", HotelController.obtenerHoteles);
 
-router.get(
-  "/obtenerListaHotel",
-  HotelController.obtenerHotelesConUsuariosYTrabajadores
-);
+router.get("/:id/usuariosPorHotel", HotelController.obtenerUsuariosPorHotelId);
 
 //Crear un hotel
 router.post("/agregarHotel", HotelController.crearHotel);

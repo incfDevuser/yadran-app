@@ -4,6 +4,7 @@ import { useRutas } from "../../Context/RoutesContext";
 import { useTrayectos } from "../../Context/TrayectosContext";
 import { useVehiculos } from "../../Context/VehiculosContext";
 import { useVuelos } from "../../Context/VuelosContext";
+import { useHoteles } from "../../Context/HotelesContext";
 //Iconos
 import { IoTrashOutline } from "react-icons/io5";
 import { BsInfoSquare } from "react-icons/bs";
@@ -11,6 +12,7 @@ import { FaLongArrowAltRight } from "react-icons/fa";
 import { FiClock } from "react-icons/fi";
 import { IoAddCircleOutline } from "react-icons/io5";
 import { IoAirplaneOutline } from "react-icons/io5";
+import { HiOutlineOfficeBuilding } from "react-icons/hi";
 import { FaQrcode } from "react-icons/fa";
 import VueloCard from "./components/VueloCard";
 
@@ -19,6 +21,7 @@ const AdminRoutes = () => {
   const { crearTrayecto } = useTrayectos();
   const { vehiculos, loading: loadingVehiculos } = useVehiculos();
   const { vuelos, asignarVuelo, loading: loadingVuelos } = useVuelos();
+  const { hoteles, asignarHotel } = useHoteles();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedRuta, setSelectedRuta] = useState(null);
   const [isCreateModalOpen, setIsCreateModelOpen] = useState(false);
@@ -27,6 +30,10 @@ const AdminRoutes = () => {
   const [isVueloModalOpen, setIsVueloModalOpen] = useState(false);
   const [selectedVuelo, setSelectedVuelo] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
+  //Hoteles
+  const [isHotelModalOpen, setIsHotelModalOpen] = useState(false);
+  const [selectedHotel, setSelectedHotel] = useState(null);
+  const [searchHotel, setSearchHotel] = useState("");
 
   const [nuevaRuta, setNuevaRuta] = useState({
     nombre_ruta: "",
@@ -80,7 +87,30 @@ const AdminRoutes = () => {
       console.error("Error al asignar vuelo como trayecto", error);
     }
   };
+  //Hoteles
+  const openHotelModal = (rutaId) => {
+    setSelectedRuta(rutaId);
+    setIsHotelModalOpen(true);
+  };
 
+  const closeHotelModal = () => {
+    setIsHotelModalOpen(false);
+    setSelectedHotel(null);
+  };
+
+  const handleAsignarHotel = async () => {
+    if (!selectedRuta || !selectedHotel) {
+      console.error("No se ha seleccionado una ruta o un hotel");
+      return;
+    }
+
+    try {
+      await asignarHotel(selectedHotel.id, selectedRuta);
+      closeHotelModal();
+    } catch (error) {
+      console.error("Error al asignar hotel como trayecto", error);
+    }
+  };
   const handleDelete = async (id) => {
     try {
       if (window.confirm("Seguro que quieres eliminar la ruta?")) {
@@ -213,16 +243,20 @@ const AdminRoutes = () => {
                       >
                         <IoAddCircleOutline />
                       </button>
-                    </div>
-                  </td>
-                  <td className="py-2 px-4 border-b">
-                    <div className="flex justify-center space-x-2 text-xl">
-                      {/* Botón para asignar vuelo */}
+                      <div className="flex justify-center space-x-2 text-xl">
+                        {/* Botón para asignar vuelo */}
+                        <button
+                          onClick={() => openVueloModal(ruta.id)}
+                          className="text-blue-500 px-3 py-1 rounded"
+                        >
+                          <IoAirplaneOutline />
+                        </button>
+                      </div>
                       <button
-                        onClick={() => openVueloModal(ruta.id)}
-                        className="text-blue-500 px-3 py-1 rounded"
+                        onClick={() => openHotelModal(ruta.id)}
+                        className="text-green-500 px-3 py-1 rounded"
                       >
-                        <IoAirplaneOutline />
+                        <HiOutlineOfficeBuilding />
                       </button>
                     </div>
                   </td>
@@ -492,53 +526,66 @@ const AdminRoutes = () => {
                         key={trayecto.id}
                         className="p-4 border border-gray-300 rounded shadow w-[600px]"
                       >
-                        <div className="flex justify-center items-center gap-4">
-                          {/* Origen - Destino */}
-                          <div className="flex gap-4 font-semibold justify-center items-center">
-                            <div className="flex flex-col">
-                              Origen
-                              <p className="text-gray-500">{trayecto.origen}</p>
+                        {trayecto.hotel ? (
+                          // Renderizar solo información del hotel
+                          <div className="flex flex-col bg-gray-100 p-4 rounded shadow">
+                            <h3 className="font-bold text-lg text-blue-700">
+                              Área de Descanso
+                            </h3>
+                            <p>
+                              <strong>Hotel:</strong> {trayecto.hotel.nombre}
+                            </p>
+                            <p>
+                              <strong>Ciudad:</strong> {trayecto.hotel.ciudad}
+                            </p>
+                            <p>
+                              <strong>Dirección:</strong>{" "}
+                              {trayecto.hotel.direccion}
+                            </p>
+                            <p>
+                              <strong>Teléfono:</strong>{" "}
+                              {trayecto.hotel.telefono}
+                            </p>
+                            <p>
+                              <strong>Capacidad:</strong>{" "}
+                              {trayecto.hotel.capacidad}
+                            </p>
+                          </div>
+                        ) : (
+                          // Renderizar información normal del trayecto
+                          <div className="flex justify-center items-center gap-4">
+                            <div className="flex gap-4 font-semibold justify-center items-center">
+                              <div className="flex flex-col">
+                                Origen
+                                <p className="text-gray-500">
+                                  {trayecto.origen}
+                                </p>
+                              </div>
+                              <FaLongArrowAltRight className="text-green-500 text-xl" />
+                              <div className="flex flex-col">
+                                Destino
+                                <p className="text-gray-500">
+                                  {trayecto.destino}
+                                </p>
+                              </div>
                             </div>
-                            <FaLongArrowAltRight className="text-green-500 text-xl" />
-                            <div className="flex flex-col">
-                              Destino
+
+                            <div className="text-center ml-3">
+                              <p className="font-semibold">Duración Estimada</p>
+                              <div className="flex justify-center items-center gap-2 text-gray-500">
+                                <FiClock />
+                                <p>{trayecto.duracion_estimada} Min</p>
+                              </div>
+                            </div>
+
+                            <div className="text-center ml-3">
+                              <p className="font-semibold">Vehículo Asociado</p>
                               <p className="text-gray-500">
-                                {trayecto.destino}
+                                {trayecto.nombre_vehiculo}
                               </p>
                             </div>
                           </div>
-
-                          {/* Duración estimada */}
-                          <div className="text-center ml-3">
-                            <p className="font-semibold">Duración Estimada</p>
-                            <div className="flex justify-center items-center gap-2 text-gray-500">
-                              <FiClock />
-                              <p>{trayecto.duracion_estimada} Min</p>
-                            </div>
-                          </div>
-
-                          {/* Vehículo Asociado */}
-                          <div className="text-center ml-3">
-                            <p className="font-semibold">Vehículo Asociado</p>
-                            <p className="text-gray-500">
-                              {trayecto.nombre_vehiculo}
-                            </p>
-                          </div>
-
-                          {/* QR Code */}
-                          {trayecto.qr_code && (
-                            <div className="mb-5 flex flex-col items-center">
-                              <a
-                                href={trayecto.qr_code}
-                                download={`QR_Trayecto_${trayecto.id}.png`}
-                                className="mt-4 flex items-center gap-2 text-blue-500 hover:text-blue-700"
-                              >
-                                <FaQrcode className="text-2xl" />
-                                QR
-                              </a>
-                            </div>
-                          )}
-                        </div>
+                        )}
                       </div>
                     ))}
                   </div>
@@ -559,6 +606,7 @@ const AdminRoutes = () => {
             </div>
           </div>
         )}
+
         {isVueloModalOpen && (
           <div className="fixed inset-0 bg-gray-500 bg-opacity-75 flex items-center justify-center z-50">
             <div className="bg-white p-8 rounded shadow-lg max-w-2xl w-full">
@@ -600,6 +648,59 @@ const AdminRoutes = () => {
                 </button>
                 <button
                   onClick={closeVueloModal}
+                  className="bg-gray-500 text-white px-4 py-2 rounded"
+                >
+                  Cancelar
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+        {isHotelModalOpen && (
+          <div className="fixed inset-0 bg-gray-500 bg-opacity-75 flex items-center justify-center z-50">
+            <div className="bg-white p-8 rounded shadow-lg max-w-2xl w-full">
+              <h2 className="text-xl font-bold mb-4">Seleccionar Hotel</h2>
+
+              <div className="mb-4">
+                <input
+                  type="text"
+                  placeholder="Buscar por nombre del hotel"
+                  className="w-full p-2 border rounded-md"
+                  value={searchHotel}
+                  onChange={(e) => setSearchHotel(e.target.value)}
+                />
+              </div>
+
+              <div className="flex flex-col items-center gap-4 max-h-[400px] overflow-y-auto">
+                {hoteles
+                  .filter((hotel) =>
+                    hotel.nombre
+                      .toLowerCase()
+                      .includes(searchHotel.toLowerCase())
+                  )
+                  .map((hotel) => (
+                    <div
+                      key={hotel.id}
+                      className={`cursor-pointer w-full p-4 border rounded ${
+                        selectedHotel?.id === hotel.id ? "bg-blue-100" : ""
+                      }`}
+                      onClick={() => setSelectedHotel(hotel)}
+                    >
+                      <h3 className="text-lg font-bold">{hotel.nombre}</h3>
+                      <p className="text-gray-500">{hotel.ciudad}</p>
+                    </div>
+                  ))}
+              </div>
+
+              <div className="flex justify-end mt-4">
+                <button
+                  onClick={handleAsignarHotel}
+                  className="bg-blue-500 text-white px-4 py-2 rounded mr-2"
+                >
+                  Asignar Hotel
+                </button>
+                <button
+                  onClick={closeHotelModal}
                   className="bg-gray-500 text-white px-4 py-2 rounded"
                 >
                   Cancelar

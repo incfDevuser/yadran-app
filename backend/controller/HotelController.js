@@ -61,17 +61,18 @@ const asignarHotel = async (req, res) => {
     });
   }
 };
-const obtenerHotelesConUsuariosYTrabajadores = async (req, res) => {
+const obtenerUsuariosPorHotelId = async (req, res) => {
+  const { id } = req.params;
   try {
-    const hoteles = await HotelModel.obtenerHotelesConUsuariosYTrabajadores();
+    const usuarios = await HotelModel.obtenerUsuariosPorHotelId(id);
     return res.status(200).json({
-      message: "Lista de hoteles con usuarios y trabajadores",
-      hoteles,
+      message: "Usuarios del hotel obtenidos correctamente",
+      usuarios,
     });
   } catch (error) {
-    console.error("Error al obtener hoteles con usuarios y trabajadores:", error.message);
+    console.error("Error al obtener usuarios por hotel ID:", error.message);
     return res.status(500).json({
-      message: "Error al obtener hoteles con usuarios y trabajadores",
+      message: "Error interno del servidor",
     });
   }
 };
@@ -80,5 +81,5 @@ export const HotelController = {
   obtenerHoteles,
   asignarHotel,
   crearHotel,
-  obtenerHotelesConUsuariosYTrabajadores
+  obtenerUsuariosPorHotelId,
 };

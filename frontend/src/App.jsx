@@ -67,6 +67,10 @@ import Validaciones from "./pages/User/Validaciones";
 import { QrProvider } from "./Context/QrContext";
 import { ChoferProvider } from "./Context/ChoferContext";
 
+//Hoteles
+import AdminHoteles from "./pages/Admin/AdminHoteles";
+import { HotelesProvider } from "./Context/HotelesContext";
+
 const App = () => {
   return (
     <UsuariosProvider>
@@ -198,7 +202,9 @@ const App = () => {
                   <RutasProvider>
                     <TrayectosProvider>
                       <VehiculosProvider>
-                        <AdminRoutes />
+                        <HotelesProvider>
+                          <AdminRoutes />
+                        </HotelesProvider>
                       </VehiculosProvider>
                     </TrayectosProvider>
                   </RutasProvider>
@@ -279,6 +285,15 @@ const App = () => {
                 <VuelosProvider>
                   <AdminVuelos />
                 </VuelosProvider>
+              }
+            />
+            {/* Ruta para los hoteles */}
+            <Route
+              path="adminHoteles"
+              element={
+                <HotelesProvider>
+                  <AdminHoteles />
+                </HotelesProvider>
               }
             />
           </Routes>

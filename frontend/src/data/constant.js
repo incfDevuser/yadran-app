@@ -11,7 +11,10 @@ export const adminNavBar = [
     {id:"9",path:"/adminIntercentro", label: "Intercentro"},
     {id:"10",path:"/adminVuelos", label: "Vuelos"},
     {id:"11", path:"/adminSolicitudes", label:"Solicitudes"},
-    {id:"12", path:"/adminSeguimientoViajes", label:"Seguimiento Viaje"}
+    {id:"12", path:"/adminSeguimientoViajes", label:"Seguimiento Viaje"},
+    {id:"13", path:"/adminPontones", label:"Pontones"},
+    {id:"14", path:"/adminHoteles", label:"Hoteles"},
+    {id:"15", path:"/adminNotificaciones", label:"Notificaciones"}
 ]
 export const mainNavBar = [
     {id:"1",path:"/", label: "Agendar"},
