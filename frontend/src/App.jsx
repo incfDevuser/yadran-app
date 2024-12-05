@@ -71,6 +71,11 @@ import { ChoferProvider } from "./Context/ChoferContext";
 import AdminHoteles from "./pages/Admin/AdminHoteles";
 import { HotelesProvider } from "./Context/HotelesContext";
 
+//Notificacaiones
+import AdminNotificaciones from "./pages/Admin/AdminNotificaciones";
+import NotificacionesUsuario from "./pages/User/NotificacionesUsuario";
+import { NotificacionesProvider } from "./Context/NotificacionesContext";
+
 const App = () => {
   return (
     <UsuariosProvider>
@@ -289,11 +294,27 @@ const App = () => {
             />
             {/* Ruta para los hoteles */}
             <Route
-              path="adminHoteles"
+              path="/adminHoteles"
               element={
                 <HotelesProvider>
                   <AdminHoteles />
                 </HotelesProvider>
+              }
+            />
+            <Route
+              path="/adminNotificaciones"
+              element={
+                <NotificacionesProvider>
+                  <AdminNotificaciones />
+                </NotificacionesProvider>
+              }
+            />
+            <Route
+              path="/notificaciones"
+              element={
+                <NotificacionesProvider>
+                  <NotificacionesUsuario />
+                </NotificacionesProvider>
               }
             />
           </Routes>

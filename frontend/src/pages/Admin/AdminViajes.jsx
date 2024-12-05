@@ -4,7 +4,6 @@ import AdminSolicitudes from "./AdminSolicitudes";
 import { useViajes } from "../../Context/ViajesContext";
 import { useRutas } from "../../Context/RoutesContext";
 
-
 const AdminViajes = () => {
   const { viajes, loading, error, crearViaje } = useViajes();
   const { rutas, loading: loadingRutas } = useRutas();
@@ -99,7 +98,7 @@ const AdminViajes = () => {
               </div>
             ))}
           </div>
-        </div>        
+        </div>
         {/* Modal para mostrar los trayectos */}
         {selectedViaje && (
           <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
@@ -107,25 +106,48 @@ const AdminViajes = () => {
               <h2 className="text-2xl font-bold mb-6">
                 Trayectos del Viaje: {selectedViaje.nombre}
               </h2>
-
               <div className="space-y-4">
-                {selectedViaje.trayectos.map((trayecto) => (
-                  <div
-                    key={trayecto.id}
-                    className="border border-gray-300 rounded-lg p-4 bg-gray-50"
-                  >
-                    <p className="text-lg">Origen: {trayecto.origen}</p>
-                    <p className="text-lg">Destino: {trayecto.destino}</p>
-                    <p className="text-lg">
-                      Duración Estimada: {trayecto.duracion_estimada} minutos
-                    </p>
-                    <p className="text-lg">
-                      Vehículo: {trayecto.nombre_vehiculo}
-                    </p>
-                  </div>
-                ))}
-              </div>
+                {selectedViaje.trayectos.map((trayecto) => {
+                  // Lógica para determinar si es un área de descanso
+                  const esAreaDescanso =
+                    trayecto.origen === trayecto.destino ||
+                    !trayecto.vehiculo_id;
 
+                  if (esAreaDescanso) {
+                    return (
+                      <div
+                        key={trayecto.id}
+                        className="border border-yellow-300 rounded-lg p-4 bg-yellow-50"
+                      >
+                        <h3 className="text-lg font-bold text-yellow-600">
+                          Área de Descanso: Hotel
+                        </h3>
+                        <p className="text-sm font-medium text-gray-700">
+                          <strong>Ubicación:</strong> {trayecto.origen}
+                        </p>
+                      </div>
+                    );
+                  }
+
+                  // Mostrar trayecto regular
+                  return (
+                    <div
+                      key={trayecto.id}
+                      className="border border-gray-300 rounded-lg p-4 bg-gray-50"
+                    >
+                      <p className="text-lg">Origen: {trayecto.origen}</p>
+                      <p className="text-lg">Destino: {trayecto.destino}</p>
+                      <p className="text-lg">
+                        Duración Estimada: {trayecto.duracion_estimada} minutos
+                      </p>
+                      <p className="text-lg">
+                        Vehículo:{" "}
+                        {trayecto.nombre_vehiculo || "No especificado"}
+                      </p>
+                    </div>
+                  );
+                })}
+              </div>
               <div className="mt-6 text-right">
                 <button
                   onClick={handleCloseModal}
@@ -137,6 +159,7 @@ const AdminViajes = () => {
             </div>
           </div>
         )}
+
         {/* Modal de creación de viaje */}
         {isModalOpen && (
           <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">

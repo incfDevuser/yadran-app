@@ -1,6 +1,7 @@
 import { ViajesModel } from "../models/ViajesModel.js";
 import { SeguimientoModel } from "../models/SeguimientoModel.js";
 import { emailHelper } from "../Services/MailHelper.js";
+import { NotificacionesModel } from "../models/NotificacionesModel.js";
 
 const crearViaje = async (req, res) => {
   const { nombre, descripcion, ruta_id } = req.body;
@@ -144,7 +145,8 @@ const agendarViajeParaTrabajadores = async (req, res) => {
 
     if (!detallesViaje || detallesViaje.length === 0) {
       return res.status(404).json({
-        message: "No se encontraron detalles del viaje o trabajadores asociados.",
+        message:
+          "No se encontraron detalles del viaje o trabajadores asociados.",
       });
     }
 
@@ -173,7 +175,8 @@ const agendarViajeParaTrabajadores = async (req, res) => {
     await emailHelper.sendEmailContratista(emailCliente, emailData);
 
     res.status(201).json({
-      message: "Viaje para trabajadores agendado exitosamente y correo enviado.",
+      message:
+        "Viaje para trabajadores agendado exitosamente y correo enviado.",
       solicitudes: response.solicitudes,
     });
   } catch (error) {
@@ -184,28 +187,89 @@ const agendarViajeParaTrabajadores = async (req, res) => {
     });
   }
 };
-
-
 //Rechazar la solicitud de viaje
 const rechazarSolicitudViaje = async (req, res) => {
   const { solicitudId } = req.params;
 
   try {
-    const result = await ViajesModel.rechazarSolicitudViaje(solicitudId);
-    res.json({ message: result.message });
+    // Obtener la solicitud específica
+    const solicitud = await ViajesModel.obtenerSolicitudPorId(solicitudId);
+
+    if (!solicitud) {
+      return res.status(404).json({ message: "Solicitud no encontrada" });
+    }
+
+    // Actualizar el estado de la solicitud a "rechazada"
+    await ViajesModel.rechazarSolicitudViaje(solicitudId);
+
+    // Crear notificación dependiendo del tipo de solicitud
+    if (solicitud.usuario_id) {
+      // Notificación para un usuario natural
+      await NotificacionesModel.crearNotificacion({
+        titulo: "Solicitud de viaje rechazada",
+        descripcion: `Tu solicitud para el viaje "${solicitud.nombre_viaje}" ha sido rechazada.`,
+        tipo: "rechazo",
+        destinatario_id: solicitud.usuario_id,
+      });
+    } else if (solicitud.contratista_id) {
+      // Notificación para un contratista
+      await NotificacionesModel.crearNotificacion({
+        titulo: "Solicitud de viaje rechazada para uno de tus trabajadores",
+        descripcion: `La solicitud para el viaje "${solicitud.nombre_viaje}" de tu trabajador "${solicitud.nombre_trabajador}" ha sido rechazada.`,
+        tipo: "rechazo",
+        destinatario_id: solicitud.contratista_id,
+      });
+    }
+
+    res.status(200).json({
+      message:
+        "Solicitud de viaje rechazada exitosamente y notificación enviada.",
+    });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    console.error("Error al rechazar la solicitud de viaje:", error);
+    res.status(500).json({
+      message: "Error al rechazar la solicitud de viaje",
+      error: error.message,
+    });
   }
 };
-//Aprobar solicitud de viaje para un usuario o trabajador
+
 const aprobarSolicitudViaje = async (req, res) => {
   const { solicitud_id } = req.params;
 
   try {
-    const resultado = await ViajesModel.aprobarSolicitudViaje(solicitud_id);
+    // Obtener los detalles de la solicitud antes de aprobarla
+    const solicitud = await ViajesModel.obtenerSolicitudPorId(solicitud_id);
+
+    if (!solicitud) {
+      return res.status(404).json({ message: "Solicitud no encontrada" });
+    }
+
+    // Aprobar la solicitud
+    await ViajesModel.aprobarSolicitudViaje(solicitud_id);
+
+    // Crear la notificación basada en el tipo de solicitud
+    if (solicitud.usuario_id) {
+      // Notificación para un usuario natural
+      await NotificacionesModel.crearNotificacion({
+        titulo: "Solicitud de viaje aprobada",
+        descripcion: `Tu solicitud para el viaje "${solicitud.nombre_viaje}" ha sido aprobada.`,
+        tipo: "aprobación",
+        destinatario_id: solicitud.usuario_id,
+      });
+    } else if (solicitud.contratista_id) {
+      // Notificación para un contratista
+      await NotificacionesModel.crearNotificacion({
+        titulo: "Solicitud de viaje aprobada para uno de tus trabajadores",
+        descripcion: `La solicitud para el viaje "${solicitud.nombre_viaje}" de tu trabajador "${solicitud.nombre_trabajador}" ha sido aprobada.`,
+        tipo: "aprobación",
+        destinatario_id: solicitud.contratista_id,
+      });
+    }
 
     res.status(200).json({
-      message: "Solicitud de viaje aprobada exitosamente",
+      message:
+        "Solicitud de viaje aprobada exitosamente y notificación enviada.",
     });
   } catch (error) {
     console.error("Error al aprobar la solicitud de viaje:", error);
@@ -215,6 +279,7 @@ const aprobarSolicitudViaje = async (req, res) => {
     });
   }
 };
+
 export const ViajesController = {
   crearViaje,
   obtenerViajes,

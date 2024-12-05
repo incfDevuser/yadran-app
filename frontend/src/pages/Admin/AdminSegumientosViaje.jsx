@@ -6,14 +6,14 @@ const AdminSegumientosViaje = () => {
   const { viajes, obtenerDetalleViaje, detalleViaje, loading, error } =
     useViajes();
   const [viajeSeleccionado, setViajeSeleccionado] = useState(null);
-  const [isModalOpen, setIsModalOpen] = useState(false); // Controla si el modal está abierto
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const [filtro, setFiltro] = useState("");
 
   const handleSeleccionarViaje = async (id) => {
     setViajeSeleccionado(id);
     try {
       await obtenerDetalleViaje(id);
-      setIsModalOpen(true); // Abre el modal después de cargar los datos
+      setIsModalOpen(true);
     } catch (err) {
       console.error("Error al obtener el detalle del viaje:", err);
     }
@@ -113,76 +113,146 @@ const AdminSegumientosViaje = () => {
                 <h3 className="text-lg font-semibold text-gray-700 mb-3">
                   Trayectos y Usuarios
                 </h3>
-                {detalleViaje.trayectos.map((trayecto) => (
-                  <div
-                    key={trayecto.trayecto_id}
-                    className="p-4 bg-gray-100 rounded-lg shadow-md mb-4"
-                  >
-                    <p>
-                      <strong>Origen:</strong> {trayecto.trayecto_origen}
-                    </p>
-                    <p>
-                      <strong>Destino:</strong> {trayecto.trayecto_destino}
-                    </p>
-                    <p>
-                      <strong>Duración:</strong> {trayecto.trayecto_duracion}{" "}
-                      minutos
-                    </p>
-                    <p>
-                      <strong>Vehículo:</strong> {trayecto.tipo_vehiculo}
-                    </p>
-                    <p>
-                      <strong>Chofer:</strong> {trayecto.nombre_chofer} (
-                      {trayecto.email_chofer})
-                    </p>
-                    <h4 className="font-semibold mt-2">Usuarios:</h4>
-                    <ul className="space-y-4">
-                      {detalleViaje.usuariosVehiculos.filter(
-                        (usuario) =>
-                          usuario.trayecto_id === trayecto.trayecto_id
-                      ).length > 0 ? (
-                        detalleViaje.usuariosVehiculos
-                          .filter(
+                {detalleViaje.trayectos.map((trayecto, index) => {
+                  // Si el trayecto cumple las condiciones para ser un hotel
+                  const esHotel =
+                    trayecto.trayecto_origen === trayecto.trayecto_destino &&
+                    trayecto.nombre_chofer === null &&
+                    trayecto.vehiculo_id === null;
+
+                  if (esHotel) {
+                    return (
+                      <div
+                        key={trayecto.trayecto_id}
+                        className="p-4 bg-yellow-100 rounded-lg shadow-md mb-4"
+                      >
+                        <h4 className="font-semibold text-yellow-600">
+                          Área de Descanso
+                        </h4>
+                        <p>
+                          <strong>Hotel:</strong> {trayecto.trayecto_origen}
+                        </p>
+                        <p>
+                          <strong>Duración:</strong>{" "}
+                          {trayecto.trayecto_duracion} minutos
+                        </p>
+                        <h5 className="text-gray-700 mt-4">
+                          Usuarios en el área:
+                        </h5>
+                        <ul className="space-y-4">
+                          {detalleViaje.usuariosVehiculos.filter(
                             (usuario) =>
                               usuario.trayecto_id === trayecto.trayecto_id
-                          )
-                          .map((usuario, index) => (
-                            <li
-                              key={index}
-                              className="flex items-center p-4 bg-gray-100 rounded-lg shadow-md"
-                            >
-                              <div className="w-12 h-12 rounded-full bg-blue-500 flex items-center justify-center text-white font-bold text-lg mr-4">
-                                {usuario.nombre_usuario.charAt(0)}
-                              </div>
-                              <div className="flex-grow">
-                                <p className="font-semibold text-gray-800">
-                                  {usuario.nombre_usuario}
-                                </p>
-                                <p className="text-gray-500 text-sm flex items-center">
-                                  {usuario.email_usuario}
-                                </p>
-                              </div>
-                              <div
-                                className={`px-3 py-1 text-sm font-semibold rounded-full ${
-                                  usuario.estado_usuario === "Aprobado" ||
-                                  usuario.estado_usuario === "Confirmado"
-                                    ? "bg-green-100 text-green-600"
-                                    : "bg-red-100 text-red-600"
-                                }`}
+                          ).length > 0 ? (
+                            detalleViaje.usuariosVehiculos
+                              .filter(
+                                (usuario) =>
+                                  usuario.trayecto_id === trayecto.trayecto_id
+                              )
+                              .map((usuario, userIndex) => (
+                                <li
+                                  key={userIndex}
+                                  className="flex items-center p-4 bg-white rounded-lg shadow-md"
+                                >
+                                  <div className="w-12 h-12 rounded-full bg-yellow-500 flex items-center justify-center text-white font-bold text-lg mr-4">
+                                    {usuario.nombre_usuario.charAt(0)}
+                                  </div>
+                                  <div className="flex-grow">
+                                    <p className="font-semibold text-gray-800">
+                                      {usuario.nombre_usuario}
+                                    </p>
+                                    <p className="text-gray-500 text-sm flex items-center">
+                                      {usuario.email_usuario}
+                                    </p>
+                                  </div>
+                                </li>
+                              ))
+                          ) : (
+                            <p className="text-gray-500">
+                              No hay usuarios asignados a esta área de descanso.
+                            </p>
+                          )}
+                        </ul>
+                      </div>
+                    );
+                  }
+
+                  // Si el trayecto es regular, mostrarlo normalmente
+                  return (
+                    <div
+                      key={trayecto.trayecto_id}
+                      className="p-4 bg-gray-100 rounded-lg shadow-md mb-4"
+                    >
+                      <p>
+                        <strong>Origen:</strong> {trayecto.trayecto_origen}
+                      </p>
+                      <p>
+                        <strong>Destino:</strong> {trayecto.trayecto_destino}
+                      </p>
+                      <p>
+                        <strong>Duración:</strong> {trayecto.trayecto_duracion}{" "}
+                        minutos
+                      </p>
+                      <p>
+                        <strong>Vehículo:</strong>{" "}
+                        {trayecto.tipo_vehiculo || "No especificado"}
+                      </p>
+                      <p>
+                        <strong>Chofer:</strong>{" "}
+                        {trayecto.nombre_chofer || "No asignado"} (
+                        {trayecto.email_chofer || "Sin correo"})
+                      </p>
+                      <h4 className="font-semibold mt-2">Usuarios:</h4>
+                      <ul className="space-y-4">
+                        {detalleViaje.usuariosVehiculos.filter(
+                          (usuario) =>
+                            usuario.trayecto_id === trayecto.trayecto_id
+                        ).length > 0 ? (
+                          detalleViaje.usuariosVehiculos
+                            .filter(
+                              (usuario) =>
+                                usuario.trayecto_id === trayecto.trayecto_id
+                            )
+                            .map((usuario, userIndex) => (
+                              <li
+                                key={userIndex}
+                                className="flex items-center p-4 bg-gray-100 rounded-lg shadow-md"
                               >
-                                {usuario.estado_usuario}
-                              </div>
-                            </li>
-                          ))
-                      ) : (
-                        <p className="text-gray-500">
-                          No hay usuarios para este trayecto.
-                        </p>
-                      )}
-                    </ul>
-                  </div>
-                ))}
+                                <div className="w-12 h-12 rounded-full bg-blue-500 flex items-center justify-center text-white font-bold text-lg mr-4">
+                                  {usuario.nombre_usuario.charAt(0)}
+                                </div>
+                                <div className="flex-grow">
+                                  <p className="font-semibold text-gray-800">
+                                    {usuario.nombre_usuario}
+                                  </p>
+                                  <p className="text-gray-500 text-sm flex items-center">
+                                    {usuario.email_usuario}
+                                  </p>
+                                  <div
+                                    className={`px-3 py-1 w-[90px] text-sm font-semibold rounded-full ${
+                                      usuario.estado_usuario === "Confirmado"
+                                        ? "bg-green-100 text-green-600"
+                                        : usuario.estado_usuario === "Aprobado"
+                                        ? "bg-yellow-100 text-yellow-600"
+                                        : "bg-red-100 text-red-600"
+                                    }`}
+                                  >
+                                    {usuario.estado_usuario}
+                                  </div>
+                                </div>
+                              </li>
+                            ))
+                        ) : (
+                          <p className="text-gray-500">
+                            No hay usuarios para este trayecto.
+                          </p>
+                        )}
+                      </ul>
+                    </div>
+                  );
+                })}
               </div>
+
               {/* Usuarios en el pontón */}
               <div className="mb-6">
                 <h3 className="text-lg font-semibold text-gray-700 mb-3">

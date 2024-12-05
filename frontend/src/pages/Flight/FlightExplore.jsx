@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useViajes } from "../../Context/ViajesContext";
 import { FlightCard } from "../../container";
+import HotelCard from "../../container/Flight/HotelCard";
 import { Link } from "react-router-dom";
 import {
   FiSearch,
@@ -38,7 +39,6 @@ const FlightExplore = () => {
     setModalOpen(false);
   };
 
-  // Función para calcular la duración total del viaje sumando los trayectos
   const getTotalDuration = (trayectos) => {
     const totalMinutes = trayectos.reduce(
       (acc, trayecto) => acc + trayecto.duracion_estimada,
@@ -112,7 +112,7 @@ const FlightExplore = () => {
       <div className="mt-16 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
         {filteredViajes.length > 0 ? (
           filteredViajes.map((viaje) => {
-            const totalDuration = getTotalDuration(viaje.trayectos); // Calcular duración total
+            const totalDuration = getTotalDuration(viaje.trayectos);
             return (
               <div
                 key={viaje.id}
@@ -125,7 +125,6 @@ const FlightExplore = () => {
                   <p className="text-md text-gray-600 mt-2">
                     {viaje.descripcion}
                   </p>
-                  {/* Mostrar duración total en la card */}
                   <div className="flex items-center mt-4 text-gray-800">
                     <FiClock className="mr-2" />
                     <span>
@@ -161,26 +160,41 @@ const FlightExplore = () => {
         )}
       </div>
 
-      {/* Modal para mostrar el itinerario */}
       {isModalOpen && selectedViaje && (
         <div className="fixed inset-0 bg-gray-900 bg-opacity-75 flex justify-center items-center z-50">
           <div className="bg-white p-8 rounded-lg shadow-2xl max-w-3xl w-full max-h-96 overflow-y-auto transition-transform transform scale-100 duration-300">
             <h2 className="text-2xl font-bold mb-6 text-center">
-              Trayectos de la Ruta
+              Itinerario del Viaje
             </h2>
             {selectedViaje.trayectos.length > 0 ? (
               <ul className="space-y-4">
-                {selectedViaje.trayectos.map((trayecto) => (
-                  <FlightCard
-                    key={trayecto.id}
-                    duration={trayecto.duracion_estimada}
-                    name={`${trayecto.origen} a ${trayecto.destino}`}
-                    origin={trayecto.origen}
-                    destination={trayecto.destino}
-                    vehiculo={trayecto.nombre_vehiculo}
-                    trayectoLabel={`Trayecto ${trayecto.id}`}
-                  />
-                ))}
+                {selectedViaje.trayectos.map((trayecto) => {
+                  const esAreaDescanso =
+                    trayecto.origen === trayecto.destino &&
+                    !trayecto.vehiculo_id;
+
+                  if (esAreaDescanso) {
+                    return (
+                      <HotelCard
+                        key={trayecto.id}
+                        name="Área de Descanso (Hotel)"
+                        location={trayecto.origen}
+                        capacity="100 personas"
+                      />
+                    );
+                  }
+
+                  return (
+                    <FlightCard
+                      key={trayecto.id}
+                      duration={trayecto.duracion_estimada}
+                      name={`${trayecto.origen} a ${trayecto.destino}`}
+                      origin={trayecto.origen}
+                      destination={trayecto.destino}
+                      vehiculo={trayecto.nombre_vehiculo}
+                    />
+                  );
+                })}
               </ul>
             ) : (
               <p className="text-center text-lg">
@@ -204,4 +218,3 @@ const FlightExplore = () => {
 };
 
 export default FlightExplore;
-

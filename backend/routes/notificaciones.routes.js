@@ -26,7 +26,11 @@ router.put(
   AuthMiddleware.authToken,
   NotificacionesController.marcarNotificacionComoLeida
 );
-
+router.put(
+  "/actualizar/:id",
+  AuthMiddleware.authToken,
+  NotificacionesController.actualizarNotificacion
+);
 //Rutas para eliminar una notificacion
 router.delete(
   "/eliminar/:id",

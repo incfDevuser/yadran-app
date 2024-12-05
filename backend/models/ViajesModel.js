@@ -596,7 +596,7 @@ const obtenerSolicitudesTrabajadores = async () => {
       updated_at: row.updated_at,
       trabajador: {
         id: row.trabajador_id,
-        nombre: row.nombre_trabajador,
+        nombre: row.nombre_trabajador,  
         email: row.email_trabajador,
       },
       contratista: {
@@ -705,7 +705,37 @@ const getDetallesViajeConTrabajadores = async (viajeId) => {
     throw new Error("Error al obtener los detalles del viaje y trabajadores.");
   }
 };
-
+const obtenerSolicitudPorId = async (solicitudId) => {
+  try {
+    const query = `
+      SELECT 
+        uv.id AS solicitud_id,
+        uv.usuario_id,
+        uv.trabajador_id,
+        uv.contratista_id,
+        uv.viaje_id,
+        uv.estado,
+        u.nombre AS nombre_usuario,
+        u.email AS email_usuario,
+        t.nombre AS nombre_trabajador,
+        t.email AS email_trabajador,
+        c.nombre AS nombre_contratista,
+        c.email AS email_contratista,
+        v.nombre AS nombre_viaje
+      FROM usuarios_viajes uv
+      LEFT JOIN usuarios u ON uv.usuario_id = u.id
+      LEFT JOIN trabajadores t ON uv.trabajador_id = t.id
+      LEFT JOIN usuarios c ON uv.contratista_id = c.id
+      JOIN viajes v ON uv.viaje_id = v.id
+      WHERE uv.id = $1;
+    `;
+    const response = await pool.query(query, [solicitudId]);
+    return response.rows[0];
+  } catch (error) {
+    console.error("Error al obtener solicitud:", error);
+    throw new Error("No se pudo obtener la solicitud");
+  }
+};
 export const ViajesModel = {
   crearViaje,
   obtenerViajes,
@@ -717,4 +747,5 @@ export const ViajesModel = {
   obtenerSolicitudesTrabajadores,
   cancelarViajeUsuarioYTrabajadores,
   getDetallesViajeConTrabajadores,
+  obtenerSolicitudPorId
 };

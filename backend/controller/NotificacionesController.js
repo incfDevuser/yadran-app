@@ -8,68 +8,49 @@ const obtenerNotificaciones = async (req, res) => {
       notificaciones,
     });
   } catch (error) {
-    console.error(error);
+    console.error("Error al obtener notificaciones:", error);
     return res.status(500).json({
       message: "Error interno del servidor",
-    });
-  }
-};
-//Guardar la suscripcion
-const guardarSuscripcion = async (req, res) => {
-  const { subscription } = req.body;
-  const usuario_id = req.user.id;
-
-  try {
-    await NotificacionesModel.guardarSuscripcion(usuario_id, subscription);
-    return res
-      .status(200)
-      .json({ message: "Suscripción guardada correctamente." });
-  } catch (error) {
-    console.error("Error al guardar la suscripción:", error);
-    return res.status(500).json({
-      message: "Error interno al guardar la suscripción.",
     });
   }
 };
 
 const crearNotificacion = async (req, res) => {
-  const { titulo, descripcion, tipo } = req.body;
-  const nuevaNotificacion = {
-    titulo,
-    descripcion,
-    tipo,
-  };
+  const { titulo, descripcion, tipo, destinatario_id = null } = req.body;
   try {
-    const crear = await NotificacionesModel.crearNotificacion(
-      nuevaNotificacion
-    );
+    const nuevaNotificacion = await NotificacionesModel.crearNotificacion({
+      titulo,
+      descripcion,
+      tipo,
+      destinatario_id,
+    });
     return res.status(201).json({
-      message: "Notificacion creada",
-      nuevaNotificacion,
+      message: "Notificación creada",
+      notificacion: nuevaNotificacion,
     });
   } catch (error) {
-    console.error(error);
+    console.error("Error al crear notificación:", error);
     return res.status(500).json({
       message: "Error interno del servidor",
     });
   }
 };
+
 const eliminarNotificacion = async (req, res) => {
   const { id } = req.params;
   try {
-    const solicitudEliminar = await NotificacionesModel.eliminarNotificacion(
-      id
-    );
+    await NotificacionesModel.eliminarNotificacion(id);
     return res.status(200).json({
-      message: "Notificacion Eliminada",
+      message: "Notificación eliminada con éxito",
     });
   } catch (error) {
-    console.error(error);
+    console.error("Error al eliminar notificación:", error);
     return res.status(500).json({
       message: "Error interno del servidor",
     });
   }
 };
+
 const crearNotificacionGlobal = async (req, res) => {
   const { titulo, descripcion, tipo } = req.body;
   try {
@@ -83,28 +64,30 @@ const crearNotificacionGlobal = async (req, res) => {
       notificacion,
     });
   } catch (error) {
-    console.error(error);
+    console.error("Error al crear notificación global:", error);
     return res.status(500).json({
-      message: "Error al crear la notificación global",
+      message: "Error interno del servidor",
     });
   }
 };
+
 const obtenerNotificacionesPorUsuario = async (req, res) => {
   const usuario_id = req.user.id;
   try {
     const notificaciones =
       await NotificacionesModel.obtenerNotificacionesPorUsuario(usuario_id);
     return res.status(200).json({
-      message: "Notificaciones del usuario",
+      message: "Notificaciones del usuario obtenidas con éxito",
       notificaciones,
     });
   } catch (error) {
-    console.error(error);
+    console.error("Error al obtener notificaciones por usuario:", error);
     return res.status(500).json({
-      message: "Error al obtener las notificaciones del usuario",
+      message: "Error interno del servidor",
     });
   }
 };
+
 const marcarNotificacionComoLeida = async (req, res) => {
   const usuario_id = req.user.id;
   const { notificacion_id } = req.params;
@@ -119,16 +102,46 @@ const marcarNotificacionComoLeida = async (req, res) => {
       notificacion: notificacionLeida,
     });
   } catch (error) {
-    console.error(error);
+    console.error("Error al marcar notificación como leída:", error);
     return res.status(500).json({
-      message: "Error al marcar la notificación como leída",
+      message: "Error interno del servidor",
     });
   }
 };
+const actualizarNotificacion = async (req, res) => {
+  const { id } = req.params;
+  const campos = req.body;
+
+  try {
+    if (!Object.keys(campos).length) {
+      return res
+        .status(400)
+        .json({ message: "No se enviaron campos para actualizar" });
+    }
+
+    const notificacionActualizada =
+      await NotificacionesModel.actualizarNotificacion(id, campos);
+
+    if (!notificacionActualizada) {
+      return res.status(404).json({ message: "Notificación no encontrada" });
+    }
+
+    res.status(200).json({
+      message: "Notificación actualizada con éxito",
+      notificacion: notificacionActualizada,
+    });
+  } catch (error) {
+    console.error("Error al actualizar notificación:", error);
+    res.status(500).json({
+      message: "Error interno del servidor",
+    });
+  }
+};
+
 export const NotificacionesController = {
   obtenerNotificaciones,
-  guardarSuscripcion,
   crearNotificacion,
+  actualizarNotificacion,
   eliminarNotificacion,
   crearNotificacionGlobal,
   obtenerNotificacionesPorUsuario,

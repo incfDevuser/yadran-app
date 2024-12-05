@@ -43,10 +43,11 @@ import notificacionRoutes from "./routes/notificaciones.routes.js";
 //Qrs
 import qrRoutes from "./routes/qe.routes.js";
 //Seguimiento de viaje
-import seguimientoViajes from "./routes/seguimiento.routes.js"
+import seguimientoViajes from "./routes/seguimiento.routes.js";
 //Hoteles routes
-import hotelesRoutes from './routes/hoteles.routes.js'
-
+import hotelesRoutes from "./routes/hoteles.routes.js";
+//Limpieza de entidades
+import limpiezaRoutes from "./routes/limpieza.routes.js";
 //Definiciones y variables globales
 dotenv.config();
 pool;
@@ -120,7 +121,9 @@ app.use("/api/notificaciones", notificacionRoutes);
 app.use("/api/qr", qrRoutes);
 //Rutas para seguimiento de viaje
 app.use("/api/seguimiento", seguimientoViajes);
-app.use("/api/hoteles", hotelesRoutes)
+app.use("/api/hoteles", hotelesRoutes);
+//Rutas para la limpieza
+app.use("/api/limpieza", limpiezaRoutes);
 
 //Node cron para obtener los vuelos
 const cronJob = cron.schedule("*/10 * * * *", async () => {
