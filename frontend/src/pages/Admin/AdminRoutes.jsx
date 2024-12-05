@@ -15,6 +15,8 @@ import { IoAirplaneOutline } from "react-icons/io5";
 import { HiOutlineOfficeBuilding } from "react-icons/hi";
 import { FaQrcode } from "react-icons/fa";
 import VueloCard from "./components/VueloCard";
+import { jsPDF } from "jspdf";
+
 
 const AdminRoutes = () => {
   const { rutas, eliminarRuta, crearRuta } = useRutas();
@@ -55,6 +57,10 @@ const AdminRoutes = () => {
     vehiculo_id: "",
   });
   const descargarPDF = (trayecto) => {
+    if (!trayecto.qr_code) {
+      console.error("El trayecto no tiene un QR asignado.");
+      return;
+    }
     const doc = new jsPDF();
     doc.setFontSize(16);
     doc.text(`Trayecto: ${trayecto.origen} → ${trayecto.destino}`, 10, 20);
@@ -584,6 +590,12 @@ const AdminRoutes = () => {
                                 {trayecto.nombre_vehiculo}
                               </p>
                             </div>
+                            <button
+                              onClick={() => descargarPDF(trayecto)}
+                              className="text-blue-500 hover:text-blue-700"
+                            >
+                              <FaQrcode size={24} />
+                            </button>
                           </div>
                         )}
                       </div>

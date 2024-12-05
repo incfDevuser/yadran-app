@@ -26,7 +26,6 @@ const crearTrayecto = async ({
   origen,
   destino,
   duracion_estimada,
-  orden,
   estado,
   vehiculo_id,
 }) => {
@@ -34,28 +33,41 @@ const crearTrayecto = async ({
   try {
     await client.query("BEGIN");
 
-    // Crear el trayecto
-    const query = `
+    // Obtener el orden actual más alto para los trayectos de esta ruta
+    const queryOrden = `
+      SELECT COALESCE(MAX(orden), -1) + 1 AS nuevo_orden
+      FROM trayectos
+      WHERE ruta_id = $1;
+    `;
+    const responseOrden = await client.query(queryOrden, [ruta_id]);
+    const nuevoOrden = responseOrden.rows[0].nuevo_orden;
+
+    // Crear el trayecto con el nuevo número de orden
+    const queryCrear = `
       INSERT INTO trayectos (
         ruta_id, origen, destino, duracion_estimada, orden, estado, vehiculo_id
       ) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *;
     `;
-    const values = [
+    const valuesCrear = [
       ruta_id,
       origen,
       destino,
       duracion_estimada,
-      orden,
+      nuevoOrden,
       estado,
       vehiculo_id,
     ];
-    const response = await client.query(query, values);
-    const trayecto = response.rows[0];
+    const responseCrear = await client.query(queryCrear, valuesCrear);
+    const trayecto = responseCrear.rows[0];
+
+    // Generar el código QR
     const qrData = {
       trayecto_id: trayecto.id,
       vehiculo_id: trayecto.vehiculo_id,
     };
     const qrCode = await QRCode.toDataURL(JSON.stringify(qrData));
+
+    // Actualizar el trayecto con el QR generado
     const queryActualizarQR = `
       UPDATE trayectos
       SET qr_code = $1
@@ -78,6 +90,7 @@ const crearTrayecto = async ({
     client.release();
   }
 };
+
 
 const actualizarTrayecto = async () => {};
 
