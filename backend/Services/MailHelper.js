@@ -17,24 +17,40 @@ const sendEmail = async (emailCliente, emailData) => {
     ponton,
   } = emailData;
 
-  // Construir HTML para los trayectos
+  // Construir HTML para todos los trayectos en orden
   const trayectosHtml = trayectos
-    .map(
-      (trayecto, index) => `
-        <div style="margin-bottom: 20px; padding: 15px; border: 1px solid #ddd; border-radius: 8px;">
-          <h3 style="margin-bottom: 10px;">Trayecto ${index + 1}</h3>
-          <p><strong>Origen:</strong> ${trayecto.trayecto_origen}</p>
-          <p><strong>Destino:</strong> ${trayecto.trayecto_destino}</p>
-          <p><strong>Duración estimada:</strong> ${
-            trayecto.trayecto_duracion
-          } minutos</p>
-          <p><strong>Vehículo:</strong> ${trayecto.tipo_vehiculo}</p>
-          <p><strong>Chofer:</strong> ${trayecto.nombre_chofer} (${
-        trayecto.email_chofer
-      })</p>
-        </div>
-      `
-    )
+    .map((trayecto, index) => {
+      const isAreaDescanso =
+        trayecto.trayecto_origen === trayecto.trayecto_destino;
+
+      if (isAreaDescanso) {
+        return `
+          <div style="margin-bottom: 20px; padding: 15px; border: 1px solid #ddd; border-radius: 8px; background-color: #f7f7f7;">
+            <h3 style="margin-bottom: 10px;">Área de Descanso ${index + 1}</h3>
+            <p><strong>Ubicación:</strong> ${trayecto.trayecto_origen}</p>
+          </div>
+        `;
+      } else {
+        return `
+          <div style="margin-bottom: 20px; padding: 15px; border: 1px solid #ddd; border-radius: 8px;">
+            <h3 style="margin-bottom: 10px;">Trayecto ${index + 1}</h3>
+            <p><strong>Origen:</strong> ${trayecto.trayecto_origen}</p>
+            <p><strong>Destino:</strong> ${trayecto.trayecto_destino}</p>
+            <p><strong>Duración estimada:</strong> ${
+              trayecto.trayecto_duracion
+            } minutos</p>
+            <p><strong>Vehículo:</strong> ${
+              trayecto.tipo_vehiculo || "No especificado"
+            }</p>
+            ${
+              trayecto.nombre_chofer
+                ? `<p><strong>Chofer:</strong> ${trayecto.nombre_chofer} (${trayecto.email_chofer})</p>`
+                : ""
+            }
+          </div>
+        `;
+      }
+    })
     .join("");
 
   const mailOptions = {
@@ -87,6 +103,8 @@ const sendEmail = async (emailCliente, emailData) => {
     throw new Error("Error al enviar el correo");
   }
 };
+
+
 const sendEmailIntercentro = async (emailCliente, emailData) => {
   const {
     solicitud_id,

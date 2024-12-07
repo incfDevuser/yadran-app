@@ -81,15 +81,23 @@ const ConfirmacionVuelo = () => {
         {viaje.trayectos && viaje.trayectos.length > 0 && (
           <div className="mt-4">
             <h3 className="font-semibold text-gray-700 flex items-center">
-              <FiMapPin className="mr-2 text-blue-600" /> Trayectos
+              <FiMapPin className="mr-2 text-blue-600" /> Trayectos y Áreas de Descanso
             </h3>
             <ul className="list-disc list-inside text-md text-gray-600">
-              {viaje.trayectos.map((trayecto) => (
-                <li key={trayecto.id}>
-                  {trayecto.origen} a {trayecto.destino} -{" "}
-                  {trayecto.duracion_estimada} minutos
-                </li>
-              ))}
+              {viaje.trayectos.map((trayecto, index) => {
+                // Identificar si es un área de descanso
+                const esAreaDescanso = trayecto.origen === trayecto.destino;
+
+                return (
+                  <li key={trayecto.id}>
+                    {esAreaDescanso
+                      ? `Área de descanso: ${trayecto.origen}`
+                      : `Trayecto ${index + 1}: ${trayecto.origen} a ${trayecto.destino} - ${
+                          trayecto.duracion_estimada ? `${trayecto.duracion_estimada} minutos` : "Duración no especificada"
+                        }`}
+                  </li>
+                );
+              })}
             </ul>
           </div>
         )}

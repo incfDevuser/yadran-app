@@ -228,6 +228,7 @@ const PerfilUsuario = () => {
       </div>
 
       {/* Modal para mostrar los trayectos */}
+      {/* Modal para mostrar los trayectos */}
       {modalOpen && (
         <div
           className="fixed inset-0 bg-gray-800 bg-opacity-75 flex items-center justify-center z-50"
@@ -235,40 +236,57 @@ const PerfilUsuario = () => {
           role="dialog"
           aria-modal="true"
         >
-          <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-lg relative">
+          <div
+            className="bg-white p-6 rounded-lg shadow-lg w-full max-w-lg relative"
+            style={{ maxHeight: "80vh", overflowY: "auto" }} // Scrollbar agregado
+          >
             <h2
               id="modal-title"
               className="text-2xl font-semibold text-gray-900 mb-4"
             >
-              Trayectos
+              Trayectos y Áreas de Descanso
             </h2>
             {trayectos.length > 0 ? (
-              trayectos.map((trayecto, idx) => (
-                <div
-                  key={trayecto.id || idx}
-                  className="border border-gray-200 rounded-md p-3 mb-3"
-                >
-                  <p className="text-gray-700 mb-1">
-                    <strong>Origen:</strong>{" "}
-                    {trayecto.origen || "No disponible"}
-                  </p>
-                  <p className="text-gray-700 mb-1">
-                    <strong>Destino:</strong>{" "}
-                    {trayecto.destino || "No disponible"}
-                  </p>
-                  <p className="text-gray-700 mb-1">
-                    <strong>Estado:</strong> {trayecto.estado || "Desconocido"}
-                  </p>
-                  <p className="text-gray-700 mb-1">
-                    <strong>Vehiculo:</strong>{" "}
-                    {trayecto.tipo_vehiculo || "Desconocido"}
-                  </p>
-                  <p className="text-gray-700">
-                    <strong>Duración Estimada:</strong>{" "}
-                    {trayecto.duracion_estimada}
-                  </p>
-                </div>
-              ))
+              trayectos.reduce((acumulador, trayecto, index, array) => {
+                // Detectar áreas de descanso (mismo origen y destino)
+                if (trayecto.origen === trayecto.destino) {
+                  acumulador.push(
+                    <div
+                      key={`descanso-${index}`}
+                      className="bg-gray-100 p-4 rounded-md mb-4 shadow-sm"
+                    >
+                      <p className="text-gray-800 font-semibold">
+                        <strong>Área de Descanso:</strong> {trayecto.origen}
+                      </p>
+                    </div>
+                  );
+                } else {
+                  acumulador.push(
+                    <div
+                      key={`trayecto-${index}`}
+                      className="border border-gray-200 rounded-md p-3 mb-3"
+                    >
+                      <p className="text-gray-700 mb-1">
+                        <strong>Origen:</strong>{" "}
+                        {trayecto.origen || "No disponible"}
+                      </p>
+                      <p className="text-gray-700 mb-1">
+                        <strong>Destino:</strong>{" "}
+                        {trayecto.destino || "No disponible"}
+                      </p>
+                      <p className="text-gray-700 mb-1">
+                        <strong>Duración Estimada:</strong>{" "}
+                        {trayecto.duracion_estimada || "No disponible"}
+                      </p>
+                      <p className="text-gray-700">
+                        <strong>Vehículo:</strong>{" "}
+                        {trayecto.tipo_vehiculo || "No disponible"}
+                      </p>
+                    </div>
+                  );
+                }
+                return acumulador;
+              }, [])
             ) : (
               <p className="text-gray-600">
                 No hay trayectos disponibles para este viaje.
