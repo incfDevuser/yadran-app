@@ -1,8 +1,23 @@
 import React from "react";
-import { FaQrcode, FaDownload } from "react-icons/fa";
+import {
+  FaQrcode,
+  FaDownload,
+  FaCloud,
+  FaTemperatureHigh,
+  FaTemperatureLow,
+  FaWind,
+  FaSun,
+} from "react-icons/fa";
 
 const Modal = ({ isOpen, onClose, title, data, entityType }) => {
   if (!isOpen) return null;
+  const capitalizeWords = (text) => {
+    return text
+      .toLowerCase()
+      .split(" ")
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(" ");
+  };
   const renderEntityDetails = (item) => {
     switch (entityType) {
       case "jurisdiccion":
@@ -92,24 +107,74 @@ const Modal = ({ isOpen, onClose, title, data, entityType }) => {
       case "centro":
         return (
           <div key={item.id} className="bg-gray-100 p-3 rounded-md shadow-sm">
-            <p>Nombre: {item.nombre_centro}</p>
             <p>
-              Apertura Productiva:{" "}
+              <strong>Nombre:</strong> {item.nombre_centro}
+            </p>
+            <p>
+              <strong>Apertura Productiva:</strong>{" "}
               {item.fecha_apertura_productiva || "No disponible"}
             </p>
             <p>
-              Cierre Productivo:{" "}
+              <strong>Cierre Productivo:</strong>{" "}
               {item.fecha_cierre_productivo || "No disponible"}
             </p>
-            <p>Jefe de Centro: {item.jefe_centro || "No disponible"}</p>
             <p>
-              Etapa Ciclo Cultivo: {item.etapa_ciclo_cultivo || "No disponible"}
+              <strong>Jefe de Centro:</strong>{" "}
+              {item.jefe_centro || "No disponible"}
             </p>
-            <p>Estructura: {item.estructura || "No disponible"}</p>
-            <p>Ponton Asociado: {item.nombre_ponton || "No disponible"}</p>
-            <p>Ruta Asociada: {item.nombre_ruta || "No disponible"}</p>
+            <p>
+              <strong>Etapa Ciclo Cultivo:</strong>{" "}
+              {item.etapa_ciclo_cultivo || "No disponible"}
+            </p>
+            <p>
+              <strong>Estructura:</strong> {item.estructura || "No disponible"}
+            </p>
+            <p>
+              <strong>Ponton Asociado:</strong>{" "}
+              {item.nombre_ponton || "No disponible"}
+            </p>
+            <p>
+              <strong>Ruta Asociada:</strong>{" "}
+              {item.nombre_ruta || "No disponible"}
+            </p>
+
+            {/* Renderizar información del clima */}
+            {item.clima ? (
+              <div className="mt-4 p-3 bg-blue-100 rounded-md shadow">
+                <h4 className="text-lg font-semibold text-blue-800">
+                  Información del Clima
+                </h4>
+                <div className="flex items-center gap-2">
+                  <img
+                    src={`https://openweathermap.org/img/wn/${item.clima.weather[0].icon}@2x.png`}
+                    alt={item.clima.weather[0].description}
+                    className="w-10 h-10"
+                  />
+                  <p>{capitalizeWords(item.clima.weather[0].description)}</p>
+                </div>
+                <div className="flex items-center gap-2 mt-2">
+                  <FaTemperatureHigh className="text-red-500" />
+                  <p>Temperatura: {item.clima.main.temp}°C</p>
+                </div>
+                <div className="flex items-center gap-2">
+                  <FaTemperatureLow className="text-blue-500" />
+                  <p>Sensación Térmica: {item.clima.main.feels_like}°C</p>
+                </div>
+                <div className="flex items-center gap-2">
+                  <FaWind className="text-gray-500" />
+                  <p>Viento: {item.clima.wind.speed} m/s</p>
+                </div>
+                <div className="flex items-center gap-2">
+                  <FaCloud className="text-gray-400" />
+                  <p>Humedad: {item.clima.main.humidity}%</p>
+                </div>
+              </div>
+            ) : (
+              <p className="text-gray-500 italic mt-3">Clima no disponible</p>
+            )}
           </div>
         );
+
       case "base":
         return (
           <div key={item.id} className="bg-gray-100 p-3 rounded-md shadow-sm">

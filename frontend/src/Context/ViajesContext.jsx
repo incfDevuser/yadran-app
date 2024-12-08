@@ -18,7 +18,7 @@ export const ViajesProvider = ({ children }) => {
           withCredentials: true,
         });
         const data = response.data.viajes;
-        console.log(data)
+        console.log(data);
         setViajes(data);
       } catch (error) {
         setError(error.message || "Hubo un error al cargar los viajes");
@@ -94,7 +94,15 @@ export const ViajesProvider = ({ children }) => {
       setLoading(false);
     }
   };
-
+  const limpiarEntidades = async () => {
+    try {
+      const response = await axios.post(
+        "http://localhost:5000/api/limpieza/limpiarUsuarios"
+      );
+    } catch (error) {
+      console.error("Error al limpiar las entidades:", error);
+    }
+  };
   return (
     <ViajesContext.Provider
       value={{
@@ -106,6 +114,7 @@ export const ViajesProvider = ({ children }) => {
         obtenerDetalleViaje,
         solicitarViaje,
         crearViaje,
+        limpiarEntidades
       }}
     >
       {children}

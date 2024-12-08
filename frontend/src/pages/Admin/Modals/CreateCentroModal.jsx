@@ -17,6 +17,8 @@ const CreateCentroModal = ({ isOpen, onClose }) => {
     estructuras: "",
     ponton_id: null,
     ruta_id: null,
+    latitud: "", // Nuevo campo
+    longitud: "", // Nuevo campo
   });
 
   const handleInputChange = (e) => {
@@ -26,8 +28,13 @@ const CreateCentroModal = ({ isOpen, onClose }) => {
       [name]: value,
     });
   };
+
   const handleCreate = async () => {
     try {
+      if (!nuevoCentro.latitud || !nuevoCentro.longitud) {
+        alert("Por favor ingresa la latitud y longitud");
+        return;
+      }
       await crearCentro(nuevoCentro);
       onClose();
     } catch (error) {
@@ -127,6 +134,34 @@ const CreateCentroModal = ({ isOpen, onClose }) => {
           </div>
 
           <div className="mb-4">
+            <label className="block text-gray-700 mb-2">Latitud</label>
+            <input
+              type="number"
+              step="0.000001"
+              name="latitud"
+              value={nuevoCentro.latitud}
+              onChange={handleInputChange}
+              className="w-full px-3 py-2 border rounded"
+              placeholder="Latitud (ej: -33.4489)"
+              required
+            />
+          </div>
+
+          <div className="mb-4">
+            <label className="block text-gray-700 mb-2">Longitud</label>
+            <input
+              type="number"
+              step="0.000001"
+              name="longitud"
+              value={nuevoCentro.longitud}
+              onChange={handleInputChange}
+              className="w-full px-3 py-2 border rounded"
+              placeholder="Longitud (ej: -70.6693)"
+              required
+            />
+          </div>
+
+          <div className="mb-4">
             <label className="block text-gray-700 mb-2">Ponton Asociado</label>
             {loadingPontones ? (
               <p>Cargando Pontones...</p>
@@ -153,6 +188,7 @@ const CreateCentroModal = ({ isOpen, onClose }) => {
               </select>
             )}
           </div>
+
           <div className="mb-4">
             <label className="block text-gray-700 mb-2">Ruta Asociada</label>
             {loadingRutas ? (

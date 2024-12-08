@@ -18,38 +18,51 @@ const crearViaje = async ({ nombre, descripcion, ruta_id }) => {
 const obtenerViajes = async () => {
   try {
     const query = `
-  SELECT 
-    v.*, 
-    r.nombre_ruta AS nombre_ruta, 
-    json_agg(
-      json_build_object(
-        'id', t.id,
-        'origen', t.origen,
-        'destino', t.destino,
-        'duracion_estimada', t.duracion_estimada,
-        'vehiculo_id', t.vehiculo_id,
-        'nombre_vehiculo', veh.tipo_vehiculo 
-      )
-         ORDER BY t.id ASC
-    ) AS trayectos
-  FROM viajes v
-  JOIN rutas r ON v.ruta_id = r.id
-  JOIN trayectos t ON v.ruta_id = t.ruta_id
-  LEFT JOIN vehiculos veh ON t.vehiculo_id = veh.id  -- LEFT JOIN para incluir trayectos sin vehículo
-  GROUP BY v.id, r.nombre_ruta
-  ORDER BY v.id;
-`;
+      SELECT 
+        v.*, 
+        r.nombre_ruta AS nombre_ruta, 
+        json_build_object(
+          'id', c.id,
+          'nombre_centro', c.nombre_centro,
+          'fecha_apertura_productiva', c.fecha_apertura_productiva,
+          'fecha_cierre_productivo', c.fecha_cierre_productivo,
+          'jefe_centro', c.jefe_centro,
+          'etapa_ciclo_cultivo', c.etapa_ciclo_cultivo,
+          'estructura', c.estructura,
+          'latitud', c.latitud,
+          'longitud', c.longitud
+        ) AS centro_asociado, -- Construimos un objeto JSON con los datos del centro
+        json_agg(
+          json_build_object(
+            'id', t.id,
+            'origen', t.origen,
+            'destino', t.destino,
+            'duracion_estimada', t.duracion_estimada,
+            'vehiculo_id', t.vehiculo_id,
+            'nombre_vehiculo', veh.tipo_vehiculo 
+          )
+          ORDER BY t.id ASC
+        ) AS trayectos
+      FROM viajes v
+      JOIN rutas r ON v.ruta_id = r.id
+      LEFT JOIN centro c ON r.id = c.ruta_id -- LEFT JOIN para incluir el centro asociado
+      JOIN trayectos t ON v.ruta_id = t.ruta_id
+      LEFT JOIN vehiculos veh ON t.vehiculo_id = veh.id -- LEFT JOIN para incluir trayectos sin vehículo
+      GROUP BY v.id, r.nombre_ruta, c.id -- Incluir c.id para evitar errores de agrupación
+      ORDER BY v.id;
+    `;
 
     const response = await pool.query(query);
     return response.rows;
   } catch (error) {
     console.error(
-      "Error al obtener los viajes con trayectos y vehículos:",
+      "Error al obtener los viajes con trayectos, vehículos y centro asociado:",
       error
     );
-    throw new Error("Error al obtener los viajes con trayectos y vehículos");
+    throw new Error("Error al obtener los viajes con trayectos, vehículos y centro asociado");
   }
 };
+
 //Solicitar Viaje Para Usuario Natural
 const solicitarViajeParaUsuario = async ({
   usuario_id,

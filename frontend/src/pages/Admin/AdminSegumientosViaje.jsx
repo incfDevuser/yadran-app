@@ -1,9 +1,11 @@
 import React, { useState } from "react";
 import AdminAside from "./AdminAside";
 import { useViajes } from "../../Context/ViajesContext";
+import { toast } from "react-toastify";
+
 
 const AdminSegumientosViaje = () => {
-  const { viajes, obtenerDetalleViaje, detalleViaje, loading, error } =
+  const { viajes, obtenerDetalleViaje, detalleViaje, limpiarEntidades, loading, error } =
     useViajes();
   const [viajeSeleccionado, setViajeSeleccionado] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -18,7 +20,21 @@ const AdminSegumientosViaje = () => {
       console.error("Error al obtener el detalle del viaje:", err);
     }
   };
-
+  const handleLimpieza = async () => {
+    try {
+      await limpiarEntidades();
+      toast.success("¡Limpieza completada exitosamente!", {
+        position: toast.POSITION.TOP_RIGHT,
+        autoClose: 3000,
+      });
+    } catch (err) {
+      console.error("Error al realizar la limpieza:", err);
+      toast.error("Error al realizar la limpieza de entidades.", {
+        position: toast.POSITION.TOP_RIGHT,
+        autoClose: 3000,
+      });
+    }
+  };
   const filtrarViajes = () =>
     viajes.filter((viaje) =>
       viaje.nombre?.toLowerCase().includes(filtro.toLowerCase())
@@ -48,6 +64,14 @@ const AdminSegumientosViaje = () => {
         <h1 className="text-3xl font-bold text-gray-800 mb-6">
           Seguimiento de Viajes
         </h1>
+        <div className="mb-6">
+          <button
+            onClick={handleLimpieza}
+            className="px-6 py-3 bg-red-600 text-white font-semibold rounded-lg shadow-md hover:bg-red-700 transition-colors duration-300"
+          >
+            Limpiar Entidades
+          </button>
+        </div>
 
         {/* Filtro de viajes */}
         <div className="mb-6">

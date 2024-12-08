@@ -128,8 +128,6 @@ const AdminViajes = () => {
                       </div>
                     );
                   }
-
-                  // Mostrar trayecto regular
                   return (
                     <div
                       key={trayecto.id}

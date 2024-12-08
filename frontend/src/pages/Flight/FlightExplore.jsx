@@ -10,6 +10,10 @@ import {
   FiArrowRight,
   FiX,
   FiClock,
+  FiCloud,
+  FiSun,
+  FiThermometer,
+  FiWind,
 } from "react-icons/fi";
 
 const FlightExplore = () => {
@@ -70,7 +74,6 @@ const FlightExplore = () => {
           Explora los Viajes Disponibles
         </h1>
       </div>
-
       {/* Barra de filtros */}
       <div className="mt-8 flex flex-col gap-4">
         <div className="relative">
@@ -107,12 +110,18 @@ const FlightExplore = () => {
           </div>
         </div>
       </div>
-
       {/* Mostrar los viajes filtrados */}
       <div className="mt-16 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
         {filteredViajes.length > 0 ? (
           filteredViajes.map((viaje) => {
             const totalDuration = getTotalDuration(viaje.trayectos);
+            const centro = viaje.centro_asociado || {};
+            const clima = centro.clima || {};
+            const descripcionClima =
+              clima.weather && clima.weather.length > 0
+                ? clima.weather[0].description
+                : null;
+
             return (
               <div
                 key={viaje.id}
@@ -132,6 +141,44 @@ const FlightExplore = () => {
                       {totalDuration.minutes}min
                     </span>
                   </div>
+
+                  {/* Información del Centro */}
+                  {centro.nombre_centro && (
+                    <div className="mt-4">
+                      <h3 className="text-lg font-bold text-gray-700">
+                        Centro Asociado: {centro.nombre_centro}
+                      </h3>
+                      <p className="text-sm text-gray-600">
+                        Jefe del Centro: {centro.jefe_centro || "No disponible"}
+                      </p>
+                      <p className="text-sm text-gray-600">
+                        Etapa del Ciclo:{" "}
+                        {centro.etapa_ciclo_cultivo || "No disponible"}
+                      </p>
+                    </div>
+                  )}
+
+                  {/* Información del Clima */}
+                  {descripcionClima && (
+                    <div className="mt-4 bg-blue-50 p-4 rounded-lg">
+                      <h4 className="text-lg font-semibold text-blue-800 flex items-center">
+                        <FiCloud className="mr-2" />
+                        Clima Actual
+                      </h4>
+                      <p className="text-sm capitalize">
+                        <FiSun className="inline-block mr-1 text-yellow-500" />
+                        {descripcionClima}
+                      </p>
+                      <p className="text-sm">
+                        <FiThermometer className="inline-block mr-1 text-red-500" />
+                        Temperatura: {clima.main?.temp}°C
+                      </p>
+                      <p className="text-sm">
+                        <FiWind className="inline-block mr-1 text-gray-500" />
+                        Viento: {clima.wind?.speed} m/s
+                      </p>
+                    </div>
+                  )}
                 </div>
                 <div className="flex justify-between mt-4">
                   <button
@@ -159,7 +206,7 @@ const FlightExplore = () => {
           </p>
         )}
       </div>
-
+      ;
       {isModalOpen && selectedViaje && (
         <div className="fixed inset-0 bg-gray-900 bg-opacity-75 flex justify-center items-center z-50">
           <div className="bg-white p-8 rounded-lg shadow-2xl max-w-3xl w-full max-h-96 overflow-y-auto transition-transform transform scale-100 duration-300">

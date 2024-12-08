@@ -5,7 +5,7 @@ const limpiarUsuariosConfirmados = async (req, res) => {
     // Llama a las funciones del modelo para eliminar usuarios confirmados
     await LimpiezaModel.eliminarUsuariosConfirmadosVehiculos();
     await LimpiezaModel.eliminarUsuariosConfirmadosPontones();
-    await LimpiezaModel.eliminarUsuariosConfirmadosLanchas();
+    // await LimpiezaModel.eliminarUsuariosConfirmadosLanchas();
 
     res.status(200).json({
       message:

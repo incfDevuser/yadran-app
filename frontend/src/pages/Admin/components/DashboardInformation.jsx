@@ -71,7 +71,7 @@ const DashboardInformation = () => {
     <div>
       <main className="flex-1 p-5">
         <h1 className="text-2xl font-bold text-gray-700">
-          Configuraciones por area de nogocio
+          Configuraciones por area de negocio
         </h1>
 
         <div className="mt-1">

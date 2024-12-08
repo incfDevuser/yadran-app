@@ -7,7 +7,7 @@
       <div className="flex w-full min-h-full mt-11">
         <AdminAside />
         <div className="flex flex-col">
-          <RecopilacionAgendamiento/>
+          {/* <RecopilacionAgendamiento/> */}
           <DashboardInformation/>
           <AdministracionRutas/>
         </div>

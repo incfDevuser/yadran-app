@@ -2,7 +2,7 @@ import { ViajesModel } from "../models/ViajesModel.js";
 import { SeguimientoModel } from "../models/SeguimientoModel.js";
 import { emailHelper } from "../Services/MailHelper.js";
 import { NotificacionesModel } from "../models/NotificacionesModel.js";
-
+import obtenerClimaPorUbicacion from "../Services/ClimaService.js";
 const crearViaje = async (req, res) => {
   const { nombre, descripcion, ruta_id } = req.body;
 
@@ -24,16 +24,63 @@ const crearViaje = async (req, res) => {
 //Obtener viajes
 const obtenerViajes = async (req, res) => {
   try {
+    // Obtiene todos los viajes desde la base de datos
     const viajes = await ViajesModel.obtenerViajes();
-    res.status(200).json({
-      message: "Lista de viajes",
-      viajes,
+
+    // Mapeo de viajes para agregar el clima del centro asociado
+    const viajesConClima = await Promise.all(
+      viajes.map(async (viaje) => {
+        if (
+          viaje.centro_asociado &&
+          viaje.centro_asociado.latitud &&
+          viaje.centro_asociado.longitud
+        ) {
+          try {
+            const clima = await obtenerClimaPorUbicacion(
+              viaje.centro_asociado.latitud,
+              viaje.centro_asociado.longitud
+            );
+            return {
+              ...viaje,
+              centro_asociado: { ...viaje.centro_asociado, clima },
+            };
+          } catch (error) {
+            console.error(
+              `Error obteniendo el clima para el centro asociado al viaje ${viaje.nombre_viaje}`,
+              error
+            );
+            return {
+              ...viaje,
+              centro_asociado: { ...viaje.centro_asociado, clima: null },
+            };
+          }
+        } else {
+          // Si no hay centro asociado o no tiene coordenadas, no hay clima
+          return {
+            ...viaje,
+            centro_asociado: {
+              ...viaje.centro_asociado,
+              clima: null,
+            },
+          };
+        }
+      })
+    );
+
+    // Respuesta con los viajes incluyendo clima
+    return res.status(200).json({
+      message: "Lista de viajes con clima del centro asociado",
+      viajes: viajesConClima,
     });
   } catch (error) {
     console.error("Error al obtener los viajes:", error);
-    res.status(500).json({ message: "Error al obtener los viajes" });
+    return res.status(500).json({
+      message: "Error interno del servidor",
+      error: error.message,
+    });
   }
 };
+
 //Obtener solicitudes de viaje
 const obtenerSolicitudesUsuariosNaturales = async (req, res) => {
   try {

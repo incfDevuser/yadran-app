@@ -42,16 +42,19 @@ const crearCentro = async ({
   estructura,
   ponton_id,
   ruta_id,
+  latitud,
+  longitud,
 }) => {
   try {
     const query = `
-  INSERT INTO centro(
-  nombre_centro,
-  fecha_apertura_productiva,
-  fecha_cierre_productivo,
-  jefe_centro,
-  etapa_ciclo_cultivo,
-  estructura, ponton_id,ruta_id) VALUES($1, $2, $3, $4, $5, $6, $7,$8)`;
+    INSERT INTO centro(
+    nombre_centro,
+    fecha_apertura_productiva,
+    fecha_cierre_productivo,
+    jefe_centro,
+    etapa_ciclo_cultivo,
+    estructura, ponton_id, ruta_id, latitud, longitud) 
+    VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) RETURNING *`;
     const values = [
       nombre_centro,
       fecha_apertura_productiva,
@@ -61,14 +64,17 @@ const crearCentro = async ({
       estructura,
       ponton_id,
       ruta_id,
+      latitud,
+      longitud,
     ];
     const response = await pool.query(query, values);
     return response.rows[0];
   } catch (error) {
     console.error(error);
-    throw new Error("Error con la operacion crearCentro");
+    throw new Error("Error con la operación crearCentro");
   }
 };
+
 const actualizarCentro = async () => {
   try {
   } catch (error) {}
