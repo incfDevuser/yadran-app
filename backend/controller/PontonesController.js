@@ -59,10 +59,7 @@ const crearPonton = async (req, res) => {
   //Instanciar un nuevo ponton
   const ponton = {
     nombre_ponton,
-    ubicacion,
     concesion_id,
-    fecha_apertura_operacional,
-    fecha_cierre_operacional,
     tipo_ponton,
     habitabilidad_general,
     habitabilidad_interna,

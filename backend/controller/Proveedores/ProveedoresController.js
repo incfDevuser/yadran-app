@@ -53,7 +53,6 @@ const crearProveedor = async (req, res) => {
     tarea_realizar,
     fecha_termino_servicio,
     frecuencia_servicio,
-    descripcion_servicio,
     cantidad_usuarios_autorizados,
   } = req.body;
 
@@ -72,7 +71,6 @@ const crearProveedor = async (req, res) => {
       tarea_realizar,
       fecha_termino_servicio,
       frecuencia_servicio,
-      descripcion_servicio,
       cantidad_usuarios_autorizados,
     });
     res.status(201).json(nuevoProveedor);

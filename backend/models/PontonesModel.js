@@ -63,7 +63,6 @@ const obtenerPonton = async (id) => {
 };
 const crearPonton = async ({
   nombre_ponton,
-  ubicacion,
   concesion_id,
   fecha_apertura_operacional,
   fecha_cierre_operacional,
@@ -78,24 +77,18 @@ const crearPonton = async ({
     const insertQuery = `
       INSERT INTO ponton (
         nombre_ponton,
-        ubicacion,
         concesion_id,
-        fecha_apertura_operacional,
-        fecha_cierre_operacional,
         tipo_ponton,
         habitabilidad_general,
         habitabilidad_interna,
         habitabilidad_externa,
         qr_code
       ) 
-      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, NULL) RETURNING *;
+      VALUES ($1, $2, $3, $4, $5, $6, NULL) RETURNING *;
     `;
     const insertValues = [
       nombre_ponton,
-      ubicacion,
       concesion_id,
-      fecha_apertura_operacional,
-      fecha_cierre_operacional,
       tipo_ponton,
       habitabilidad_general,
       habitabilidad_interna,

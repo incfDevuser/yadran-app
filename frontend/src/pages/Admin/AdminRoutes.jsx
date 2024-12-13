@@ -17,7 +17,6 @@ import { FaQrcode } from "react-icons/fa";
 import VueloCard from "./components/VueloCard";
 import { jsPDF } from "jspdf";
 
-
 const AdminRoutes = () => {
   const { rutas, eliminarRuta, crearRuta } = useRutas();
   const { crearTrayecto } = useTrayectos();

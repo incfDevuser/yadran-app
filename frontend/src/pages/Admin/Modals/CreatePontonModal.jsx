@@ -9,10 +9,7 @@ const CreatePontonModal = ({ isOpen, onClose }) => {
   //Estado para crear el nuevo ponton
   const [nuevoPonton, setNuevoPonton] = useState({
     nombre_ponton: "",
-    ubicacion: "",
     concesion_id: null,
-    fecha_apertura_operacional: "",
-    fecha_cierre_operacional: "",
     tipo_ponton: "",
     habitabilidad_general: 0,
     habitabilidad_interna: 0,

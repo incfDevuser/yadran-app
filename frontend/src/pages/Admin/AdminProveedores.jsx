@@ -25,7 +25,10 @@ const AdminProveedores = () => {
     tipo_servicio: "",
     ciclo_cultivo: "",
     tarea_realizar: "",
+    fecha_inicio_servicio:"",
     fecha_termino_servicio: "",
+    //Duracion del servicio - ESPORADIDO, FIJO, ETC.
+    duracion:"",
     frecuencia_servicio: "",
     descripcion_servicio: "",
     cantidad_usuarios_autorizados: 0,

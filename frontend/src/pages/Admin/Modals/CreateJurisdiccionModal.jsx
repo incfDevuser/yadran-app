@@ -73,7 +73,7 @@ const CreateJurisdiccionModal = ({ isOpen, onClose }) => {
           </div>
 
           <div className="mb-4">
-            <label className="block text-gray-700 mb-2">Sectores</label>
+            <label className="block text-gray-700 mb-2">Comunas</label>
             <input
               type="text"
               name="sectores"

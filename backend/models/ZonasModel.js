@@ -33,11 +33,8 @@ const obtenerZona = async (id) => {
 
 const crearZona = async ({
   nombre_zona,
-  ubicacion_geografica,
   pais,
   region,
-  fecha_apertura,
-  fecha_cierre,
   jurisdiccion_id,
   estado_zona,
   descripcion
@@ -46,23 +43,17 @@ const crearZona = async ({
     const query = `
       INSERT INTO zonas(
         nombre_zona,
-        ubicacion_geografica,
         pais,
         region,
-        fecha_apertura,
-        fecha_cierre,
         jurisdiccion_id,
         estado_zona,
         descripcion
-      ) VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING *
+      ) VALUES($1, $2, $3, $4, $5, $6) RETURNING *
     `;
     const values = [
       nombre_zona,
-      ubicacion_geografica,
       pais,
       region,
-      fecha_apertura,
-      fecha_cierre,
       jurisdiccion_id,
       estado_zona,
       descripcion

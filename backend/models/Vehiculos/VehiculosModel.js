@@ -3,9 +3,26 @@ import pool from "../../config/db.js";
 const obtenerVehiculos = async () => {
   try {
     const query = `
-      SELECT v.*, p.nombre_proveedor
+      SELECT 
+        v.*, 
+        p.nombre_proveedor,
+        COALESCE(
+          json_agg(
+            json_build_object(
+              'id', t.id,
+              'nombre_tripulante', t.nombre_tripulante,
+              'rut_tripulante', t.rut_tripulante,
+              'fecha_nacimiento', t.fecha_nacimiento,
+              'empresa', t.empresa,
+              'cargo', t.cargo
+            )
+          ) FILTER (WHERE t.id IS NOT NULL), 
+          '[]'
+        ) AS tripulantes
       FROM vehiculos v
       JOIN proveedores p ON v.proveedor_id = p.id
+      LEFT JOIN vehiculo_tripulantes t ON v.id = t.vehiculo_id
+      GROUP BY v.id, p.nombre_proveedor;
     `;
     const response = await pool.query(query);
     return response.rows;
@@ -14,6 +31,7 @@ const obtenerVehiculos = async () => {
     throw new Error("Error con la operación obtenerVehiculos");
   }
 };
+
 const obtenerVehiculo = async (id) => {
   try {
     const query = `

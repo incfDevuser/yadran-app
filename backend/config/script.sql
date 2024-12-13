@@ -312,3 +312,29 @@ ADD CONSTRAINT trayectos_hotel_id_fkey
 FOREIGN KEY (hotel_id)
 REFERENCES hoteles(id)
 ON DELETE CASCADE;
+select * from ponton;
+select * from vehiculos;
+alter table ponton drop column ubicacion;
+alter table ponton drop column fecha_apertura_operacional;
+alter table ponton drop column fecha_cierre_operacional;
+ALTER TABLE zonas ALTER COLUMN region TYPE varchar(225);
+
+select * from proveedores;
+alter table proveedores add column duracion varchar(225);
+
+create table vehiculo_tripulantes(
+	id serial primary key,
+	nombre_tripulante varchar(225),
+	rut_tripulante varchar(9),
+	fecha_nacimiento date,
+	empresa varchar(225),
+	cargo varchar(225),
+	vehiculo_id int references vehiculos(id) on delete cascade
+)
+select * from vehiculos
+select * from vehiculo_tripulantes
+drop table vehiculo_tripulantes
+
+insert into vehiculo_tripulantes
+(nombre_tripulante, rut_tripulante, fecha_nacimiento, empresa, cargo, vehiculo_id)
+values ('Martin Gomez', '21171607k','2003-07-21', 'Pidaway', 'Tripulante de cabina', 6)

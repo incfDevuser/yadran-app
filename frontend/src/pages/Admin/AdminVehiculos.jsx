@@ -5,6 +5,8 @@ import { useVehiculos } from "../../Context/VehiculosContext";
 import { useProveedores } from "../../Context/ProveedoresContext";
 import { useChofer } from "../../Context/ChoferContext";
 import CrearChoferModal from "./Modals/CrearChoferModal";
+import { FaUsers } from "react-icons/fa";
+import TripulantesModal from "./Modals/TripulantesModal";
 
 const AdminVehiculos = () => {
   const { vehiculos, crearVehiculo, eliminarVehiculo } = useVehiculos();
@@ -14,6 +16,8 @@ const AdminVehiculos = () => {
   const [isCreateModelOpen, setIsCreateModelOpen] = useState(false);
   const [selectedVehiculo, setSelectedVehiculo] = useState(null);
   const [isChoferModalOpen, setIsChoferModalOpen] = useState(false);
+  const [tripulantesModalOpen, setTripulantesModalOpen] = useState(false);
+  const [tripulantesCreateOpen, setTripulantesCreateOpen] = useState(false);
   const { choferes, loading: loadingChoferes } = useChofer();
   //Estado para crear el nuevo vehiculos
   const [nuevoVehiculo, setNuevoVehiculo] = useState({
@@ -51,6 +55,15 @@ const AdminVehiculos = () => {
       ...nuevoVehiculo,
       [e.target.name]: e.target.value,
     });
+  };
+  const handleViewTripulantes = (vehiculo) => {
+    setSelectedVehiculo(vehiculo);
+    setTripulantesModalOpen(true);
+  };
+
+  const closeTripulantesModal = () => {
+    setTripulantesModalOpen(false);
+    setSelectedVehiculo(null);
   };
   //Crear el vehiculo
   const createVehiculo = async (e) => {
@@ -315,8 +328,8 @@ const AdminVehiculos = () => {
                   <th className="py-2 px-4 border-b">Capacidad Operacional</th>
                   <th className="py-2 px-4 border-b">Estado</th>
                   <th className="py-2 px-4 border-b">Documentacion</th>
-                  <th className="py-2 px-4 border-b">Velocidad Promedio</th>
                   <th className="py-2 px-4 border-b">Proveedor</th>
+                  <th className="py-2 px-4 border-b">Acciones</th>
                 </tr>
               </thead>
               {/* BODY DE LAS TABLAS */}
@@ -343,10 +356,15 @@ const AdminVehiculos = () => {
                       {vehiculo.documentacion_ok ? "OK" : "Falta Aprobacion"}
                     </td>
                     <td className="py-2 px-4 border-b">
-                      {vehiculo.velocidad_promedio}
+                      {vehiculo.nombre_proveedor}
                     </td>
                     <td className="py-2 px-4 border-b">
-                      {vehiculo.nombre_proveedor}
+                      <button
+                        className="p-2 bg-blue-500 text-white rounded-lg hover:bg-blue-700"
+                        onClick={() => handleViewTripulantes(vehiculo)}
+                      >
+                        <FaUsers />
+                      </button>
                     </td>
                   </tr>
                 ))}
@@ -357,6 +375,11 @@ const AdminVehiculos = () => {
           <CrearChoferModal
             isOpen={isChoferModalOpen}
             onClose={() => setIsChoferModalOpen(false)}
+          />
+          <TripulantesModal
+            show={tripulantesModalOpen}
+            handleClose={closeTripulantesModal}
+            vehiculo={selectedVehiculo}
           />
         </main>
       </div>

@@ -38,15 +38,11 @@ const obtenerZona = async (req, res) => {
 const crearZona = async (req, res) => {
   const {
     nombre_zona,
-    ubicacion_geografica,
     pais,
     region,
-    fecha_apertura = new Date(),
-    fecha_cierre = new Date(),
     jurisdiccion_id,
     estado_zona,
-    descripcion,
-    ruta_id,
+    descripcion
   } = req.body;
 
   const jurisdiccionExiste = await JurisdiccionesModel.obtenerJurisdiccion(
@@ -60,15 +56,11 @@ const crearZona = async (req, res) => {
   }
   const zona = {
     nombre_zona,
-    ubicacion_geografica,
     pais,
     region,
-    fecha_apertura,
-    fecha_cierre,
     jurisdiccion_id,
     estado_zona,
-    descripcion,
-    ruta_id,
+    descripcion
   };
 
   try {

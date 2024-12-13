@@ -9,11 +9,8 @@ const CreateZonaModal = ({ isOpen, onClose }) => {
   //Estado para los campos de las zonas
   const [nuevaZona, setNuevaZona] = useState({
     nombre_zona: "",
-    ubicacion_geografica: "",
     pais: "",
     region: "",
-    fecha_apertura: "",
-    fecha_cierre: "",
     jurisdiccion_id: 0,
     estado_zona: "",
     descripcion: "",
@@ -55,20 +52,6 @@ const CreateZonaModal = ({ isOpen, onClose }) => {
           </div>
 
           <div className="mb-4">
-            <label className="block text-gray-700 mb-2">
-              Ubicación Geográfica
-            </label>
-            <input
-              type="text"
-              name="ubicacion_geografica"
-              value={nuevaZona.ubicacion_geografica}
-              onChange={handleInputChange}
-              className="w-full px-3 py-2 border rounded"
-              placeholder="Ubicación Geográfica"
-            />
-          </div>
-
-          <div className="mb-4">
             <label className="block text-gray-700 mb-2">Pais</label>
             <input
               type="text"
@@ -92,29 +75,6 @@ const CreateZonaModal = ({ isOpen, onClose }) => {
             />
           </div>
 
-          <div className="mb-4">
-            <label className="block text-gray-700 mb-2">Fecha Apertura</label>
-            <input
-              type="date"
-              name="fecha_apertura"
-              value={nuevaZona.fecha_apertura}
-              onChange={handleInputChange}
-              className="w-full px-3 py-2 border rounded"
-              placeholder="Fecha de Apertura"
-            />
-          </div>
-
-          <div className="mb-4">
-            <label className="block text-gray-700 mb-2">Fecha Cierre</label>
-            <input
-              type="date"
-              name="fecha_cierre"
-              value={nuevaZona.fecha_cierre}
-              onChange={handleInputChange}
-              className="w-full px-3 py-2 border rounded"
-              placeholder="Fecha de Cierre"
-            />
-          </div>
           {/* JUSDISCCION PERO DEBE SER UN SELECT CON OPTIONS */}
           <div className="mb-4">
             <label className="block text-gray-700 mb-2">Jurisdiccion</label>
