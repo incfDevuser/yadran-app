@@ -8,10 +8,7 @@ const obtenerPontones = async () => {
       SELECT 
         p.id AS ponton_id,
         p.nombre_ponton,
-        p.ubicacion,
-        p.qr_code,  
-        p.fecha_apertura_operacional,
-        p.fecha_cierre_operacional,
+        p.qr_code, 
         p.habitabilidad_general,
         p.habitabilidad_interna,
         p.habitabilidad_externa,
@@ -64,8 +61,6 @@ const obtenerPonton = async (id) => {
 const crearPonton = async ({
   nombre_ponton,
   concesion_id,
-  fecha_apertura_operacional,
-  fecha_cierre_operacional,
   tipo_ponton,
   habitabilidad_general,
   habitabilidad_interna,
@@ -73,7 +68,7 @@ const crearPonton = async ({
 }) => {
   const client = await pool.connect();
   try {
-    await client.query("BEGIN"); 
+    await client.query("BEGIN");
     const insertQuery = `
       INSERT INTO ponton (
         nombre_ponton,
@@ -121,9 +116,28 @@ const crearPonton = async ({
     client.release();
   }
 };
-const actualizarPonton = async () => {
+const actualizarPonton = async (id, camposActualizados) => {
   try {
-  } catch (error) {}
+    const keys = Object.keys(camposActualizados);
+    const values = Object.values(camposActualizados);
+    if (keys.length === 0) {
+      throw new Error("No se proporcionaron campos para actualizar.");
+    }
+    const setClause = keys
+      .map((key, index) => `${key} = $${index + 2}`)
+      .join(", ");
+    const query = `
+      UPDATE ponton
+      SET ${setClause}
+      WHERE id = $1
+      RETURNING *;
+    `;
+    const response = await pool.query(query, [id, ...values]);
+    return response.rows[0];
+  } catch (error) {
+    console.error("Error al actualizar el pontón:", error.message);
+    throw new Error("Hubo un error con la operación actualizarPonton");
+  }
 };
 const eliminarPonton = async (id) => {
   try {

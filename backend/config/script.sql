@@ -311,6 +311,7 @@ ALTER TABLE trayectos
 ADD CONSTRAINT trayectos_hotel_id_fkey
 FOREIGN KEY (hotel_id)
 REFERENCES hoteles(id)
+
 ON DELETE CASCADE;
 select * from ponton;
 select * from vehiculos;

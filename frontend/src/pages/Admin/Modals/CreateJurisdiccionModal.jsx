@@ -80,7 +80,7 @@ const CreateJurisdiccionModal = ({ isOpen, onClose }) => {
               value={nuevaJurisdiccion.sectores}
               onChange={handleInputChange}
               className="w-full px-3 py-2 border rounded"
-              placeholder="Sectores"
+              placeholder="Comuna"
             />
           </div>
 

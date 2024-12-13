@@ -10,6 +10,7 @@ router.get("/:id", ConcesionController.obtenerConcesion);
 //Ruta para crear una concesion
 router.post("/create", ConcesionController.crearConcesion);
 //Ruta para actualizaar una concesion
+router.put("/:id", ConcesionController.actualizarConcesion);
 
 //Ruta para eliminar una concesion
 router.delete("/:id", ConcesionController.eliminarConcesion);

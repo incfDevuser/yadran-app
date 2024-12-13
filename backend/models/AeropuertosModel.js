@@ -56,9 +56,29 @@ const crearAeropuerto = async ({
     throw new Error("Error con la operación crearAeropuerto");
   }
 };
-
-const actualizarAeropuerto = async () => {};
-
+const actualizarAeropuerto = async (id, camposActualizados) => {
+  try {
+    const keys = Object.keys(camposActualizados);
+    const values = Object.values(camposActualizados);
+    if (keys.length === 0) {
+      throw new Error("No se proporcionaron campos para actualizar.");
+    }
+    const setClause = keys
+      .map((key, index) => `${key} = $${index + 2}`)
+      .join(", ");
+    const query = `
+      UPDATE aeropuerto
+      SET ${setClause}
+      WHERE id = $1
+      RETURNING *;
+    `;
+    const response = await pool.query(query, [id, ...values]);
+    return response.rows[0];
+  } catch (error) {
+    console.error("Error al actualizar el aeropuerto:", error.message);
+    throw new Error("Error con la operación actualizarAeropuerto");
+  }
+};
 const eliminarAeropuerto = async (id) => {
   try {
     const query = "DELETE FROM aeropuerto WHERE id = $1 RETURNING *;";

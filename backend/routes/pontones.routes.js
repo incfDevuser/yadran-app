@@ -11,6 +11,7 @@ router.get("/:id", PontonesController.obtenerPonton);
 router.post("/create", PontonesController.crearPonton);
 
 //Acutalizar un Ponton
+router.put("/:id", PontonesController.actualizarPonton);
 
 //Eliminar un Ponton
 router.delete("/:id", PontonesController.eliminarPonton);

@@ -40,10 +40,7 @@ const obtenerPonton = async (req, res) => {
 const crearPonton = async (req, res) => {
   const {
     nombre_ponton,
-    ubicacion,
     concesion_id,
-    fecha_apertura_operacional,
-    fecha_cierre_operacional,
     tipo_ponton,
     habitabilidad_general,
     habitabilidad_interna,
@@ -101,10 +98,35 @@ const eliminarPonton = async (req, res) => {
     });
   }
 };
-
+const actualizarPonton = async (req, res) => {
+  const { id } = req.params;
+  const camposActualizados = req.body;
+  try {
+    const pontonExistente = await PontonesModel.obtenerPonton(id);
+    if (!pontonExistente) {
+      return res.status(404).json({
+        message: "Pontón no encontrado",
+      });
+    }
+    const pontonActualizado = await PontonesModel.actualizarPonton(
+      id,
+      camposActualizados
+    );
+    return res.status(200).json({
+      message: "Pontón actualizado correctamente",
+      pontonActualizado,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      message: "Error interno del servidor",
+      error: error.message,
+    });
+  }
+};
 export const PontonesController = {
   obtenerPontones,
   obtenerPonton,
   crearPonton,
-  eliminarPonton
+  eliminarPonton,
+  actualizarPonton
 };

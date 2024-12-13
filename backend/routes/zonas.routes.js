@@ -12,6 +12,7 @@ router.get("/:id", ZonasController.obtenerZona);
 //Ruta para crear una zona, agregar que solo el admin las puede crear
 router.post("/create",ZonasController.crearZona);
 //Ruta para actualizar una zona
+router.put("/:id", ZonasController.actualizarZona);
 
 //Ruta para eliminar una zona, agregar permisos de administrador
 router.delete("/:id", AuthMiddleware.isAdmin, ZonasController.eliminarZona);

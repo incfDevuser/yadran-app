@@ -5,15 +5,21 @@ const obtenerCentros = async (req, res) => {
   try {
     // Obtiene todos los centros desde la base de datos
     const centros = await CentrosModel.obtenerCentros();
-    
+
     const centrosConClima = await Promise.all(
       centros.map(async (centro) => {
         if (centro.latitud && centro.longitud) {
           try {
-            const clima = await obtenerClimaPorUbicacion(centro.latitud, centro.longitud);
+            const clima = await obtenerClimaPorUbicacion(
+              centro.latitud,
+              centro.longitud
+            );
             return { ...centro, clima };
           } catch (error) {
-            console.error(`Error obteniendo el clima para el centro ${centro.nombre_centro}`, error);
+            console.error(
+              `Error obteniendo el clima para el centro ${centro.nombre_centro}`,
+              error
+            );
             return { ...centro, clima: null };
           }
         } else {
@@ -93,7 +99,25 @@ const crearCentro = async (req, res) => {
   }
 };
 const actualizarCentro = async (req, res) => {
+  const { id } = req.params;
+  const camposActualizados = req.body;
+
   try {
+    const centroExistente = await CentrosModel.obtenerCentro(id);
+    if (!centroExistente) {
+      return res.status(404).json({
+        message: "Centro no encontrado",
+      });
+    }
+
+    const centroActualizado = await CentrosModel.actualizarCentro(
+      id,
+      camposActualizados
+    );
+    return res.status(200).json({
+      message: "Centro actualizado correctamente",
+      centroActualizado,
+    });
   } catch (error) {
     return res.status(500).json({
       message: "Error interno del servidor",
@@ -101,6 +125,7 @@ const actualizarCentro = async (req, res) => {
     });
   }
 };
+
 const eliminarCentro = async (req, res) => {
   try {
   } catch (error) {

@@ -52,7 +52,34 @@ const crearNuevoAeropuerto = async (req, res) => {
     res.status(500).json({ message: "Error al crear el aeropuerto" });
   }
 };
-const actualizarAeropuerto = async (req, res) => {};
+const actualizarAeropuerto = async (req, res) => {
+  const { id } = req.params;
+  const camposActualizados = req.body;
+
+  try {
+    const aeropuertoExistente = await AeropuertosModel.obtenerAeropuerto(id);
+    if (!aeropuertoExistente) {
+      return res.status(404).json({
+        message: "Aeropuerto no encontrado",
+      });
+    }
+
+    const aeropuertoActualizado = await AeropuertosModel.actualizarAeropuerto(
+      id,
+      camposActualizados
+    );
+    return res.status(200).json({
+      message: "Aeropuerto actualizado correctamente",
+      aeropuertoActualizado,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      message: "Error interno del servidor",
+      error: error.message,
+    });
+  }
+};
+
 const eliminarAeropuerto = async (req, res) => {
   const { id } = req.params;
   try {

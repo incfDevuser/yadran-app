@@ -37,7 +37,7 @@ const crearZona = async ({
   region,
   jurisdiccion_id,
   estado_zona,
-  descripcion
+  descripcion,
 }) => {
   try {
     const query = `
@@ -56,7 +56,7 @@ const crearZona = async ({
       region,
       jurisdiccion_id,
       estado_zona,
-      descripcion
+      descripcion,
     ];
     const response = await pool.query(query, values);
     return response.rows[0];
@@ -65,8 +65,31 @@ const crearZona = async ({
     throw new Error("Hubo un error con la operación crearZona");
   }
 };
-const actualizarZona = async (id, data) => {
+const actualizarZona = async (id, camposActualizados) => {
+  try {
+    const keys = Object.keys(camposActualizados);
+    const values = Object.values(camposActualizados);
+    if (keys.length === 0) {
+      throw new Error("No se proporcionaron campos para actualizar.");
+    }
+    const setClause = keys
+      .map((key, index) => `${key} = $${index + 2}`)
+      .join(", ");
+
+    const query = `
+      UPDATE zonas
+      SET ${setClause}
+      WHERE id = $1
+      RETURNING *;
+    `;
+    const response = await pool.query(query, [id, ...values]);
+    return response.rows[0];
+  } catch (error) {
+    console.error("Error al actualizar la zona:", error);
+    throw new Error("Hubo un error con la operación actualizarZona");
+  }
 };
+
 const eliminarZona = async (id) => {
   try {
     const query = "DELETE FROM zonas WHERE id = $1 RETURNING *";

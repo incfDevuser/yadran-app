@@ -55,9 +55,33 @@ const crearBase = async (req, res) => {
   }
 };
 const actualizarBase = async (req, res) => {
+  const { id } = req.params;
+  const camposActualizados = req.body;
+
   try {
-  } catch (error) {}
+    const baseExistente = await BasesModel.obtenerBase(id);
+    if (!baseExistente) {
+      return res.status(404).json({
+        message: "Base no encontrada",
+      });
+    }
+
+    const baseActualizada = await BasesModel.actualizarBase(
+      id,
+      camposActualizados
+    );
+    return res.status(200).json({
+      message: "Base actualizada correctamente",
+      baseActualizada,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      message: "Error interno del servidor",
+      error: error.message,
+    });
+  }
 };
+
 const eliminarBase = async (req, res) => {
   try {
   } catch (error) {

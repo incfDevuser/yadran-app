@@ -45,7 +45,7 @@ const crearJurisdiccion = async (req, res) => {
     tipo_embarcacion,
     contacto,
     integracion,
-    fecha_ultima_modificacion = new Date()
+    fecha_ultima_modificacion = new Date(),
   } = req.body;
 
   const jurisdiccion = {
@@ -56,7 +56,7 @@ const crearJurisdiccion = async (req, res) => {
     tipo_embarcacion,
     contacto,
     integracion,
-    fecha_ultima_modificacion
+    fecha_ultima_modificacion,
   };
 
   try {
@@ -104,10 +104,36 @@ const eliminarJurisdiccion = async (req, res) => {
     });
   }
 };
+const actualizarJurisdiccion = async (req, res) => {
+  const { id } = req.params;
+  const camposActualizados = req.body;
+  try {
+    const jurisdiccionExistente = await JurisdiccionesModel.obtenerJurisdiccion(
+      id
+    );
+    if (!jurisdiccionExistente) {
+      return res.status(404).json({
+        message: "Jurisdicción no encontrada",
+      });
+    }
+    const jurisdiccionActualizada =
+      await JurisdiccionesModel.actualizarJurisdiccion(id, camposActualizados);
+    return res.status(200).json({
+      message: "Jurisdicción actualizada correctamente",
+      jurisdiccionActualizada,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      message: "Error interno del servidor",
+      error: error.message,
+    });
+  }
+};
 
 export const JurisdiccionesControllers = {
   obtenerJurisdicciones,
   obtenerJurisdiccion,
   crearJurisdiccion,
   eliminarJurisdiccion,
+  actualizarJurisdiccion
 };

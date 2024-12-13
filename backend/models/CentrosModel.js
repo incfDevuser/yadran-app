@@ -1,6 +1,4 @@
 import pool from "../config/db.js";
-import obtenerClimaPorUbicacion from "../Services/ClimaService.js";
-
 const obtenerCentros = async () => {
   try {
     const query = `
@@ -74,10 +72,30 @@ const crearCentro = async ({
     throw new Error("Error con la operación crearCentro");
   }
 };
-
-const actualizarCentro = async () => {
+const actualizarCentro = async (id, camposActualizados) => {
   try {
-  } catch (error) {}
+    const keys = Object.keys(camposActualizados);
+    const values = Object.values(camposActualizados);
+
+    if (keys.length === 0) {
+      throw new Error("No se proporcionaron campos para actualizar.");
+    }
+    const setClause = keys
+      .map((key, index) => `${key} = $${index + 2}`)
+      .join(", ");
+
+    const query = `
+      UPDATE centro
+      SET ${setClause}
+      WHERE id = $1
+      RETURNING *;
+    `;
+    const response = await pool.query(query, [id, ...values]);
+    return response.rows[0];
+  } catch (error) {
+    console.error("Error al actualizar el centro:", error.message);
+    throw new Error("Error con la operación actualizarCentro");
+  }
 };
 const eliminarCentro = async (id) => {
   try {

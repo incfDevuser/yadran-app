@@ -36,7 +36,7 @@ const obtenerConcesion = async (req, res) => {
   }
 };
 const crearConcesion = async (req, res) => {
-  const { nombre_concesion,vigencia, zona_id } = req.body;
+  const { nombre_concesion, vigencia, zona_id } = req.body;
   //Verificar si la zona existe
   const zonaExiste = await ZonasModel.obtenerZona(zona_id);
   if (!zonaExiste) {
@@ -64,7 +64,25 @@ const crearConcesion = async (req, res) => {
   }
 };
 const actualizarConcesion = async (req, res) => {
+  const { id } = req.params;
+  const camposActualizados = req.body;
+
   try {
+    const concesionExistente = await ConcesionesModel.obtenerConcesion(id);
+    if (!concesionExistente) {
+      return res.status(404).json({
+        message: "Concesión no encontrada",
+      });
+    }
+
+    const concesionActualizada = await ConcesionesModel.actualizarConcesion(
+      id,
+      camposActualizados
+    );
+    return res.status(200).json({
+      message: "Concesión actualizada correctamente",
+      concesionActualizada,
+    });
   } catch (error) {
     return res.status(500).json({
       message: "Error interno del servidor",
@@ -72,6 +90,7 @@ const actualizarConcesion = async (req, res) => {
     });
   }
 };
+
 const eliminarConcesion = async (req, res) => {
   const { id } = req.params;
   //Verificar si la concesion existe
@@ -96,9 +115,9 @@ const eliminarConcesion = async (req, res) => {
 };
 
 export const ConcesionController = {
-    obtenerConcesiones,
-    obtenerConcesion,
-    crearConcesion,
-    actualizarConcesion,
-    eliminarConcesion
+  obtenerConcesiones,
+  obtenerConcesion,
+  crearConcesion,
+  actualizarConcesion,
+  eliminarConcesion,
 };

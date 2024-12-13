@@ -57,9 +57,33 @@ const crearPuerto = async ({
     throw new Error("Error con la operación crearPuerto");
   }
 };
+const actualizarPuerto = async (id, camposActualizados) => {
+  try {
+    const keys = Object.keys(camposActualizados);
+    const values = Object.values(camposActualizados);
 
-const actualizarPuerto = async () => {};
+    if (keys.length === 0) {
+      throw new Error("No se proporcionaron campos para actualizar.");
+    }
 
+    const setClause = keys
+      .map((key, index) => `${key} = $${index + 2}`)
+      .join(", ");
+
+    const query = `
+      UPDATE puerto
+      SET ${setClause}
+      WHERE id = $1
+      RETURNING *;
+    `;
+
+    const response = await pool.query(query, [id, ...values]);
+    return response.rows[0];
+  } catch (error) {
+    console.error("Error al actualizar el puerto:", error.message);
+    throw new Error("Error con la operación actualizarPuerto");
+  }
+};
 const eliminarPuerto = async (id) => {
   try {
     const query = "DELETE FROM puerto WHERE id = $1 RETURNING *;";

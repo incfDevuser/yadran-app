@@ -51,7 +51,33 @@ const crearNuevoPuerto = async (req, res) => {
   }
 };
 
-const actualizarPuerto = async (req, res) => {};
+const actualizarPuerto = async (req, res) => {
+  const { id } = req.params;
+  const camposActualizados = req.body;
+
+  try {
+    const puertoExistente = await PuertosModel.obtenerPuerto(id);
+    if (!puertoExistente) {
+      return res.status(404).json({
+        message: "Puerto no encontrado",
+      });
+    }
+
+    const puertoActualizado = await PuertosModel.actualizarPuerto(
+      id,
+      camposActualizados
+    );
+    return res.status(200).json({
+      message: "Puerto actualizado correctamente",
+      puertoActualizado,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      message: "Error interno del servidor",
+      error: error.message,
+    });
+  }
+};
 
 const eliminarPuerto = async (req, res) => {
   const { id } = req.params;

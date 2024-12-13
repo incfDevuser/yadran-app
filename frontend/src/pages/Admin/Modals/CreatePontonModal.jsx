@@ -52,20 +52,6 @@ const CreatePontonModal = ({ isOpen, onClose }) => {
           </div>
 
           <div className="mb-4">
-            <label className="block text-gray-700 mb-2">
-              Ubicación Geográfica
-            </label>
-            <input
-              type="text"
-              name="ubicacion"
-              value={nuevoPonton.ubicacion}
-              onChange={handleInputChange}
-              className="w-full px-3 py-2 border rounded"
-              placeholder="Ubicación Geográfica"
-            />
-          </div>
-
-          <div className="mb-4">
             <label className="block text-gray-700 mb-2">Concesion</label>
             {loadingConcesiones ? (
               <p>Cargando Concesiones</p>
@@ -91,30 +77,6 @@ const CreatePontonModal = ({ isOpen, onClose }) => {
                 ))}
               </select>
             )}
-          </div>
-
-          <div className="mb-4">
-            <label className="block text-gray-700 mb-2">Fecha Apertura</label>
-            <input
-              type="date"
-              name="fecha_apertura_operacional"
-              value={nuevoPonton.fecha_apertura_operacional}
-              onChange={handleInputChange}
-              className="w-full px-3 py-2 border rounded"
-              placeholder="Fecha apertura operacional"
-            />
-          </div>
-
-          <div className="mb-4">
-            <label className="block text-gray-700 mb-2">Fecha Cierre</label>
-            <input
-              type="date"
-              name="fecha_cierre_operacional"
-              value={nuevoPonton.fecha_cierre_operacional}
-              onChange={handleInputChange}
-              className="w-full px-3 py-2 border rounded"
-              placeholder="Fecha cierre operacional"
-            />
           </div>
 
           <div className="mb-4">

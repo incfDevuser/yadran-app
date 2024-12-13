@@ -7,5 +7,6 @@ router.get("/", BaseController.obtenerBases);
 router.get("/:id", BaseController.obtenerBase);
 router.post("/create", BaseController.crearBase);
 router.delete("/:id", BaseController.eliminarBase);
+router.put("/:id", BaseController.actualizarBase);
 
 export default router;

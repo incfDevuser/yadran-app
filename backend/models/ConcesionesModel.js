@@ -41,9 +41,29 @@ const crearConcesion = async ({ nombre_concesion, vigencia, zona_id }) => {
     throw new Error("Hubo un error con la operacion crearConcesion");
   }
 };
-const actualizarConcesion = async () => {
+const actualizarConcesion = async (id, camposActualizados) => {
   try {
-  } catch (error) {}
+    const keys = Object.keys(camposActualizados);
+    const values = Object.values(camposActualizados);
+    if (keys.length === 0) {
+      throw new Error("No se proporcionaron campos para actualizar.");
+    }
+    const setClause = keys
+      .map((key, index) => `${key} = $${index + 2}`)
+      .join(", ");
+
+    const query = `
+      UPDATE concesion
+      SET ${setClause}
+      WHERE id = $1
+      RETURNING *;
+    `;
+    const response = await pool.query(query, [id, ...values]);
+    return response.rows[0];
+  } catch (error) {
+    console.error("Error al actualizar la concesión:", error);
+    throw new Error("Hubo un error con la operación actualizarConcesion");
+  }
 };
 const eliminarConcesion = async (id) => {
   try {

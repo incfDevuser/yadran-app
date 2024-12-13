@@ -42,7 +42,7 @@ const crearZona = async (req, res) => {
     region,
     jurisdiccion_id,
     estado_zona,
-    descripcion
+    descripcion,
   } = req.body;
 
   const jurisdiccionExiste = await JurisdiccionesModel.obtenerJurisdiccion(
@@ -60,7 +60,7 @@ const crearZona = async (req, res) => {
     region,
     jurisdiccion_id,
     estado_zona,
-    descripcion
+    descripcion,
   };
 
   try {
@@ -84,26 +84,32 @@ const crearZona = async (req, res) => {
 };
 const actualizarZona = async (req, res) => {
   const { id } = req.params;
-  const data = req.body;
+  const camposActualizados = req.body;
 
   try {
-    const zonaActualizada = await ZonasModel.actualizarZona(id, data);
-    if (!zonaActualizada) {
-      return res.status(400).json({
+    const zonaExistente = await ZonasModel.obtenerZona(id);
+    if (!zonaExistente) {
+      return res.status(404).json({
         message: "Zona no encontrada",
       });
     }
+
+    const zonaActualizada = await ZonasModel.actualizarZona(
+      id,
+      camposActualizados
+    );
     return res.status(200).json({
-      message: "Zona actualizada",
+      message: "Zona actualizada correctamente",
       zonaActualizada,
     });
   } catch (error) {
     return res.status(500).json({
-      message: "Error al actualizar la zona",
+      message: "Error interno del servidor",
       error: error.message,
     });
   }
 };
+
 const eliminarZona = async (req, res) => {
   const { id } = req.params;
   try {
