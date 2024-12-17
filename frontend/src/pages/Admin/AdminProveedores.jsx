@@ -25,12 +25,10 @@ const AdminProveedores = () => {
     tipo_servicio: "",
     ciclo_cultivo: "",
     tarea_realizar: "",
-    fecha_inicio_servicio:"",
+    fecha_inicio_servicio: "",
     fecha_termino_servicio: "",
-    //Duracion del servicio - ESPORADIDO, FIJO, ETC.
-    duracion:"",
+    duracion: "",
     frecuencia_servicio: "",
-    descripcion_servicio: "",
     cantidad_usuarios_autorizados: 0,
   });
 
@@ -80,7 +78,6 @@ const AdminProveedores = () => {
       console.error("Hubo un error al crear el proveedor", error);
     }
   };
-  
 
   return (
     <div className="flex w-full h-full mt-11">
@@ -123,16 +120,16 @@ const AdminProveedores = () => {
                       onClick={() => handleDelete(proveedor.id)}
                       className="text-red-500 px-3 py-1 rounded"
                     >
-                      <IoTrashOutline/>
+                      <IoTrashOutline />
                     </button>
                     <button className="text-blue-500 px-3 py-1 rounded">
-                    <HiPencilSquare/>
+                      <HiPencilSquare />
                     </button>
                     <button
                       className="text-green-500 px-3 py-1 rounded"
                       onClick={() => handleViewInfo(proveedor)}
                     >
-                      <BsInfoSquare/>
+                      <BsInfoSquare />
                     </button>
                   </td>
                 </tr>
@@ -295,18 +292,24 @@ const AdminProveedores = () => {
                       required
                     />
                   </div>
+
                   <div className="mb-4 w-[300px]">
                     <label className="block text-gray-700 font-bold mb-2">
-                      Fecha Termino Servicio:
+                      Duración:
                     </label>
-                    <input
-                      type="date"
-                      name="fecha_termino_servicio"
-                      value={nuevoProveedor.fecha_termino_servicio}
+                    <select
+                      name="duracion"
+                      value={nuevoProveedor.duracion}
                       onChange={handleChange}
                       className="w-full border border-gray-300 p-2 rounded"
                       required
-                    />
+                    >
+                      <option value="" disabled>
+                        Seleccionar duración
+                      </option>
+                      <option value="Esporadico">Esporádico</option>
+                      <option value="Fijo">Fijo</option>
+                    </select>
                   </div>
                 </div>
 
@@ -327,7 +330,7 @@ const AdminProveedores = () => {
                   </div>
                   <div className="mb-4 w-[300px]">
                     <label className="block text-gray-700 font-bold mb-2">
-                     Cant Usuarios Autorizados:
+                      Cant Usuarios Autorizados:
                     </label>
                     <input
                       type="text"
@@ -339,22 +342,36 @@ const AdminProveedores = () => {
                     />
                   </div>
                 </div>
-
-                {/* ULTIMO BLOQUE */}
-                <div className="mb-4">
+                {/* Fechas de servicio */}
+                <div className="flex justify-between gap-2">
+                  <div className="mb-4 w-[300px]">
                     <label className="block text-gray-700 font-bold mb-2">
-                      Descripcion Servicio:
+                      Fecha de Inicio:
                     </label>
                     <input
-                      type="text"
-                      name="descripcion_servicio"
-                      value={nuevoProveedor.descripcion_servicio}
+                      type="date"
+                      name="fecha_inicio_servicio"
+                      value={nuevoProveedor.fecha_inicio_servicio}
                       onChange={handleChange}
                       className="w-full border border-gray-300 p-2 rounded"
                       required
                     />
                   </div>
-                {/* Agregar más campos según sea necesario */}
+                  <div className="mb-4 w-[300px]">
+                    <label className="block text-gray-700 font-bold mb-2">
+                      Fecha Termino Servicio:
+                    </label>
+                    <input
+                      type="date"
+                      name="fecha_termino_servicio"
+                      value={nuevoProveedor.fecha_termino_servicio}
+                      onChange={handleChange}
+                      className="w-full border border-gray-300 p-2 rounded"
+                      required
+                    />
+                  </div>
+                </div>
+
                 <div className="flex justify-end">
                   <button
                     onClick={closeModalCreate}
@@ -405,6 +422,18 @@ const AdminProveedores = () => {
               <p>
                 <strong>Tipo de Servicio:</strong>{" "}
                 {selectedProveedor.tipo_servicio}
+              </p>
+              <p>
+                <strong>Duracion de Servicio:</strong>{" "}
+                {selectedProveedor.duracion}
+              </p>
+              <p>
+                <strong>Inicio de Servicio:</strong>{" "}
+                {selectedProveedor.fecha_inicio_servicio}
+              </p>
+              <p>
+                <strong>Fin de Servicio:</strong>{" "}
+                {selectedProveedor.fecha_termino_servicio}
               </p>
               {/* Mapeo de vehículos */}
               <div className="flex flex-col mt-6">

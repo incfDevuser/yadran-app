@@ -44,8 +44,37 @@ export const ConcesionesProvider = ({ children }) => {
       throw error;
     }
   };
+  const actualizarConcesion = async (id, datosActualizados) => {
+    setLoading(true);
+    try {
+      const response = await axios.put(
+        `http://localhost:5000/api/concesiones/${id}`,
+        datosActualizados
+      );
+      const concesionActualizada = response.data;
+
+      setConcesiones((prev) =>
+        prev.map((c) => (c.id === id ? concesionActualizada : c))
+      );
+      return concesionActualizada;
+    } catch (error) {
+      console.error("Error al actualizar la concesión:", error.message);
+      throw error;
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
-    <ConcesionesContext.Provider value={{ concesiones, loading, error, crearConcesion }}>
+    <ConcesionesContext.Provider
+      value={{
+        concesiones,
+        loading,
+        error,
+        crearConcesion,
+        actualizarConcesion,
+      }}
+    >
       {children}
     </ConcesionesContext.Provider>
   );

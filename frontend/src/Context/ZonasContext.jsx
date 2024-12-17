@@ -42,8 +42,31 @@ export const ZonasProvider = ({ children }) => {
       throw error;
     }
   };
+  const actualizarZona = async (id, datosActualizados) => {
+    setLoading(true);
+    try {
+      const response = await axios.put(
+        `http://localhost:5000/api/zonas/${id}`,
+        datosActualizados
+      );
+      const zonaActualizada = response.data;
+
+      setZonas((prev) =>
+        prev.map((zona) => (zona.id === id ? zonaActualizada : zona))
+      );
+      return zonaActualizada;
+    } catch (error) {
+      console.error("Error al actualizar la zona:", error.message);
+      throw error;
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
-    <ZonasContext.Provider value={{ zonas, loading, error, crearZona }}>
+    <ZonasContext.Provider
+      value={{ zonas, loading, error, crearZona, actualizarZona }}
+    >
       {children}
     </ZonasContext.Provider>
   );

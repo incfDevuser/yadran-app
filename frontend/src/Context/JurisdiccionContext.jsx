@@ -48,9 +48,36 @@ export const JurisdiccionProvider = ({ children }) => {
       throw error;
     }
   };
+  const actualizarJurisdiccion = async (id, datosActualizados) => {
+    setLoading(true);
+    try {
+      const response = await axios.put(
+        `http://localhost:5000/api/jurisdicciones/${id}`,
+        datosActualizados
+      );
+      const jurisdiccionActualizada = response.data;
+
+      setJurisdicciones((prev) =>
+        prev.map((j) => (j.id === id ? jurisdiccionActualizada : j))
+      );
+      return jurisdiccionActualizada;
+    } catch (error) {
+      console.error("Error al actualizar la jurisdicción:", error.message);
+      throw error;
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <JurisdiccionContext.Provider
-      value={{ jurisdicciones, loading, error, crearJurisdiccion }}
+      value={{
+        jurisdicciones,
+        loading,
+        error,
+        crearJurisdiccion,
+        actualizarJurisdiccion,
+      }}
     >
       {children}
     </JurisdiccionContext.Provider>

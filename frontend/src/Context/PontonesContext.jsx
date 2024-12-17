@@ -66,8 +66,38 @@ export const PontonesProvider = ({ children }) => {
       throw error;
     }
   };
+  const actualizarPonton = async (id, datosActualizados) => {
+    setLoading(true);
+    try {
+      const response = await axios.put(
+        `http://localhost:5000/api/pontones/${id}`,
+        datosActualizados
+      );
+      const pontonActualizado = response.data;
+
+      setPontones((prev) =>
+        prev.map((p) => (p.id === id ? pontonActualizado : p))
+      );
+      return pontonActualizado;
+    } catch (error) {
+      console.error("Error al actualizar el pontón:", error.message);
+      throw error;
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
-    <PontonesContext.Provider value={{ pontones, loading, error, crearPonton,asignarQrPonton  }}>
+    <PontonesContext.Provider
+      value={{
+        pontones,
+        loading,
+        error,
+        crearPonton,
+        asignarQrPonton,
+        actualizarPonton,
+      }}
+    >
       {children}
     </PontonesContext.Provider>
   );

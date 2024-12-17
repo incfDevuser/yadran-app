@@ -30,80 +30,6 @@ const obtenerUsuario = async (id) => {
     throw new Error("Hubo un error con la operación obtenerUsuario");
   }
 };
-// const obtenerUsuarioConViajes = async (id) => {
-//   try {
-//     const query = `
-//     SELECT 
-//       usuarios.*,
-//       roles.nombre_rol,
-//       COALESCE(
-//         json_agg(
-//           json_build_object(
-//             'id', viajes.id,
-//             'nombre', viajes.nombre,
-//             'descripcion', viajes.descripcion,
-//             'fecha_inicio', usuarios_viajes.fecha_inicio,
-//             'fecha_fin', usuarios_viajes.fecha_fin,
-//             'comentario_usuario', usuarios_viajes.comentario_usuario,
-//             'estado', usuarios_viajes.estado,
-//             'solicitud_id', usuarios_viajes.id,
-//             'trayectos', (
-//               SELECT COALESCE(
-//                 json_agg(
-//                   json_build_object(
-//                     'id', trayectos.id,
-//                     'origen', trayectos.origen,
-//                     'destino', trayectos.destino,
-//                     'estado', trayectos.estado,
-//                     'vehiculo_id', trayectos.vehiculo_id,
-//                     'tipo_vehiculo', vehiculos.tipo_vehiculo,
-//                     'duracion_estimada', trayectos.duracion_estimada
-//                   )
-//                 ) FILTER (WHERE trayectos.id IS NOT NULL), '[]'
-//               )
-//               FROM trayectos
-//               JOIN rutas ON trayectos.ruta_id = rutas.id
-//               LEFT JOIN vehiculos ON trayectos.vehiculo_id = vehiculos.id
-//               WHERE rutas.id = viajes.ruta_id
-//             )
-//           )
-//         ) FILTER (WHERE viajes.id IS NOT NULL), '[]'
-//       ) AS viajes,
-//       COALESCE(
-//         json_agg(
-//           json_build_object(
-//             'solicitud_id', solicitudes.id,
-//             'movimiento_id', solicitudes.movimiento_id,
-//             'estado', solicitudes.estado,
-//             'comentario', solicitudes.comentario,
-//             'fecha_movimiento', movimientos.fecha,
-//             'centro_origen', origen.nombre_centro,
-//             'centro_destino', destino.nombre_centro,
-//             'lancha', lanchas.nombre
-//           )
-//         ) FILTER (WHERE solicitudes.id IS NOT NULL), '[]'
-//       ) AS solicitudes_intercentro
-//     FROM usuarios
-//     JOIN roles ON usuarios.rol_id = roles.id
-//     LEFT JOIN usuarios_viajes ON usuarios.id = usuarios_viajes.usuario_id
-//     LEFT JOIN viajes ON usuarios_viajes.viaje_id = viajes.id
-//     LEFT JOIN usuariosmovimientosintercentro AS solicitudes ON usuarios.id = solicitudes.usuario_id
-//     LEFT JOIN movimientosintercentro AS movimientos ON solicitudes.movimiento_id = movimientos.id
-//     LEFT JOIN centro AS origen ON movimientos.centro_origen_id = origen.id
-//     LEFT JOIN centro AS destino ON movimientos.centro_destino_id = destino.id
-//     LEFT JOIN lanchas ON movimientos.lancha_id = lanchas.id
-//     WHERE usuarios.id = $1
-//     GROUP BY usuarios.id, roles.nombre_rol
-//   `;
-//     const values = [id];
-//     const response = await pool.query(query, values);
-//     return response.rows[0];
-//   } catch (error) {
-//     console.error(error);
-//     throw new Error("Hubo un error con la operación obtenerUsuarioConViajes");
-//   }
-// };
-
 const obtenerUsuarioConViajes = async (id) => {
   try {
     const query = `
@@ -182,7 +108,6 @@ const obtenerUsuarioConViajes = async (id) => {
   }
 };
 
-
 const eliminarUsuario = async (id) => {
   try {
     const query = "DELETE FROM usuarios WHERE id = $1";
@@ -206,6 +131,35 @@ const findUser = async (email) => {
     throw new Error("Hubo un error con la operación FINDUSER");
   }
 };
+const actualizarUsuario = async (id, camposActualizados) => {
+  try {
+    if (camposActualizados.email) {
+      delete camposActualizados.email;
+    }
+    const keys = Object.keys(camposActualizados);
+    const valores = Object.values(camposActualizados);
+
+    if (keys.length === 0) {
+      throw new Error("No se proporcionaron campos válidos para actualizar.");
+    }
+    const setQuery = keys
+      .map((key, index) => `${key} = $${index + 1}`)
+      .join(", ");
+
+    const query = `
+      UPDATE usuarios
+      SET ${setQuery}
+      WHERE id = $${keys.length + 1}
+      RETURNING *;
+    `;
+    valores.push(id);
+    const response = await pool.query(query, valores);
+    return response.rows[0];
+  } catch (error) {
+    console.error("Error al actualizar el usuario:", error.message);
+    throw new Error("Hubo un error al actualizar el usuario");
+  }
+};
 
 export const UserModel = {
   obtenerUsuarios,
@@ -213,4 +167,5 @@ export const UserModel = {
   eliminarUsuario,
   findUser,
   obtenerUsuarioConViajes,
+  actualizarUsuario
 };

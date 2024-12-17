@@ -4,13 +4,14 @@ import { emailHelper } from "../Services/MailHelper.js";
 import { NotificacionesModel } from "../models/NotificacionesModel.js";
 import obtenerClimaPorUbicacion from "../Services/ClimaService.js";
 const crearViaje = async (req, res) => {
-  const { nombre, descripcion, ruta_id } = req.body;
+  const { nombre, descripcion, ruta_id, tipo_viaje } = req.body;
 
   try {
     const viaje = await ViajesModel.crearViaje({
       nombre,
       descripcion,
       ruta_id,
+      tipo_viaje,
     });
     res.status(201).json({
       message: "Viaje creado con éxito",
@@ -24,10 +25,7 @@ const crearViaje = async (req, res) => {
 //Obtener viajes
 const obtenerViajes = async (req, res) => {
   try {
-    // Obtiene todos los viajes desde la base de datos
     const viajes = await ViajesModel.obtenerViajes();
-
-    // Mapeo de viajes para agregar el clima del centro asociado
     const viajesConClima = await Promise.all(
       viajes.map(async (viaje) => {
         if (
@@ -55,7 +53,6 @@ const obtenerViajes = async (req, res) => {
             };
           }
         } else {
-          // Si no hay centro asociado o no tiene coordenadas, no hay clima
           return {
             ...viaje,
             centro_asociado: {
@@ -66,8 +63,6 @@ const obtenerViajes = async (req, res) => {
         }
       })
     );
-
-    // Respuesta con los viajes incluyendo clima
     return res.status(200).json({
       message: "Lista de viajes con clima del centro asociado",
       viajes: viajesConClima,
@@ -80,8 +75,6 @@ const obtenerViajes = async (req, res) => {
     });
   }
 };
-
-//Obtener solicitudes de viaje
 const obtenerSolicitudesUsuariosNaturales = async (req, res) => {
   try {
     const result = await ViajesModel.obtenerSolicitudesUsuariosNaturales();
@@ -90,7 +83,6 @@ const obtenerSolicitudesUsuariosNaturales = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
-//Obtener solicitudes de viaje contratista
 const obtenerSolicitudesContratista = async (req, res) => {
   try {
     const result = await ViajesModel.obtenerSolicitudesTrabajadores();
@@ -99,7 +91,6 @@ const obtenerSolicitudesContratista = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
-//Controlador para agendar un viaje para un usuario natural
 const solicitarViajeUsuarioNatural = async (req, res) => {
   const { viaje_id, fecha_inicio, fecha_fin, comentario_usuario } = req.body;
   const usuario_id = req.user.id;

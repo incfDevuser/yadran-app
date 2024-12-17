@@ -51,6 +51,8 @@ const crearProveedor = async (req, res) => {
     tipo_servicio,
     ciclo_cultivo,
     tarea_realizar,
+    fecha_inicio_servicio,
+    duracion,
     fecha_termino_servicio,
     frecuencia_servicio,
     cantidad_usuarios_autorizados,
@@ -69,11 +71,16 @@ const crearProveedor = async (req, res) => {
       tipo_servicio,
       ciclo_cultivo,
       tarea_realizar,
+      fecha_inicio_servicio,
+      duracion,
       fecha_termino_servicio,
       frecuencia_servicio,
       cantidad_usuarios_autorizados,
     });
-    res.status(201).json(nuevoProveedor);
+    res.status(201).json({
+      message: "Proveedor creado exitosamente",
+      proveedor: nuevoProveedor,
+    });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Error al crear el proveedor" });

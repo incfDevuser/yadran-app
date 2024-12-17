@@ -124,14 +124,24 @@ const crearProveedor = async ({
   tipo_servicio,
   ciclo_cultivo,
   tarea_realizar,
+  fecha_inicio_servicio,
+  duracion,
   fecha_termino_servicio,
   frecuencia_servicio,
   cantidad_usuarios_autorizados,
 }) => {
   try {
-    const query = `INSERT INTO proveedores 
-    (nombre_proveedor, rut, encargado, contacto, email_encargado, telefono_encargado, representante_interno, estado, tipo_servicio, ciclo_cultivo, tarea_realizar, fecha_termino_servicio, frecuencia_servicio, cantidad_usuarios_autorizados) 
-    VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14) RETURNING *`;
+    const query = `
+      INSERT INTO proveedores 
+      (
+        nombre_proveedor, rut, encargado, contacto, email_encargado, 
+        telefono_encargado, representante_interno, estado, tipo_servicio, 
+        ciclo_cultivo, tarea_realizar, fecha_inicio_servicio, duracion, 
+        fecha_termino_servicio, frecuencia_servicio, cantidad_usuarios_autorizados
+      ) 
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16) 
+      RETURNING *;
+    `;
     const values = [
       nombre_proveedor,
       rut,
@@ -144,6 +154,8 @@ const crearProveedor = async ({
       tipo_servicio,
       ciclo_cultivo,
       tarea_realizar,
+      fecha_inicio_servicio,
+      duracion,
       fecha_termino_servicio,
       frecuencia_servicio,
       cantidad_usuarios_autorizados,

@@ -1,12 +1,12 @@
 import pool from "../config/db.js";
 
-const crearViaje = async ({ nombre, descripcion, ruta_id }) => {
+const crearViaje = async ({ nombre, descripcion, ruta_id, tipo_viaje }) => {
   try {
     const query = `
-      INSERT INTO viajes (nombre, descripcion, ruta_id)
-      VALUES ($1, $2, $3) RETURNING *
+      INSERT INTO viajes (nombre, descripcion, ruta_id, tipo_viaje)
+      VALUES ($1, $2, $3, $4) RETURNING *
     `;
-    const values = [nombre, descripcion, ruta_id];
+    const values = [nombre, descripcion, ruta_id, tipo_viaje];
     const response = await pool.query(query, values);
     return response.rows[0];
   } catch (error) {
@@ -59,7 +59,9 @@ const obtenerViajes = async () => {
       "Error al obtener los viajes con trayectos, vehículos y centro asociado:",
       error
     );
-    throw new Error("Error al obtener los viajes con trayectos, vehículos y centro asociado");
+    throw new Error(
+      "Error al obtener los viajes con trayectos, vehículos y centro asociado"
+    );
   }
 };
 
@@ -525,6 +527,11 @@ const obtenerSolicitudesUsuariosNaturales = async () => {
         u.id AS usuario_id,
         u.nombre AS nombre_usuario,
         u.email AS email_usuario,
+        u.rut AS rut_usuario,
+        u.empresa AS empresa_usuario,
+        u.cargo AS cargo_usuario,
+        u.numero_contacto AS contacto_usuario,
+        u.fecha_nacimiento AS fecha_nacimiento_usuario,
         v.nombre AS nombre_viaje,
         v.descripcion AS descripcion_viaje
       FROM usuarios_viajes uv
@@ -547,6 +554,11 @@ const obtenerSolicitudesUsuariosNaturales = async () => {
       updated_at: row.updated_at,
       nombre_solicitante: row.nombre_usuario,
       email_solicitante: row.email_usuario,
+      rut_solicitante: row.rut_usuario,
+      empresa_solicitante: row.empresa_usuario,
+      cargo_solicitante: row.cargo_usuario,
+      contacto_solicitante: row.contacto_usuario,
+      fecha_nacimiento_solicitante: row.fecha_nacimiento_usuario,
       nombre_viaje: row.nombre_viaje,
       descripcion_viaje: row.descripcion_viaje,
     }));
@@ -566,6 +578,7 @@ const obtenerSolicitudesUsuariosNaturales = async () => {
     );
   }
 };
+
 //Obtener solicitudes para trabajadores
 
 const obtenerSolicitudesTrabajadores = async () => {
@@ -609,7 +622,7 @@ const obtenerSolicitudesTrabajadores = async () => {
       updated_at: row.updated_at,
       trabajador: {
         id: row.trabajador_id,
-        nombre: row.nombre_trabajador,  
+        nombre: row.nombre_trabajador,
         email: row.email_trabajador,
       },
       contratista: {
@@ -760,5 +773,5 @@ export const ViajesModel = {
   obtenerSolicitudesTrabajadores,
   cancelarViajeUsuarioYTrabajadores,
   getDetallesViajeConTrabajadores,
-  obtenerSolicitudPorId
+  obtenerSolicitudPorId,
 };

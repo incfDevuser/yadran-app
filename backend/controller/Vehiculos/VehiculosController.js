@@ -155,6 +155,30 @@ const obtenerInfoCompletaVehiculo = async (req, res) => {
     });
   }
 };
+const asignarTripulante = async (req, res) => {
+  const { vehiculo_id, nombre_tripulante, rut_tripulante, fecha_nacimiento, empresa, cargo } = req.body;
+
+  try {
+    const nuevoTripulante = await VehiculosModel.asignarTripulante({
+      vehiculo_id,
+      nombre_tripulante,
+      rut_tripulante,
+      fecha_nacimiento,
+      empresa,
+      cargo
+    });
+
+    res.status(201).json({
+      message: "Tripulante asignado exitosamente al vehículo",
+      tripulante: nuevoTripulante,
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: "Error al asignar el tripulante al vehículo",
+      error: error.message,
+    });
+  }
+};
 
 export const VehiculosController = {
   obtenerVehiculos,
@@ -164,4 +188,5 @@ export const VehiculosController = {
   eliminarVehiculo,
   obtenerUsuariosEnVehiculo,
   obtenerInfoCompletaVehiculo,
+  asignarTripulante
 };

@@ -177,6 +177,22 @@ const obtenerUsuariosPorVehiculoYTrayecto = async (vehiculo_id) => {
     );
   }
 };
+const asignarTripulante = async ({ vehiculo_id, nombre_tripulante, rut_tripulante, fecha_nacimiento, empresa, cargo }) => {
+  try {
+    const query = `
+      INSERT INTO vehiculo_tripulantes (
+        vehiculo_id, nombre_tripulante, rut_tripulante, fecha_nacimiento, empresa, cargo
+      ) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *;
+    `;
+    const values = [vehiculo_id, nombre_tripulante, rut_tripulante, fecha_nacimiento, empresa, cargo];
+    const response = await pool.query(query, values);
+    return response.rows[0];
+  } catch (error) {
+    console.error("Error al asignar el tripulante al vehículo:", error);
+    throw new Error("Error al asignar el tripulante al vehículo");
+  }
+};
+
 export const VehiculosModel = {
   obtenerVehiculos,
   obtenerVehiculo,
@@ -185,4 +201,5 @@ export const VehiculosModel = {
   eliminarVehiculo,
   obtenerUsuariosEnVehiculo,
   obtenerUsuariosPorVehiculoYTrayecto,
+  asignarTripulante
 };

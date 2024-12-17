@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import AdminAside from "./AdminAside";
-import AdminSolicitudes from "./AdminSolicitudes";
 import { useViajes } from "../../Context/ViajesContext";
 import { useRutas } from "../../Context/RoutesContext";
 
@@ -13,6 +12,7 @@ const AdminViajes = () => {
     nombre: "",
     descripcion: "",
     ruta_id: "",
+    tipo_viaje: "",
   });
 
   const handleChange = (e) => {
@@ -159,6 +159,7 @@ const AdminViajes = () => {
         )}
 
         {/* Modal de creación de viaje */}
+        {/* Modal de creación de viaje */}
         {isModalOpen && (
           <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
             <div className="bg-white p-8 rounded-lg max-w-md w-full shadow-xl">
@@ -211,6 +212,22 @@ const AdminViajes = () => {
                     ) : (
                       <option disabled>No hay rutas disponibles</option>
                     )}
+                  </select>
+                </div>
+                <div className="mb-4">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Tipo de Viaje
+                  </label>
+                  <select
+                    name="tipo_viaje"
+                    value={newViaje.tipo_viaje}
+                    onChange={handleChange}
+                    className="w-full border border-gray-300 p-2 rounded-lg"
+                    required
+                  >
+                    <option value="">Seleccionar Tipo de Viaje</option>
+                    <option value="normal">Normal</option>
+                    <option value="gerencial">Gerencial</option>
                   </select>
                 </div>
                 <div className="text-right">

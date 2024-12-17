@@ -18,7 +18,9 @@ const TripulantesModal = ({ show, handleClose, vehiculo }) => {
             <FaTimes />
           </button>
         </div>
-        <div className="mt-4">
+        <div
+          className="mt-4 max-h-64 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100"
+        >
           {vehiculo?.tripulantes?.length > 0 ? (
             <ul className="space-y-4">
               {vehiculo.tripulantes.map((tripulante) => (

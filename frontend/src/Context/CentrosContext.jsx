@@ -43,8 +43,31 @@ export const CentrosProvider = ({ children }) => {
       throw error;
     }
   };
+  const actualizarCentro = async (id, datosActualizados) => {
+    setLoading(true);
+    try {
+      const response = await axios.put(
+        `http://localhost:5000/api/centros/${id}`,
+        datosActualizados
+      );
+      const centroActualizado = response.data;
+
+      setCentros((prev) =>
+        prev.map((c) => (c.id === id ? centroActualizado : c))
+      );
+      return centroActualizado;
+    } catch (error) {
+      console.error("Error al actualizar el centro:", error.message);
+      throw error;
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
-    <CentrosContext.Provider value={{ centros, loading, error, crearCentro }}>
+    <CentrosContext.Provider
+      value={{ centros, loading, error, crearCentro, actualizarCentro }}
+    >
       {children}
     </CentrosContext.Provider>
   );

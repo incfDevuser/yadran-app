@@ -8,7 +8,7 @@ router.get("/", UserController.obtenerUsuarios);
 router.get("/usuario/:id", UserController.obtenerUsuario);
 router.delete("/:id", UserController.eliminarUsuario);
 // Obtener el perfil del usuario autenticado
-router.get("/miPerfil", AuthMiddleware.authToken,UserController.myProfile);
+router.get("/miPerfil", AuthMiddleware.authToken, UserController.myProfile);
 
 router.post("/logout", (req, res) => {
   res.clearCookie("token", {
@@ -18,5 +18,6 @@ router.post("/logout", (req, res) => {
   });
   return res.status(200).json({ message: "Cierre de sesión exitoso" });
 });
+router.put("/usuario/:id", UserController.actualizarUsuario);
 
 export default router;

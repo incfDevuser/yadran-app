@@ -96,6 +96,29 @@ export const UsuariosProvider = ({ children }) => {
       throw new Error("Error al cancelar el viaje. Intenta de nuevo.");
     }
   };
+  const actualizarUsuario = async (id, camposActualizados) => {
+    try {
+      const response = await axios.put(
+        `http://localhost:5000/api/usuarios/usuario/${id}`,
+        camposActualizados,
+        {
+          withCredentials: true,
+        }
+      );
+      const dataActualizada = response.data;
+      if (usuarios?.id === id) {
+        setUsuarios((prevState) => ({
+          ...prevState,
+          ...camposActualizados,
+        }));
+      }
+
+      return dataActualizada;
+    } catch (error) {
+      console.error("Error al actualizar el usuario:", error.message);
+      throw new Error("Hubo un error al actualizar el usuario.");
+    }
+  };
   return (
     <UsuariosContext.Provider
       value={{
@@ -109,6 +132,7 @@ export const UsuariosProvider = ({ children }) => {
         iniciarSesion,
         cerrarSesion,
         cancelarViaje,
+        actualizarUsuario,
       }}
     >
       {children}

@@ -211,9 +211,35 @@ const AdminSolicitudes = () => {
               </p>
               <p>
                 <strong>Comentario:</strong>{" "}
-                {selectedSolicitud.comentario_usuario ||
-                  selectedSolicitud.comentario ||
-                  "N/A"}
+                {selectedSolicitud.comentario_usuario || "N/A"}
+              </p>
+              <hr className="my-4" />
+              <h3 className="text-xl font-bold text-gray-800 mb-4">
+                Información del Solicitante
+              </h3>
+              <p>
+                <strong>RUT:</strong>{" "}
+                {selectedSolicitud.rut_solicitante || "N/A"}
+              </p>
+              <p>
+                <strong>Empresa:</strong>{" "}
+                {selectedSolicitud.empresa_solicitante || "N/A"}
+              </p>
+              <p>
+                <strong>Cargo:</strong>{" "}
+                {selectedSolicitud.cargo_solicitante || "N/A"}
+              </p>
+              <p>
+                <strong>Contacto:</strong>{" "}
+                {selectedSolicitud.contacto_solicitante || "N/A"}
+              </p>
+              <p>
+                <strong>Fecha de Nacimiento:</strong>{" "}
+                {selectedSolicitud.fecha_nacimiento_solicitante
+                  ? new Date(
+                      selectedSolicitud.fecha_nacimiento_solicitante
+                    ).toLocaleDateString()
+                  : "N/A"}
               </p>
               <button
                 className="mt-4 bg-red-500 text-white px-4 py-2 rounded-lg"

@@ -1,5 +1,4 @@
 import { UserModel } from "../models/UserModel.js";
-import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
 dotenv.config();
 
@@ -50,7 +49,7 @@ const myProfile = async (req, res) => {
 
   try {
     const user = await UserModel.obtenerUsuarioConViajes(id);
-    
+
     if (!user) {
       return res.status(404).json({ message: "Usuario no encontrado" });
     }
@@ -61,9 +60,38 @@ const myProfile = async (req, res) => {
     return res.status(500).json({ message: "Error interno del servidor" });
   }
 };
+const actualizarUsuario = async (req, res) => {
+  const { id } = req.params;
+  const camposActualizados = req.body;
+
+  try {
+    const usuarioExistente = await UserModel.obtenerUsuario(id);
+
+    if (!usuarioExistente) {
+      return res.status(404).json({ error: "Usuario no encontrado" });
+    }
+
+    const usuarioActualizado = await UserModel.actualizarUsuario(
+      id,
+      camposActualizados
+    );
+
+    return res.status(200).json({
+      message: "Usuario actualizado exitosamente",
+      usuario: usuarioActualizado,
+    });
+  } catch (error) {
+    console.error("Error al actualizar el usuario:", error.message);
+    return res
+      .status(500)
+      .json({ error: "Error interno al actualizar el usuario" });
+  }
+};
+
 export const UserController = {
   obtenerUsuarios,
   obtenerUsuario,
   eliminarUsuario,
-  myProfile
+  myProfile,
+  actualizarUsuario,
 };

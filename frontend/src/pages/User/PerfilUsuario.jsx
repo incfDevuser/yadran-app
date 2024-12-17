@@ -3,12 +3,24 @@ import { useUsuario } from "../../Context/UsuarioContext";
 import { useIntercentros } from "../../Context/IntercentroContext";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-
+import ModalEditarPerfil from "./ModalEditarPerfil.JSX";
 const PerfilUsuario = () => {
-  const { usuarios, cancelarViaje } = useUsuario();
+  const { usuarios, cancelarViaje, actualizarUsuario } = useUsuario();
   const { cancelarSolicitudIntercentro } = useIntercentros();
   const [modalOpen, setModalOpen] = useState(false);
   const [trayectos, setTrayectos] = useState([]);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const handleSave = async (formData) => {
+    try {
+      await actualizarUsuario(usuarios.id, formData);
+      toast.success("Perfil actualizado con éxito");
+      setIsModalOpen(false);
+    } catch (error) {
+      console.error("Error al actualizar el perfil:", error);
+      toast.error("Hubo un error al actualizar el perfil.");
+    }
+  };
 
   const handleOpenModal = (trayectos) => {
     setTrayectos(trayectos || []);
@@ -67,7 +79,10 @@ const PerfilUsuario = () => {
     <div className="max-w-5xl mx-auto p-6 bg-white shadow-lg rounded-lg mt-10">
       <div className="flex justify-between items-center mb-8">
         <h1 className="text-3xl font-bold text-gray-900">Perfil del Usuario</h1>
-        <button className="rounded-xl bg-blue-600 p-2 text-white hover:bg-blue-700">
+        <button
+          onClick={() => setIsModalOpen(true)}
+          className="bg-blue-500 text-white px-4 py-2 rounded shadow hover:bg-blue-600"
+        >
           Editar Información
         </button>
       </div>
@@ -85,11 +100,18 @@ const PerfilUsuario = () => {
             <strong>Email:</strong> {usuarios?.email || "No disponible"}
           </p>
           <p className="text-gray-700">
-            <strong>Rol:</strong> {usuarios?.nombre_rol || "No disponible"}
+            <strong>Rut:</strong> {usuarios?.rut || "No disponible"}
           </p>
           <p className="text-gray-700">
-            <strong>Es Administrador:</strong> {usuarios?.isadmin ? "Sí" : "No"}
+            <strong>Numero Contacto:</strong>{" "}
+            {usuarios?.numero_contacto || "No disponible"}
           </p>
+          <p className="text-gray-700">
+            <strong>Rol:</strong> {usuarios?.nombre_rol || "No disponible"}
+          </p>
+          {/* <p className="text-gray-700">
+            <strong>Es Administrador:</strong> {usuarios?.isadmin ? "Sí" : "No"}
+          </p> */}
         </div>
 
         {/* Información Adicional */}
@@ -106,6 +128,12 @@ const PerfilUsuario = () => {
           </p>
           <p className="text-gray-700">
             <strong>Teléfono:</strong> {usuarios?.telefono || "No disponible"}
+          </p>
+          <p className="text-gray-700">
+            <strong>Empresa:</strong> {usuarios?.empresa || "No disponible"}
+          </p>
+          <p className="text-gray-700">
+            <strong>Cargo:</strong> {usuarios?.cargo || "No disponible"}
           </p>
         </div>
       </div>
@@ -301,6 +329,12 @@ const PerfilUsuario = () => {
           </div>
         </div>
       )}
+      <ModalEditarPerfil
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onSave={handleSave}
+        user={usuarios}
+      />
     </div>
   );
 };
