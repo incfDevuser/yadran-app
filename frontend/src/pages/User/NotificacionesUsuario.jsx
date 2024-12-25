@@ -1,14 +1,15 @@
 import React, { useEffect } from "react";
 import { useNotificaciones } from "../../Context/NotificacionesContext";
-import { BsBellFill, BsCheckCircleFill } from "react-icons/bs"; // Importamos íconos de React Icons
+import {
+  BsBellFill,
+  BsCheckCircleFill,
+  BsExclamationCircleFill,
+  BsInfoCircleFill,
+} from "react-icons/bs"; // Importamos íconos de React Icons
 
 const NotificacionesUsuario = () => {
-  const {
-    notificaciones,
-    obtenerNotificacionesPorUsuario,
-    loading,
-    error,
-  } = useNotificaciones();
+  const { notificaciones, obtenerNotificacionesPorUsuario, loading, error } =
+    useNotificaciones();
 
   useEffect(() => {
     obtenerNotificacionesPorUsuario();
@@ -18,7 +19,30 @@ const NotificacionesUsuario = () => {
     console.log("Notificación marcada como leída:", notificacionId);
   };
 
-  if (loading) return <p className="text-center text-gray-500">Cargando notificaciones...</p>;
+  const getNotificacionEstilo = (tipo) => {
+    switch (tipo) {
+      case "alerta":
+        return {
+          icon: <BsExclamationCircleFill className="text-2xl text-red-500" />,
+          bgClass: "bg-red-50",
+        };
+      case "informativa":
+        return {
+          icon: <BsInfoCircleFill className="text-2xl text-blue-500" />,
+          bgClass: "bg-blue-50",
+        };
+      default:
+        return {
+          icon: <BsBellFill className="text-2xl text-gray-500" />,
+          bgClass: "bg-gray-50",
+        };
+    }
+  };
+
+  if (loading)
+    return (
+      <p className="text-center text-gray-500">Cargando notificaciones...</p>
+    );
   if (error) return <p className="text-center text-red-500">{error}</p>;
 
   return (
@@ -30,37 +54,40 @@ const NotificacionesUsuario = () => {
         <p className="text-center text-gray-500">No tienes notificaciones</p>
       ) : (
         <ul className="space-y-4">
-          {notificaciones.map((notificacion) => (
-            <li
-              key={notificacion.id}
-              className={`flex items-center justify-between p-4 rounded-md shadow-sm ${
-                notificacion.leido ? "bg-green-50" : "bg-gray-50"
-              }`}
-            >
-              <div className="flex items-center gap-4">
-                {notificacion.leido ? (
-                  <BsCheckCircleFill className="text-2xl text-green-500" />
-                ) : (
-                  <BsBellFill className="text-2xl text-blue-500" />
-                )}
-                <div>
-                  <h4 className="text-lg font-medium text-gray-800">{notificacion.titulo}</h4>
-                  <p className="text-sm text-gray-600">{notificacion.descripcion}</p>
-                  <small className="text-xs text-gray-400">
-                    {new Date(notificacion.fecha_creacion).toLocaleString()}
-                  </small>
+          {notificaciones.map((notificacion) => {
+            const { icon, bgClass } = getNotificacionEstilo(notificacion.tipo);
+            return (
+              <li
+                key={notificacion.id}
+                className={`flex items-center justify-between p-4 rounded-md shadow-sm ${
+                  notificacion.leido ? "bg-green-50" : bgClass
+                }`}
+              >
+                <div className="flex items-center gap-4">
+                  {icon}
+                  <div>
+                    <h4 className="text-lg font-medium text-gray-800">
+                      {notificacion.titulo}
+                    </h4>
+                    <p className="text-sm text-gray-600">
+                      {notificacion.descripcion}
+                    </p>
+                    <small className="text-xs text-gray-400">
+                      {new Date(notificacion.fecha_creacion).toLocaleString()}
+                    </small>
+                  </div>
                 </div>
-              </div>
-              {/* {!notificacion.leido && (
-                <button
-                  onClick={() => handleMarcarComoLeida(notificacion.id)}
-                  className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 text-sm transition-all"
-                >
-                  Marcar como leída
-                </button>
-              )} */}
-            </li>
-          ))}
+                {/* {!notificacion.leido && (
+                  <button
+                    onClick={() => handleMarcarComoLeida(notificacion.id)}
+                    className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 text-sm transition-all"
+                  >
+                    Marcar como leída
+                  </button>
+                )} */}
+              </li>
+            );
+          })}
         </ul>
       )}
     </div>

@@ -248,15 +248,14 @@ const AdminRoutes = () => {
                       >
                         <IoAddCircleOutline />
                       </button>
-                      <div className="flex justify-center space-x-2 text-xl">
-                        {/* Botón para asignar vuelo */}
+                      {/* <div className="flex justify-center space-x-2 text-xl">
                         <button
                           onClick={() => openVueloModal(ruta.id)}
                           className="text-blue-500 px-3 py-1 rounded"
                         >
                           <IoAirplaneOutline />
                         </button>
-                      </div>
+                      </div> */}
                       <button
                         onClick={() => openHotelModal(ruta.id)}
                         className="text-green-500 px-3 py-1 rounded"

@@ -60,10 +60,43 @@ export const VehiculosProvider = ({ children }) => {
       throw error;
     }
   };
+  const asignarTripulante = async (vehiculoId, tripulante) => {
+    try {
+      const response = await axios.post(
+        `http://localhost:5000/api/vehiculos/${vehiculoId}/tripulantes`,
+        tripulante,
+        { withCredentials: true }
+      );
+      console.log("Respuesta de la asignación:", response.data);
+
+      setVehiculos((prevVehiculos) =>
+        prevVehiculos.map((vehiculo) =>
+          vehiculo.id === vehiculoId
+            ? {
+                ...vehiculo,
+                tripulantes: [
+                  ...vehiculo.tripulantes,
+                  response.data.tripulante,
+                ],
+              }
+            : vehiculo
+        )
+      );
+    } catch (error) {
+      console.error("Error al asignar tripulante:", error.message);
+    }
+  };
 
   return (
     <VehiculosContext.Provider
-      value={{ vehiculos, loading, error, crearVehiculo, eliminarVehiculo }}
+      value={{
+        vehiculos,
+        loading,
+        error,
+        crearVehiculo,
+        eliminarVehiculo,
+        asignarTripulante,
+      }}
     >
       {children}
     </VehiculosContext.Provider>

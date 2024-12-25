@@ -6,11 +6,11 @@ const Footer = () => {
       <div className="mt-40 flex flex-col gap-5 px-8">
         <div className="flex justify-between items-start flex-col md:flex-row gap-7">
           <div className="flex justify-start items-start">
-            <h1 className="text-[#605DEC] font-bold text-2xl">TripTrack</h1>
+            <h1 className="text-[#605DEC] font-bold text-2xl">PersonalTrack</h1>
           </div>
           <ul className="flex flex-col items-start justify-start gap-3">
             <h2 className="text-[#6E7491] font-bold text-lg">Acerca de</h2>
-            <li className="footerLi">Sobre TripTrack</li>
+            <li className="footerLi">Sobre PersonalTrack</li>
             <li className="footerLi">Cómo funciona</li>
             <li className="footerLi">Docs</li>
             <li className="footerLi">Yadran</li>
@@ -37,8 +37,8 @@ const Footer = () => {
           </ul>
           <ul className="flex flex-col items-start justify-start gap-3">
             <h2 className="text-[#6E7491] font-bold text-lg">Descarga la app</h2>
-            <li className="footerLi">TripTrack para Android</li>
-            <li className="footerLi">TripTrack para iOS</li>
+            <li className="footerLi">PersonalTrack para Android</li>
+            <li className="footerLi">PersonalTrack para iOS</li>
             <li className="footerLi">Sitio móvil</li>
             <img src={appStore} alt="appStore" className="" />
             <img src={googlePlay} alt="googlePlay" />
@@ -50,7 +50,7 @@ const Footer = () => {
             <img src={instagram} alt="instagram" className="cursor-pointer object-cover w-5 h-5 sm:w-7 sm:h-7" />
             <img src={facebook} alt="facebook" className="cursor-pointer object-cover w-5 h-5 sm:w-7 sm:h-7" />
           </div>
-          <p className="text-[#7C8DB0] text-sm sm:text-base">&copy; 2023 TripTrack, Inc.</p>
+          <p className="text-[#7C8DB0] text-sm sm:text-base">&copy; 2023 PersonalTrack, Inc.</p>
         </div>
       </div>
     </>

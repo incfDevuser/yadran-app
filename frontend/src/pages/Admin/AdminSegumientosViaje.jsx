@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import AdminAside from "./AdminAside";
 import { useViajes } from "../../Context/ViajesContext";
 import { toast } from "react-toastify";
-
+import LoadingViajes from "./components/LoadingViajes";
 
 const AdminSegumientosViaje = () => {
   const { viajes, obtenerDetalleViaje, detalleViaje, limpiarEntidades, loading, error } =
@@ -43,7 +43,7 @@ const AdminSegumientosViaje = () => {
   if (loading) {
     return (
       <div className="flex justify-center items-center h-screen">
-        <p>Cargando viajes...</p>
+        <LoadingViajes/>
       </div>
     );
   }

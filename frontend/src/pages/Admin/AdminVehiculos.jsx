@@ -7,6 +7,8 @@ import { useChofer } from "../../Context/ChoferContext";
 import CrearChoferModal from "./Modals/CrearChoferModal";
 import { FaUsers } from "react-icons/fa";
 import TripulantesModal from "./Modals/TripulantesModal";
+import CrearTripulanteModal from "./Modals/CrearTripulanteModal";
+import { IoPersonAdd } from "react-icons/io5";
 
 const AdminVehiculos = () => {
   const { vehiculos, crearVehiculo, eliminarVehiculo } = useVehiculos();
@@ -18,6 +20,7 @@ const AdminVehiculos = () => {
   const [isChoferModalOpen, setIsChoferModalOpen] = useState(false);
   const [tripulantesModalOpen, setTripulantesModalOpen] = useState(false);
   const [tripulantesCreateOpen, setTripulantesCreateOpen] = useState(false);
+
   const { choferes, loading: loadingChoferes } = useChofer();
   //Estado para crear el nuevo vehiculos
   const [nuevoVehiculo, setNuevoVehiculo] = useState({
@@ -33,28 +36,22 @@ const AdminVehiculos = () => {
     velocidad_promedio: 0,
   });
 
-  const handleViewInfo = (vehiculo) => {
-    setSelectedVehiculo(vehiculo);
-    setIsModalOpen(true);
-  };
-  const closeModalInfo = () => {
-    setIsModalOpen(false);
-    setSelectedVehiculo(null);
-  };
-
-  const openCreateModal = () => {
-    setIsCreateModelOpen(true);
-  };
-
   const closeCreateModal = () => {
     setIsCreateModelOpen(false);
   };
-
+  const closeTripulantesCreateModal = () => {
+    setTripulantesCreateOpen(false);
+    setSelectedVehiculo(null);
+  };
   const handleChange = (e) => {
     setNuevoVehiculo({
       ...nuevoVehiculo,
       [e.target.name]: e.target.value,
     });
+  };
+  const handleCreateTripulante = (vehiculo) => {
+    setSelectedVehiculo(vehiculo);
+    setTripulantesCreateOpen(true);
   };
   const handleViewTripulantes = (vehiculo) => {
     setSelectedVehiculo(vehiculo);
@@ -359,12 +356,20 @@ const AdminVehiculos = () => {
                       {vehiculo.nombre_proveedor}
                     </td>
                     <td className="py-2 px-4 border-b">
-                      <button
-                        className="p-2 bg-blue-500 text-white rounded-lg hover:bg-blue-700"
-                        onClick={() => handleViewTripulantes(vehiculo)}
-                      >
-                        <FaUsers />
-                      </button>
+                      <div className="flex">
+                        <button
+                          className="p-2 bg-blue-500 text-white rounded-lg hover:bg-blue-700"
+                          onClick={() => handleViewTripulantes(vehiculo)}
+                        >
+                          <FaUsers />
+                        </button>
+                        <button
+                          onClick={() => handleCreateTripulante(vehiculo)}
+                          className="p-2 bg-green-500 text-white rounded-lg ml-2"
+                        >
+                          <IoPersonAdd />
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 ))}
@@ -381,6 +386,12 @@ const AdminVehiculos = () => {
             handleClose={closeTripulantesModal}
             vehiculo={selectedVehiculo}
           />
+          {tripulantesCreateOpen && (
+            <CrearTripulanteModal
+              vehiculoId={selectedVehiculo?.id}
+              closeModal={closeTripulantesCreateModal}
+            />
+          )}
         </main>
       </div>
     </div>

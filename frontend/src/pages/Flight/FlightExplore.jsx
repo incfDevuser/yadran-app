@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useUsuario } from "../../Context/UsuarioContext";
 import { useViajes } from "../../Context/ViajesContext";
 import { FlightCard } from "../../container";
 import HotelCard from "../../container/Flight/HotelCard";
@@ -15,9 +16,10 @@ import {
   FiThermometer,
   FiWind,
 } from "react-icons/fi";
-
+import LoadingViajes from "../Admin/components/LoadingViajes";
 const FlightExplore = () => {
   const { viajes, loading, error } = useViajes();
+  const { rol } = useUsuario(); // Obtenemos el rol del usuario
   const [selectedViaje, setSelectedViaje] = useState(null);
   const [isModalOpen, setModalOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
@@ -25,7 +27,7 @@ const FlightExplore = () => {
   const [filterByOrigin, setFilterByOrigin] = useState("");
 
   if (loading)
-    return <p className="text-center text-xl mt-8">Cargando viajes...</p>;
+    return <LoadingViajes/>;
   if (error)
     return (
       <p className="text-center text-xl mt-8 text-red-500">
@@ -53,18 +55,28 @@ const FlightExplore = () => {
     return { hours, minutes };
   };
 
-  const filteredViajes = viajes.filter((viaje) => {
-    return (
-      viaje.nombre.toLowerCase().includes(searchTerm.toLowerCase()) &&
-      viaje.trayectos.some(
-        (trayecto) =>
-          trayecto.destino
-            .toLowerCase()
-            .includes(filterByDestination.toLowerCase()) &&
-          trayecto.origen.toLowerCase().includes(filterByOrigin.toLowerCase())
-      )
-    );
-  });
+  // Filtrar los viajes según el rol del usuario
+  const filteredViajes = viajes
+    .filter((viaje) => {
+      if (rol === "Gerencia") {
+        return viaje.tipo_viaje === "gerencial"; // Mostrar solo viajes gerenciales
+      } else {
+        return viaje.tipo_viaje !== "gerencial"; // Mostrar viajes normales
+      }
+    })
+    .filter((viaje) => {
+      // Aplicar filtros adicionales de búsqueda, destino y origen
+      return (
+        viaje.nombre.toLowerCase().includes(searchTerm.toLowerCase()) &&
+        viaje.trayectos.some(
+          (trayecto) =>
+            trayecto.destino
+              .toLowerCase()
+              .includes(filterByDestination.toLowerCase()) &&
+            trayecto.origen.toLowerCase().includes(filterByOrigin.toLowerCase())
+        )
+      );
+    });
 
   return (
     <div className="px-8 w-full flex flex-col">
@@ -134,6 +146,16 @@ const FlightExplore = () => {
                   <p className="text-md text-gray-600 mt-2">
                     {viaje.descripcion}
                   </p>
+                  <p
+                    className={`text-md mt-2 font-semibold w-[90px] ${
+                      viaje.tipo_viaje === "gerencial"
+                        ? "text-yellow-600 bg-yellow-100 px-2 py-1 rounded"
+                        : "text-blue-600 bg-blue-100 px-2 py-1 rounded"
+                    }`}
+                  >
+                    {viaje.tipo_viaje === "gerencial" ? "Gerencial" : "Normal"}
+                  </p>
+
                   <div className="flex items-center mt-4 text-gray-800">
                     <FiClock className="mr-2" />
                     <span>
@@ -206,7 +228,6 @@ const FlightExplore = () => {
           </p>
         )}
       </div>
-      ;
       {isModalOpen && selectedViaje && (
         <div className="fixed inset-0 bg-gray-900 bg-opacity-75 flex justify-center items-center z-50">
           <div className="bg-white p-8 rounded-lg shadow-2xl max-w-3xl w-full max-h-96 overflow-y-auto transition-transform transform scale-100 duration-300">
@@ -240,7 +261,7 @@ const FlightExplore = () => {
                       destination={trayecto.destino}
                       vehiculo={trayecto.nombre_vehiculo}
                     />
-                  );
+                  )
                 })}
               </ul>
             ) : (

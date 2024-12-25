@@ -50,7 +50,7 @@ const crearVehiculo = async (req, res) => {
     estado,
     documentacion_ok,
     velocidad_promedio,
-    chofer_id
+    chofer_id,
   } = req.body;
 
   try {
@@ -64,7 +64,7 @@ const crearVehiculo = async (req, res) => {
       estado,
       documentacion_ok,
       velocidad_promedio,
-      chofer_id
+      chofer_id,
     };
     const nuevoVehiculo = await VehiculosModel.crearVehiculo(vehiculo);
     res.status(201).json({
@@ -134,9 +134,8 @@ const obtenerUsuariosEnVehiculo = async (req, res) => {
 const obtenerInfoCompletaVehiculo = async (req, res) => {
   const { vehiculo_id } = req.params;
   try {
-    const vehiculoInfo = await VehiculosModel.obtenerUsuariosPorVehiculoYTrayecto(
-      vehiculo_id
-    );
+    const vehiculoInfo =
+      await VehiculosModel.obtenerUsuariosPorVehiculoYTrayecto(vehiculo_id);
 
     if (!vehiculoInfo) {
       return res.status(404).json({
@@ -156,8 +155,14 @@ const obtenerInfoCompletaVehiculo = async (req, res) => {
   }
 };
 const asignarTripulante = async (req, res) => {
-  const { vehiculo_id, nombre_tripulante, rut_tripulante, fecha_nacimiento, empresa, cargo } = req.body;
-
+  const { vehiculo_id } = req.params; // Obtener el ID del vehículo desde los params
+  const {
+    nombre_tripulante,
+    rut_tripulante,
+    fecha_nacimiento,
+    empresa,
+    cargo,
+  } = req.body;
   try {
     const nuevoTripulante = await VehiculosModel.asignarTripulante({
       vehiculo_id,
@@ -165,9 +170,8 @@ const asignarTripulante = async (req, res) => {
       rut_tripulante,
       fecha_nacimiento,
       empresa,
-      cargo
+      cargo,
     });
-
     res.status(201).json({
       message: "Tripulante asignado exitosamente al vehículo",
       tripulante: nuevoTripulante,
@@ -188,5 +192,5 @@ export const VehiculosController = {
   eliminarVehiculo,
   obtenerUsuariosEnVehiculo,
   obtenerInfoCompletaVehiculo,
-  asignarTripulante
+  asignarTripulante,
 };

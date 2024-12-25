@@ -1,5 +1,5 @@
 import { Link, useLocation } from "react-router-dom";
-import { tripma } from "../assets/logo";
+// import { tripma } from "../assets/logo";
 import { MdOutlineClose } from "react-icons/md";
 import { BiMenuAltLeft } from "react-icons/bi";
 import { useState } from "react";
@@ -21,7 +21,7 @@ const Navbar = () => {
 
   return (
     <>
-      <nav className="w-full flex flex-row items-center justify-between px-5 py-4 relative">
+      <nav className="w-full flex flex-row items-center justify-between px-5 py-4 relative z-50 bg-white ">
         {/* Sección izquierda: Menú desplegable en móvil y logo */}
         <div className="flex items-center justify-center gap-3">
           <div className="relative md:hidden flex items-center">
@@ -59,14 +59,45 @@ const Navbar = () => {
                         <Link to={item.path}>{item.label}</Link>
                       </li>
                     ))}
+                {rol === "Colaborador Autorizado" && !isAdmin && (
+                  <Link className="text-gray-500" to="/validar">
+                    Validar
+                  </Link>
+                )}
+                {!usuarios ? (
+                  <button
+                    className="bg-[#605DEC] py-2 px-4 md:py-3 md:px-5 rounded-[5px] border-2 border-[#605DEC] text-base text-[#FAFAFA] hover:text-[#605DEC] hover:bg-white hover:border-2 hover:border-[#605DEC] transition-all duration-200"
+                    onClick={() => setSignin(true)} // Abrir modal de Sign up
+                  >
+                    Sign up
+                  </button>
+                ) : (
+                  <button
+                    className="py-2 px-4 md:py-3 md:px-5 rounded-[5px] text-base text-red-500"
+                    onClick={cerrarSesion}
+                  >
+                    Cerrar sesión
+                  </button>
+                )}
+                {isAdmin && rol !== "Colaborador" && (
+                  <Link
+                    to="/admin"
+                    className="text-[#605DEC] py-2 px-4 rounded-md transition-all duration-200"
+                  >
+                    Admin Panel
+                  </Link>
+                )}
+                {rol === "Contratista" && (
+                  <Link to="/contratista-dashboard" className="text-[#7C8DB0]">
+                    Mis Trabajadores
+                  </Link>
+                )}
               </ul>
             )}
           </div>
-          <img
-            src={tripma}
-            alt="Tripma"
-            className="md:w-[107px] md:h-[30px] w-[90px] h-[25px] object-contain"
-          />
+          <p className="text-3xl font-bold bg-gradient-to-r from-blue-500 to-purple-500 bg-clip-text text-transparent">
+            PersonalTrack
+          </p>
         </div>
 
         {/* Opciones para pantallas grandes */}
@@ -110,7 +141,9 @@ const Navbar = () => {
             </Link>
           )}
           {rol === "Colaborador Autorizado" && !isAdmin && (
-            <Link className="text-gray-500" to="/validar">Validar</Link>
+            <Link className="text-gray-500" to="/validar">
+              Validar
+            </Link>
           )}
 
           {/* Botón de Sign In o Cerrar Sesión */}

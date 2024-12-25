@@ -395,7 +395,7 @@ const AdminProveedores = () => {
         {/* Modal para mostrar información del proveedor */}
         {isModalOpen && selectedProveedor && (
           <div className="fixed inset-0 bg-gray-500 bg-opacity-75 flex items-center justify-center z-50">
-            <div className="bg-white p-8 rounded shadow-lg max-w-lg w-full">
+            <div className="bg-white p-8 rounded shadow-lg max-w-lg w-full max-h-[80vh] overflow-y-auto scrollbar-thin scrollbar-thumb-blue-500 scrollbar-track-gray-200">
               <h2 className="text-xl font-bold mb-4">
                 Información del Proveedor
               </h2>
@@ -437,48 +437,69 @@ const AdminProveedores = () => {
               </p>
               {/* Mapeo de vehículos */}
               <div className="flex flex-col mt-6">
-                <h3 className="text-lg font-semibold mb-2">
+                <h3 className="text-lg font-semibold mb-4 text-gray-700">
                   Vehículos Asociados
                 </h3>
                 {selectedProveedor.vehiculos.length > 0 ? (
-                  <div className="flex flex-wrap justify-center items-start space-x-4">
-                    {selectedProveedor.vehiculos.map((vehiculo) => (
-                      <div
-                        key={vehiculo.id}
-                        className="p-4 border border-gray-300 rounded shadow"
-                      >
-                        <p>
-                          <strong>Tipo de Vehículo:</strong>{" "}
-                          {vehiculo.tipo_vehiculo}
-                        </p>
-                        <p>
-                          <strong>Capacidad Total:</strong>{" "}
-                          {vehiculo.capacidad_total}
-                        </p>
-                        <p>
-                          <strong>Capacidad Operacional:</strong>{" "}
-                          {vehiculo.capacidad_operacional}
-                        </p>
-                        <p>
-                          <strong>Estado:</strong> {vehiculo.estado}
-                        </p>
-                        <p>
-                          <strong>Velocidad Promedio:</strong>{" "}
-                          {vehiculo.velocidad_promedio} km/h
-                        </p>
-                        <p>
-                          <strong>Documentación:</strong>{" "}
-                          {vehiculo.documentacion_ok
-                            ? "OK"
-                            : "Falta Aprobación"}
-                        </p>
-                      </div>
-                    ))}
+                  <div className="h-64 overflow-y-auto p-2 border border-gray-300 rounded-lg bg-gray-50 shadow-inner scrollbar-thin scrollbar-thumb-blue-500 scrollbar-track-gray-200">
+                    <div className="flex flex-col space-y-4">
+                      {selectedProveedor.vehiculos.map((vehiculo) => (
+                        <div
+                          key={vehiculo.id}
+                          className="p-4 border border-gray-200 rounded-lg shadow-md bg-white"
+                        >
+                          <h4 className="text-md font-semibold text-gray-800 mb-2">
+                            {vehiculo.tipo_vehiculo}
+                          </h4>
+                          <ul className="text-gray-600 text-sm space-y-1">
+                            <li>
+                              <span className="font-medium">
+                                Capacidad Total:
+                              </span>{" "}
+                              {vehiculo.capacidad_total}
+                            </li>
+                            <li>
+                              <span className="font-medium">
+                                Capacidad Operacional:
+                              </span>{" "}
+                              {vehiculo.capacidad_operacional}
+                            </li>
+                            <li>
+                              <span className="font-medium">Estado:</span>{" "}
+                              {vehiculo.estado}
+                            </li>
+                            <li>
+                              <span className="font-medium">
+                                Velocidad Promedio:
+                              </span>{" "}
+                              {vehiculo.velocidad_promedio} km/h
+                            </li>
+                            <li>
+                              <span className="font-medium">
+                                Documentación:
+                              </span>{" "}
+                              {vehiculo.documentacion_ok ? (
+                                <span className="text-green-600 font-semibold">
+                                  OK
+                                </span>
+                              ) : (
+                                <span className="text-red-600 font-semibold">
+                                  Falta Aprobación
+                                </span>
+                              )}
+                            </li>
+                          </ul>
+                        </div>
+                      ))}
+                    </div>
                   </div>
                 ) : (
-                  <p>Este proveedor no tiene vehículos asociados.</p>
+                  <p className="text-gray-500">
+                    Este proveedor no tiene vehículos asociados.
+                  </p>
                 )}
               </div>
+
               <div className="mt-6 flex justify-end">
                 <button
                   onClick={closeModal}

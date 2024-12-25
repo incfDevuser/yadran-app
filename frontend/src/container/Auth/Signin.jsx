@@ -27,7 +27,7 @@ const Signin = ({ signin, setSignin }) => {
       <header className="flex flex-col justify-start">
         <div className="flex items-center justify-between">
           <h1 className="text-[#6E7491] text-[20px] sm:text-[24px] leading-5 sm:leading-8 font-bold ">
-            Iniciar sesión en TripTrack
+            Iniciar sesión en PersonalTrack
           </h1>
           <MdOutlineClose
             className="text-[#6E7491] cursor-pointer"
@@ -35,7 +35,7 @@ const Signin = ({ signin, setSignin }) => {
           />
         </div>
         <p className="text-sm sm:text-[18px] leading-4 sm:leading-6 text-[#7C8DB0] mt-2">
-          Triptrack es la plataforma corporativa de gestion de viajes de los colaboradores de Yadran.
+        PersonalTrack es la plataforma corporativa de gestion de viajes de los colaboradores de Yadran.
         </p>
       </header>
       <div className="flex flex-col gap-2">

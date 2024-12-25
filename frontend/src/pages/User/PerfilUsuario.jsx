@@ -4,6 +4,7 @@ import { useIntercentros } from "../../Context/IntercentroContext";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import ModalEditarPerfil from "./ModalEditarPerfil.JSX";
+import NotUser from "./NotUser";
 const PerfilUsuario = () => {
   const { usuarios, cancelarViaje, actualizarUsuario } = useUsuario();
   const { cancelarSolicitudIntercentro } = useIntercentros();
@@ -72,7 +73,7 @@ const PerfilUsuario = () => {
   };
 
   if (!usuarios) {
-    return <p className="text-center text-gray-600">Cargando...</p>;
+    return <NotUser/>;
   }
 
   return (

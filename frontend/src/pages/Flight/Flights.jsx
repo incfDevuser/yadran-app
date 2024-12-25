@@ -1,7 +1,4 @@
-import { FlightDeals, Hero, Testimonials } from "../../components"
-import Places from "../../components/Places"
-
-
+import { Hero } from "../../components"
 const Flights = () => {
   return (
     <>

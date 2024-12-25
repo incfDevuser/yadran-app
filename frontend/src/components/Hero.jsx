@@ -10,7 +10,7 @@ const Hero = () => {
     <div className="flex flex-col items-center relative w-full h-[529px] px-7 py-4">
       {/* Título con gradiente */}
       <div className="flex justify-center items-center">
-        <h1 className="font-extrabold text-5xl sm:text-7xl md:text-8xl text-center leading-[55px] sm:leading-[70px] md:leading-[90px] bg-gradient-to-r from-blue-500 to-purple-500 text-transparent bg-clip-text">
+        <h1 className="p-7 font-extrabold text-5xl sm:text-7xl md:text-8xl text-center leading-[55px] sm:leading-[70px] md:leading-[90px] bg-gradient-to-r from-blue-500 to-purple-500 text-transparent bg-clip-text">
           Es más que <br /> un solo viaje
         </h1>
       </div>

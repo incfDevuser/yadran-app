@@ -2,6 +2,21 @@ import React, { useState } from "react";
 import AdminAside from "./AdminAside";
 import { useViajes } from "../../Context/ViajesContext";
 import { useRutas } from "../../Context/RoutesContext";
+import LoadingViajes from "./components/LoadingViajes";
+import {
+  FaRoute,
+  FaCalendarAlt,
+  FaInfoCircle,
+  FaBriefcase,
+  FaPlane,
+  FaPlaneDeparture,
+  FaShip,
+  FaAnchor,
+  FaCar,
+  FaHotel,
+  FaMapMarkerAlt,
+  FaClock,
+} from "react-icons/fa";
 
 const AdminViajes = () => {
   const { viajes, loading, error, crearViaje } = useViajes();
@@ -31,7 +46,7 @@ const AdminViajes = () => {
   if (loading) {
     return (
       <div className="flex justify-center items-center h-full">
-        <div className="text-lg text-gray-500">Cargando viajes...</div>
+        <LoadingViajes/>
       </div>
     );
   }
@@ -73,26 +88,72 @@ const AdminViajes = () => {
             {viajes.map((viaje) => (
               <div
                 key={viaje.id}
-                className="flex flex-col bg-white shadow-lg rounded-lg hover:shadow-xl transition-shadow border border-gray-200 p-6 cursor-pointer"
+                className={`flex flex-col shadow-lg rounded-lg hover:shadow-xl transition-shadow border p-6 cursor-pointer ${
+                  viaje.tipo === "Gerencial"
+                    ? "border-yellow-500 bg-yellow-100"
+                    : "border-gray-200 bg-white"
+                }`}
                 onClick={() => handleOpenModal(viaje)}
               >
-                {/* Información del viaje */}
-                <div className="mb-4">
-                  <p className="font-bold text-xl text-gray-900 mb-2">
-                    {viaje.nombre}
-                  </p>
-                  <p className="text-sm font-medium text-gray-700 mb-1">
-                    {viaje.descripcion}
-                  </p>
-                  <p className="text-sm font-semibold text-gray-600 mb-1">
-                    Ruta:{" "}
-                    <span className="text-blue-600">{viaje.nombre_ruta}</span>
-                  </p>
-                  <p className="text-xs text-gray-500">
-                    Creado el: {new Date(viaje.created_at).toLocaleDateString()}
-                  </p>
+                {/* Icono y Nombre del viaje */}
+                <div className="flex items-center gap-3 mb-4">
+                  <div
+                    className={`text-2xl p-2 rounded-full ${
+                      viaje.tipo === "Gerencial"
+                        ? "bg-yellow-500 text-white"
+                        : "bg-blue-500 text-white"
+                    }`}
+                  >
+                    {viaje.tipo === "Gerencial" ? <FaBriefcase /> : <FaRoute />}
+                  </div>
+                  <div>
+                    <p className="font-bold text-xl text-gray-900">
+                      {viaje.nombre}
+                    </p>
+                    <p className="text-sm font-medium text-gray-700">
+                      {viaje.descripcion}
+                    </p>
+                  </div>
                 </div>
-                <button className="mt-auto bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition-colors">
+
+                {/* Información del viaje */}
+                <div className="mb-4 space-y-2">
+                  <div className="flex items-center gap-2 text-gray-600">
+                    <FaRoute className="text-blue-500" />
+                    <span className="text-sm font-semibold">
+                      Ruta:{" "}
+                      <span className="text-blue-600">{viaje.nombre_ruta}</span>
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-2 text-gray-600">
+                    <FaCalendarAlt className="text-blue-500" />
+                    <span className="text-xs">
+                      Creado el:{" "}
+                      {new Date(viaje.created_at).toLocaleDateString()}
+                    </span>
+                  </div>
+                  {viaje.tipo_viaje ? (
+                    <div
+                      className={`inline-block px-2 py-1 text-xs font-semibold rounded-full ${
+                        viaje.tipo_viaje === "gerencial"
+                          ? "bg-yellow-500 text-white"
+                          : "bg-gray-200 text-gray-800"
+                      }`}
+                    >
+                      {viaje.tipo_viaje === "gerencial"
+                        ? "Gerencial"
+                        : "Normal"}
+                    </div>
+                  ) : (
+                    <div className="inline-block px-2 py-1 text-xs font-semibold rounded-full bg-gray-200 text-gray-800">
+                      Normal
+                    </div>
+                  )}
+                </div>
+
+                {/* Botón para ver trayectos */}
+                <button className="bg-blue-500 rounded-lg p-3 text-white">
+                  <FaInfoCircle className="inline-block mr-2" />
                   Ver Trayectos
                 </button>
               </div>
@@ -100,56 +161,117 @@ const AdminViajes = () => {
           </div>
         </div>
         {/* Modal para mostrar los trayectos */}
+
         {selectedViaje && (
           <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-            <div className="bg-white p-8 rounded-lg max-w-2xl w-full shadow-xl overflow-y-auto max-h-[80vh]">
-              <h2 className="text-2xl font-bold mb-6">
-                Trayectos del Viaje: {selectedViaje.nombre}
-              </h2>
-              <div className="space-y-4">
+            <div className="bg-white p-8 rounded-lg max-w-2xl w-full shadow-2xl overflow-y-auto max-h-[80vh]">
+              {/* Encabezado */}
+              <div className="flex justify-between items-center border-b pb-4 mb-6">
+                <h2 className="text-2xl font-bold text-gray-800">
+                  🚍 Trayectos del Viaje:{" "}
+                  <span className="text-blue-600">{selectedViaje.nombre}</span>
+                </h2>
+                <button
+                  onClick={handleCloseModal}
+                  className="text-red-500 hover:text-red-600 transition-colors text-2xl font-bold"
+                >
+                  ×
+                </button>
+              </div>
+
+              {/* Contenido de Trayectos */}
+              <div className="space-y-6">
                 {selectedViaje.trayectos.map((trayecto) => {
-                  // Lógica para determinar si es un área de descanso
+                  // Lógica para determinar si es área de descanso
                   const esAreaDescanso =
                     trayecto.origen === trayecto.destino ||
                     !trayecto.vehiculo_id;
+
+                  // Determinar el icono basado en el tipo de vehículo
+                  let vehiculoIcono;
+                  let estiloVehiculo = "text-gray-600";
+
+                  switch (trayecto.nombre_vehiculo) {
+                    case "Avioneta":
+                      vehiculoIcono = <FaPlaneDeparture />;
+                      estiloVehiculo = "text-blue-500";
+                      break;
+                    case "Avión comercial":
+                      vehiculoIcono = <FaPlane />;
+                      estiloVehiculo = "text-indigo-500";
+                      break;
+                    case "Lancha menor":
+                      vehiculoIcono = <FaShip />;
+                      estiloVehiculo = "text-green-500";
+                      break;
+                    case "Lancha grande":
+                      vehiculoIcono = <FaAnchor />;
+                      estiloVehiculo = "text-teal-500";
+                      break;
+                    default:
+                      vehiculoIcono = <FaCar />;
+                      estiloVehiculo = "text-gray-500";
+                      break;
+                  }
 
                   if (esAreaDescanso) {
                     return (
                       <div
                         key={trayecto.id}
-                        className="border border-yellow-300 rounded-lg p-4 bg-yellow-50"
+                        className="flex items-start gap-4 border border-yellow-300 rounded-lg p-4 bg-yellow-50 shadow-sm"
                       >
-                        <h3 className="text-lg font-bold text-yellow-600">
-                          Área de Descanso: Hotel
-                        </h3>
-                        <p className="text-sm font-medium text-gray-700">
-                          <strong>Ubicación:</strong> {trayecto.origen}
-                        </p>
+                        <div className="text-yellow-500 text-2xl">
+                          <FaHotel />
+                        </div>
+                        <div>
+                          <h3 className="text-lg font-bold text-yellow-600 mb-1">
+                            Área de Descanso: Hotel
+                          </h3>
+                          <p className="text-sm font-medium text-gray-700">
+                            <FaMapMarkerAlt className="inline-block mr-1 text-gray-600" />
+                            <strong>Ubicación:</strong> {trayecto.origen}
+                          </p>
+                        </div>
                       </div>
                     );
                   }
+
                   return (
                     <div
                       key={trayecto.id}
-                      className="border border-gray-300 rounded-lg p-4 bg-gray-50"
+                      className="flex items-start gap-4 border border-gray-200 rounded-lg p-4 bg-gray-50 shadow-sm"
                     >
-                      <p className="text-lg">Origen: {trayecto.origen}</p>
-                      <p className="text-lg">Destino: {trayecto.destino}</p>
-                      <p className="text-lg">
-                        Duración Estimada: {trayecto.duracion_estimada} minutos
-                      </p>
-                      <p className="text-lg">
-                        Vehículo:{" "}
-                        {trayecto.nombre_vehiculo || "No especificado"}
-                      </p>
+                      <div className={`text-2xl ${estiloVehiculo}`}>
+                        {vehiculoIcono}
+                      </div>
+                      <div>
+                        <h3 className="text-lg font-bold text-gray-800 mb-2">
+                          Trayecto en {trayecto.nombre_vehiculo || "Vehículo"}
+                        </h3>
+                        <p className="text-sm font-medium text-gray-700">
+                          <FaMapMarkerAlt className="inline-block mr-1 text-gray-600" />
+                          <strong>Origen:</strong> {trayecto.origen}
+                        </p>
+                        <p className="text-sm font-medium text-gray-700">
+                          <FaMapMarkerAlt className="inline-block mr-1 text-gray-600" />
+                          <strong>Destino:</strong> {trayecto.destino}
+                        </p>
+                        <p className="text-sm font-medium text-gray-700">
+                          <FaClock className="inline-block mr-1 text-gray-600" />
+                          <strong>Duración Estimada:</strong>{" "}
+                          {trayecto.duracion_estimada} minutos
+                        </p>
+                      </div>
                     </div>
                   );
                 })}
               </div>
-              <div className="mt-6 text-right">
+
+              {/* Botón de cierre */}
+              <div className="mt-6 flex justify-end">
                 <button
                   onClick={handleCloseModal}
-                  className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition-colors"
+                  className="bg-red-500 text-white px-6 py-2 rounded-lg hover:bg-red-600 transition-colors"
                 >
                   Cerrar
                 </button>
@@ -158,7 +280,6 @@ const AdminViajes = () => {
           </div>
         )}
 
-        {/* Modal de creación de viaje */}
         {/* Modal de creación de viaje */}
         {isModalOpen && (
           <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
