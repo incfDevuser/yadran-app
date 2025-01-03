@@ -1,27 +1,32 @@
 import React, { useState } from "react";
 import { useChofer } from "../../../Context/ChoferContext";
 
-const CrearChoferModal = ({ isOpen, onClose }) => {
+const CrearChoferModal = ({ isOpen, onClose, actualizarChoferes }) => {
   const { crearChofer } = useChofer();
-  const [nuevoChofer, setNuevoChofer] = useState({
+
+  const initialState = {
     nombre: "",
     telefono: "",
     email: "",
-  });
+  };
+
+  const [nuevoChofer, setNuevoChofer] = useState(initialState);
 
   const handleChange = (e) => {
-    setNuevoChofer({
-      ...nuevoChofer,
-      [e.target.name]: e.target.value,
-    });
+    const { name, value } = e.target;
+    setNuevoChofer((prevState) => ({
+      ...prevState,
+      [name]: value,
+    }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
       await crearChofer(nuevoChofer);
+      setNuevoChofer(initialState);
       onClose();
-      setNuevoChofer({ nombre: "", telefono: "", email: "" }); 
+      actualizarChoferes();
     } catch (error) {
       console.error("Error al crear el chofer:", error);
     }
@@ -35,7 +40,9 @@ const CrearChoferModal = ({ isOpen, onClose }) => {
         <h2 className="text-xl font-bold mb-4">Crear Chofer</h2>
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
-            <label className="block text-gray-700 font-bold mb-2">Nombre:</label>
+            <label className="block text-gray-700 font-bold mb-2">
+              Nombre:
+            </label>
             <input
               type="text"
               name="nombre"
@@ -46,7 +53,9 @@ const CrearChoferModal = ({ isOpen, onClose }) => {
             />
           </div>
           <div className="mb-4">
-            <label className="block text-gray-700 font-bold mb-2">Teléfono:</label>
+            <label className="block text-gray-700 font-bold mb-2">
+              Teléfono:
+            </label>
             <input
               type="text"
               name="telefono"

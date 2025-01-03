@@ -13,6 +13,9 @@ import AdminVehiculos from "./pages/Admin/AdminVehiculos";
 import AdminViajes from "./pages/Admin/AdminViajes";
 import AdminSolicitudes from "./pages/Admin/AdminSolicitudes";
 
+//Admin dashboard 2
+import AdminDashboard2 from "./pages/Admin/AdminDashboard2";
+
 import Trips from "./pages/Flight/Trips";
 import MisCentros from "./pages/MisCentros";
 import { ToastContainer } from "react-toastify";
@@ -79,156 +82,157 @@ import { NotificacionesProvider } from "./Context/NotificacionesContext";
 const App = () => {
   return (
     <UsuariosProvider>
-      <div className="font-Nunito min-h-screen flex flex-col max-w-[1440px] mx-auto">
-        <Navbar />
+      <NotificacionesProvider>
+        <div className="font-Nunito min-h-screen flex flex-col max-w-[1440px] mx-auto">
+          <Navbar />
 
-        {/* Contenedor para las rutas que crece automáticamente y empuja el footer */}
-        <div className="flex-grow">
-          <Routes>
-            {/* Home Page */}
-            <Route path="/" element={<Flights />} />
+          {/* Contenedor para las rutas que crece automáticamente y empuja el footer */}
+          <div className="flex-grow">
+            <Routes>
+              {/* Home Page */}
+              <Route path="/" element={<Flights />} />
 
-            <Route
-              path="/contratista-dashboard"
-              element={
-                <ContratistaProvider>
-                  <ContratistaDashboard />
-                </ContratistaProvider>
-              }
-            />
-
-            {/* Pagina de espera */}
-
-            <Route path="/proceso-espera" element={<WaitingPage />} />
-            {/* Agendar un Viaje Normal*/}
-            <Route
-              path="/explore"
-              element={
-                <ViajesProvider>
-                  <FlightExplore />
-                </ViajesProvider>
-              }
-            />
-            {/* Agendar un Viaje Intercentro */}
-            <Route
-              path="/explore-intercentro"
-              element={
-                <IntercentrosProvider>
-                  <IntercentroExplore />
-                </IntercentrosProvider>
-              }
-            />
-            <Route
-              path="/confirmacion-intercentro/:id"
-              element={
-                <IntercentrosProvider>
+              <Route
+                path="/contratista-dashboard"
+                element={
                   <ContratistaProvider>
-                    <ConfirmacionIntercentro />
+                    <ContratistaDashboard />
                   </ContratistaProvider>
-                </IntercentrosProvider>
-              }
-            />
-            {/* Ruta para validad la identidad */}
-            <Route
-              path="/validar"
-              element={
-                <QrProvider>
-                  <Validaciones />
-                </QrProvider>
-              }
-            />
-            {/* Solicitudes del Usuario */}
-            <Route path="/trips" element={<Trips />} />
+                }
+              />
 
-            {/* Centros los cuales el usuario ha visitado */}
-            <Route path="/mis-centros" element={<MisCentros />} />
+              {/* Pagina de espera */}
 
-            {/* Confirmacion de viaje del usuario al agendar una visita */}
-            <Route
-              path="/confirmacion-vuelo/:viajeId"
-              element={
-                <ViajesProvider>
-                  <ContratistaProvider>
-                    <ConfirmacionVuelo />
-                  </ContratistaProvider>
-                </ViajesProvider>
-              }
-            />
-
-            {/* Nueva ruta */}
-            <Route path="/admin" element={<AdminPanel />} />
-
-            {/* Vista de Adminstracion, aca se ven las solicitudes hechas por un usuario*/}
-            <Route
-              path="/adminSolicitudes"
-              element={
-                <SolicitudesProvider>
-                  <AdminSolicitudes />
-                </SolicitudesProvider>
-              }
-            />
-            {/* Administracion de los Viajes */}
-            <Route
-              path="/adminViajes"
-              element={
-                <RutasProvider>
+              <Route path="/proceso-espera" element={<WaitingPage />} />
+              {/* Agendar un Viaje Normal*/}
+              <Route
+                path="/explore"
+                element={
                   <ViajesProvider>
-                    <AdminViajes />
+                    <FlightExplore />
                   </ViajesProvider>
-                </RutasProvider>
-              }
-            />
-            {/* Administracion de los Viajes (rutas) de intercentro */}
-            <Route
-              path="/adminIntercentro"
-              element={
-                <IntercentrosProvider>
-                  <CentrosProvider>
-                    <AdminIntercentro />
-                  </CentrosProvider>
-                </IntercentrosProvider>
-              }
-            />
-            {/*  Rutas para el panel de administrador */}
-            <Route
-              path="/adminUserList"
-              element={
-                <RolesProvider>
-                  <AdminUserList />
-                </RolesProvider>
-              }
-            />
+                }
+              />
+              {/* Agendar un Viaje Intercentro */}
+              <Route
+                path="/explore-intercentro"
+                element={
+                  <IntercentrosProvider>
+                    <IntercentroExplore />
+                  </IntercentrosProvider>
+                }
+              />
+              <Route
+                path="/confirmacion-intercentro/:id"
+                element={
+                  <IntercentrosProvider>
+                    <ContratistaProvider>
+                      <ConfirmacionIntercentro />
+                    </ContratistaProvider>
+                  </IntercentrosProvider>
+                }
+              />
+              {/* Ruta para validad la identidad */}
+              <Route
+                path="/validar"
+                element={
+                  <QrProvider>
+                    <Validaciones />
+                  </QrProvider>
+                }
+              />
+              {/* Solicitudes del Usuario */}
+              <Route path="/trips" element={<Trips />} />
 
-            {/* Administracion de las rutas, aca se crean las rutas */}
-            <Route
-              path="/adminRoutes"
-              element={
-                <VuelosProvider>
+              {/* Centros los cuales el usuario ha visitado */}
+              <Route path="/mis-centros" element={<MisCentros />} />
+
+              {/* Confirmacion de viaje del usuario al agendar una visita */}
+              <Route
+                path="/confirmacion-vuelo/:viajeId"
+                element={
+                  <ViajesProvider>
+                    <ContratistaProvider>
+                      <ConfirmacionVuelo />
+                    </ContratistaProvider>
+                  </ViajesProvider>
+                }
+              />
+
+              {/* Nueva ruta */}
+              <Route path="/admin" element={<AdminPanel />} />
+
+              {/* Vista de Adminstracion, aca se ven las solicitudes hechas por un usuario*/}
+              <Route
+                path="/adminSolicitudes"
+                element={
+                  <SolicitudesProvider>
+                    <AdminSolicitudes />
+                  </SolicitudesProvider>
+                }
+              />
+              {/* Administracion de los Viajes */}
+              <Route
+                path="/adminViajes"
+                element={
                   <RutasProvider>
-                    <TrayectosProvider>
-                      <VehiculosProvider>
-                        <HotelesProvider>
-                          <AdminRoutes />
-                        </HotelesProvider>
-                      </VehiculosProvider>
-                    </TrayectosProvider>
+                    <ViajesProvider>
+                      <AdminViajes />
+                    </ViajesProvider>
                   </RutasProvider>
-                </VuelosProvider>
-              }
-            />
-            {/* No se que son los reportes , pero se consultara */}
-            <Route path="/adminReportes" element={<AdminReportes />} />
+                }
+              />
+              {/* Administracion de los Viajes (rutas) de intercentro */}
+              <Route
+                path="/adminIntercentro"
+                element={
+                  <IntercentrosProvider>
+                    <CentrosProvider>
+                      <AdminIntercentro />
+                    </CentrosProvider>
+                  </IntercentrosProvider>
+                }
+              />
+              {/*  Rutas para el panel de administrador */}
+              <Route
+                path="/adminUserList"
+                element={
+                  <RolesProvider>
+                    <AdminUserList />
+                  </RolesProvider>
+                }
+              />
 
-            {/* Administracion de los proveedores */}
-            <Route
-              path="/adminProveedores"
-              element={
-                <ProveedoresProvider>
-                  <AdminProveedores />
-                </ProveedoresProvider>
-              }
-            />
-            {/* Admin Dashboard, donde mas se recopila informacion */}
+              {/* Administracion de las rutas, aca se crean las rutas */}
+              <Route
+                path="/adminRoutes"
+                element={
+                  <VuelosProvider>
+                    <RutasProvider>
+                      <TrayectosProvider>
+                        <VehiculosProvider>
+                          <HotelesProvider>
+                            <AdminRoutes />
+                          </HotelesProvider>
+                        </VehiculosProvider>
+                      </TrayectosProvider>
+                    </RutasProvider>
+                  </VuelosProvider>
+                }
+              />
+              {/* No se que son los reportes , pero se consultara */}
+              <Route path="/adminReportes" element={<AdminReportes />} />
+
+              {/* Administracion de los proveedores */}
+              <Route
+                path="/adminProveedores"
+                element={
+                  <ProveedoresProvider>
+                    <AdminProveedores />
+                  </ProveedoresProvider>
+                }
+              />
+              {/* Admin Dashboard, donde mas se recopila informacion
             <Route
               path="/adminDashboard"
               element={
@@ -252,90 +256,84 @@ const App = () => {
                   </ZonasProvider>
                 </JurisdiccionProvider>
               }
-            />
-            <Route
-              path="/adminVehiculos"
-              element={
-                <VehiculosProvider>
-                  <ProveedoresProvider>
-                    <ChoferProvider>
-                      <AdminVehiculos />
-                    </ChoferProvider>
-                  </ProveedoresProvider>
-                </VehiculosProvider>
-              }
-            />
-            {/* Admin seguimiento viaje */}
-            <Route
-              path="/adminSeguimientoViajes"
-              element={
-                <ViajesProvider>
-                  <AdminSegumientosViaje />
-                </ViajesProvider>
-              }
-            />
-            <Route
-              path="/miPerfil"
-              element={
-                <IntercentrosProvider>
-                  <PerfilUsuario />
-                </IntercentrosProvider>
-              }
-            />
+            /> */}
+              <Route path="/adminDashboard2" element={<AdminDashboard2 />} />
+              <Route
+                path="/adminVehiculos"
+                element={
+                  <VehiculosProvider>
+                    <ProveedoresProvider>
+                      <ChoferProvider>
+                        <AdminVehiculos />
+                      </ChoferProvider>
+                    </ProveedoresProvider>
+                  </VehiculosProvider>
+                }
+              />
+              {/* Admin seguimiento viaje */}
+              <Route
+                path="/adminSeguimientoViajes"
+                element={
+                  <ViajesProvider>
+                    <AdminSegumientosViaje />
+                  </ViajesProvider>
+                }
+              />
+              <Route
+                path="/miPerfil"
+                element={
+                  <IntercentrosProvider>
+                    <PerfilUsuario />
+                  </IntercentrosProvider>
+                }
+              />
 
-            {/* Ruta para los vuelos */}
-            <Route
-              path="/adminVuelos"
-              element={
-                <VuelosProvider>
-                  <AdminVuelos />
-                </VuelosProvider>
-              }
-            />
-            {/* Ruta para los hoteles */}
-            <Route
-              path="/adminHoteles"
-              element={
-                <HotelesProvider>
-                  <AdminHoteles />
-                </HotelesProvider>
-              }
-            />
-            <Route
-              path="/adminNotificaciones"
-              element={
-                <NotificacionesProvider>
-                  <AdminNotificaciones />
-                </NotificacionesProvider>
-              }
-            />
-            <Route
-              path="/notificaciones"
-              element={
-                <NotificacionesProvider>
-                  <NotificacionesUsuario />
-                </NotificacionesProvider>
-              }
-            />
-          </Routes>
+              {/* Ruta para los vuelos */}
+              <Route
+                path="/adminVuelos"
+                element={
+                  <VuelosProvider>
+                    <AdminVuelos />
+                  </VuelosProvider>
+                }
+              />
+              {/* Ruta para los hoteles */}
+              <Route
+                path="/adminHoteles"
+                element={
+                  <HotelesProvider>
+                    <AdminHoteles />
+                  </HotelesProvider>
+                }
+              />
+              <Route
+                path="/adminNotificaciones"
+                element={<AdminNotificaciones />}
+              />
+              <Route
+                path="/notificaciones"
+                element={<NotificacionesUsuario />}
+              />
+            </Routes>
+          </div>
+
+          {/* Footer con mt-auto para asegurar que se mantenga al final */}
+          <Footer className="mt-auto" />
+
+          <ToastContainer
+            position="bottom-center"
+            autoClose={5000}
+            hideProgressBar={false}
+            newestOnTop={false}
+            closeOnClick
+            rtl={false}
+            pauseOnFocusLoss
+            draggable
+            pauseOnHover
+            theme="dark"
+          />
         </div>
-
-        {/* Footer con mt-auto para asegurar que se mantenga al final */}
-        <Footer className="mt-auto" />
-
-        <ToastContainer
-          position="bottom-center"
-          autoClose={5000}
-          hideProgressBar={false}
-          newestOnTop={false}
-          closeOnClick
-          rtl={false}
-          pauseOnFocusLoss
-          draggable
-          pauseOnHover
-          theme="dark"
-        />
-      </div>
+      </NotificacionesProvider>
     </UsuariosProvider>
   );
 };

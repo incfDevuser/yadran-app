@@ -2,7 +2,7 @@ import React, { createContext, useContext, useEffect, useState } from "react";
 import axios from "axios";
 
 const VuelosContext = createContext();
-
+const BaseUrl = import.meta.env.VITE_BASE_URL;
 export const VuelosProvider = ({ children }) => {
   const [vuelos, setVuelos] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -12,7 +12,7 @@ export const VuelosProvider = ({ children }) => {
     const obtenerVuelos = async () => {
       setLoading(true);
       try {
-        const response = await axios.get(`http://localhost:5000/api/vuelos/`, {
+        const response = await axios.get(`${BaseUrl}/vuelos/`, {
           withCredentials: true,
         });
         const data = response.data.vuelos;
@@ -29,7 +29,7 @@ export const VuelosProvider = ({ children }) => {
   const asignarVuelo = async (numero_vuelo, ruta_id) => {
     try {
       const response = await axios.post(
-        "http://localhost:5000/api/vuelos/asignar",
+        `${BaseUrl}/vuelos/asignar`,
         {
           numero_vuelo,
           ruta_id,

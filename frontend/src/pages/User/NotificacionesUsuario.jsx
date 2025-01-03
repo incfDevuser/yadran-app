@@ -5,7 +5,7 @@ import {
   BsCheckCircleFill,
   BsExclamationCircleFill,
   BsInfoCircleFill,
-} from "react-icons/bs"; // Importamos íconos de React Icons
+} from "react-icons/bs";
 
 const NotificacionesUsuario = () => {
   const { notificaciones, obtenerNotificacionesPorUsuario, loading, error } =
@@ -77,14 +77,6 @@ const NotificacionesUsuario = () => {
                     </small>
                   </div>
                 </div>
-                {/* {!notificacion.leido && (
-                  <button
-                    onClick={() => handleMarcarComoLeida(notificacion.id)}
-                    className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 text-sm transition-all"
-                  >
-                    Marcar como leída
-                  </button>
-                )} */}
               </li>
             );
           })}

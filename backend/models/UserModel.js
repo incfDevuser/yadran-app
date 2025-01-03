@@ -60,6 +60,7 @@ const obtenerUsuarioConViajes = async (id) => {
                       'tipo_vehiculo', vh.tipo_vehiculo,
                       'duracion_estimada', t.duracion_estimada
                     )
+                    ORDER BY t.orden -- Ordenar los trayectos por el campo orden
                   ), '[]'
                 )
                 FROM trayectos t

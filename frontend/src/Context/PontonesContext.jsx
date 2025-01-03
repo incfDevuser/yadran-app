@@ -2,32 +2,29 @@ import axios from "axios";
 import React, { useState, useEffect, createContext, useContext } from "react";
 
 const PontonesContext = createContext();
-
+const BaseUrl = import.meta.env.VITE_BASE_URL;
 export const PontonesProvider = ({ children }) => {
   const [pontones, setPontones] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  useEffect(() => {
-    const obtenerPontones = async () => {
-      setLoading(true);
-      try {
-        const response = await axios.get(`http://localhost:5000/api/pontones/`);
-        const data = response.data.pontones;
-        console.log(data);
-        setPontones(data);
-      } catch (error) {
-        setError(error.message || "Hubo un error al cargar los pontones");
-      } finally {
-        setLoading(false);
-      }
-    };
-    obtenerPontones();
-  }, []);
+  const obtenerPontones = async () => {
+    setLoading(true);
+    try {
+      const response = await axios.get(`${BaseUrl}/pontones/`);
+      const data = response.data.pontones;
+      console.log(data);
+      setPontones(data);
+    } catch (error) {
+      setError(error.message || "Hubo un error al cargar los pontones");
+    } finally {
+      setLoading(false);
+    }
+  };
   const crearPonton = async (nuevoPonton) => {
     try {
       const response = await axios.post(
-        "http://localhost:5000/api/pontones/create",
+        `${BaseUrl}/pontones/create`,
         nuevoPonton
       );
       if (response.status === 201) {
@@ -44,7 +41,7 @@ export const PontonesProvider = ({ children }) => {
   const asignarQrPonton = async (id) => {
     try {
       const response = await axios.post(
-        `http://localhost:5000/api/qr/asignar-qr/${id}`
+        `${BaseUrl}i/qr/asignar-qr/${id}`
       );
       if (response.status === 200) {
         setPontones((prevPontones) =>
@@ -70,7 +67,7 @@ export const PontonesProvider = ({ children }) => {
     setLoading(true);
     try {
       const response = await axios.put(
-        `http://localhost:5000/api/pontones/${id}`,
+        `${BaseUrl}/pontones/${id}`,
         datosActualizados
       );
       const pontonActualizado = response.data;
@@ -93,6 +90,7 @@ export const PontonesProvider = ({ children }) => {
         pontones,
         loading,
         error,
+        obtenerPontones,
         crearPonton,
         asignarQrPonton,
         actualizarPonton,

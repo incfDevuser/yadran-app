@@ -2,7 +2,7 @@ import axios from "axios";
 import React, { createContext, useCallback, useState, useContext } from "react";
 
 const ContratistaContext = createContext();
-
+const BaseUrl = import.meta.env.VITE_BASE_URL;
 export const ContratistaProvider = ({ children }) => {
   const [trabajadores, setTrabajadores] = useState([]);
   const [solicitudes, setSolicitudes] = useState([]);
@@ -12,20 +12,18 @@ export const ContratistaProvider = ({ children }) => {
   const obtenerTrabajadores = useCallback(async () => {
     try {
       const response = await axios.get(
-        "http://localhost:5000/api/contratista/misTrabajadores",
+        `${BaseUrl}/contratista/misTrabajadores`,
         { withCredentials: true }
       );
       setTrabajadores(response.data.trabajadores);
     } catch (error) {
       console.error("Error al obtener trabajadores:", error.message);
     }
-  }, []); // Dependencias vacías para asegurar que no se recrea
-
-  // Obtener solicitudes (memoizado)
+  }, []);
   const obtenerSolicitudes = useCallback(async () => {
     try {
       const response = await axios.get(
-        `http://localhost:5000/api/contratista/solicitudes-trabajadores`,
+        `${BaseUrl}/contratista/solicitudes-trabajadores`,
         { withCredentials: true }
       );
       setSolicitudes(response.data.solicitudes);
@@ -33,19 +31,20 @@ export const ContratistaProvider = ({ children }) => {
       console.error("Error al obtener las solicitudes de trabajadores:", error);
     }
   }, []);
-
-  // Agregar trabajadores
   const agregarTrabajadores = useCallback(async (nuevoTrabajador) => {
     try {
       const response = await axios.post(
-        `http://localhost:5000/api/contratista/trabajadores`,
+        `${BaseUrl}/contratista/trabajadores`,
         nuevoTrabajador,
         { withCredentials: true }
       );
-      setTrabajadores((prev) => [...prev, response.data]);
-      return response.data;
+      if (response.status === 201) {
+        setTrabajadores((prev) => [...prev, response.data.trabajador]); 
+        return response.data.trabajador;
+      }
     } catch (error) {
       console.error("Error al agregar trabajador:", error.message);
+      throw error;
     }
   }, []);
 
@@ -53,7 +52,7 @@ export const ContratistaProvider = ({ children }) => {
   const obtenerSolicitudesIntercentro = useCallback(async () => {
     try {
       const response = await axios.get(
-        `http://localhost:5000/api/contratista/solicitudes-trabajadores/intercentro`,
+        `${BaseUrl}/contratista/solicitudes-trabajadores/intercentro`,
         { withCredentials: true }
       );
       setSolicitudesIntercentro(response.data.solicitudes);
@@ -66,7 +65,7 @@ export const ContratistaProvider = ({ children }) => {
   const cancelarSolicitudTrabajador = useCallback(async (solicitudId) => {
     try {
       const response = await axios.delete(
-        `http://localhost:5000/api/viajes/cancelar-solicitud/${solicitudId}`,
+        `${BaseUrl}/viajes/cancelar-solicitud/${solicitudId}`,
         { withCredentials: true }
       );
       return response.data;
@@ -82,7 +81,7 @@ export const ContratistaProvider = ({ children }) => {
   const agendarNormal = useCallback(async (solicitud) => {
     try {
       const response = await axios.post(
-        `http://localhost:5000/api/viajes/solicitar-trabajadores`,
+        `${BaseUrl}/viajes/solicitar-trabajadores`,
         solicitud,
         { withCredentials: true }
       );
@@ -96,7 +95,7 @@ export const ContratistaProvider = ({ children }) => {
   const cancelarSolicitudIntercentro = useCallback(async (solicitudId) => {
     try {
       const response = await axios.delete(
-        `http://localhost:5000/api/intercentro/cancelarSolicitud/trabajador/${solicitudId}`,
+        `${BaseUrl}/intercentro/cancelarSolicitud/trabajador/${solicitudId}`,
         { withCredentials: true }
       );
       return response.data;

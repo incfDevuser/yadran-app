@@ -2,12 +2,12 @@ import React, { createContext, useContext } from "react";
 import axios from "axios";
 
 const QrContext = createContext();
- 
+const BaseUrl = import.meta.env.VITE_BASE_URL;
 export const QrProvider = ({ children }) => {
   const validarTrayecto = async ({ trayecto_id, vehiculo_id }) => {
     try {
       const response = await axios.post(
-        "http://localhost:5000/api/qr/registrar-en-trayecto",
+        `${BaseUrl}/qr/registrar-en-trayecto`,
         {
           trayecto_id,
           vehiculo_id,
@@ -30,7 +30,7 @@ export const QrProvider = ({ children }) => {
   const validarPonton = async ({ ponton_id }) => {
     try {
       const response = await axios.post(
-        "http://localhost:5000/api/qr/registrar-ponton",
+        `${BaseUrl}/qr/registrar-ponton`,
         { ponton_id },
         {
           withCredentials: true,

@@ -2,7 +2,8 @@ import { ContratistaModel } from "../models/ContratistaModel.js";
 import { emailHelper } from "../Services/MailHelper.js";
 //Controlador para agregar un trabajador bajo el contratista
 const agregarTrabajador = async (req, res) => {
-  const { nombre, email, identificacion, telefono } = req.body;
+  const { nombre, email, identificacion, telefono, fecha_nacimiento } =
+    req.body;
   const contratistaId = req.user.id;
 
   try {
@@ -11,7 +12,8 @@ const agregarTrabajador = async (req, res) => {
       nombre,
       email,
       identificacion,
-      telefono
+      telefono,
+      fecha_nacimiento
     );
     res.status(201).json({
       message: "Trabajador agregado exitosamente",

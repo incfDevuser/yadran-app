@@ -5,9 +5,12 @@ import AgregarTrabajadorForm from "./AgregarTrabajadorForm";
 import { useContratista } from "../../Context/ContratistaContext";
 
 const ContratistaTrabajadores = () => {
-  const { trabajadores, agregarTrabajadores } = useContratista();
+  const { trabajadores, agregarTrabajadores, obtenerTrabajadores } =
+    useContratista();
   const [mostrarModal, setMostrarModal] = useState(false);
+
   const toggleModal = () => setMostrarModal(!mostrarModal);
+
   return (
     <div className="space-y-8">
       <div className="flex justify-start">
@@ -19,11 +22,12 @@ const ContratistaTrabajadores = () => {
         </button>
       </div>
       {mostrarModal && (
-        <div className="fixed inset-0  flex items-center justify-center z-50">
+        <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
           <div className="bg-white rounded-lg shadow-lg p-6 w-full max-w-md relative">
             <AgregarTrabajadorForm
-              agregarTrabajadores={(trabajador) => {
-                agregarTrabajadores(trabajador);
+              agregarTrabajadores={async (trabajador) => {
+                await agregarTrabajadores(trabajador);
+                await obtenerTrabajadores(); 
                 setMostrarModal(false);
               }}
             />
@@ -50,5 +54,3 @@ const ContratistaTrabajadores = () => {
 };
 
 export default ContratistaTrabajadores;
-
-

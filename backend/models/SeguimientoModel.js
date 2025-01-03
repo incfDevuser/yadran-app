@@ -23,6 +23,7 @@ const getDetalleCompletoViaje = async (viajeId) => {
         t.origen AS trayecto_origen,
         t.destino AS trayecto_destino,
         t.duracion_estimada AS trayecto_duracion,
+        t.orden AS trayecto_orden,
         v.id AS vehiculo_id,
         v.tipo_vehiculo AS tipo_vehiculo,
         c.nombre AS nombre_chofer,
@@ -30,8 +31,9 @@ const getDetalleCompletoViaje = async (viajeId) => {
     FROM trayectos t
     LEFT JOIN vehiculos v ON t.vehiculo_id = v.id
     LEFT JOIN choferes c ON v.chofer_id = c.id
-    WHERE t.ruta_id = $1;
-  `;
+    WHERE t.ruta_id = $1
+    ORDER BY t.orden;
+`;
 
   const usuariosVehiculosQuery = `
     SELECT 

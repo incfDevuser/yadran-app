@@ -1,9 +1,9 @@
-import React, { createContext, useContext, useState } from "react";
+import React, { createContext, useContext, useState, useEffect } from "react";
 import axios from "axios";
 
 // Crear el contexto
 const IntercentrosContext = createContext();
-
+const BaseUrl = import.meta.env.VITE_BASE_URL;
 // Proveedor del contexto
 export const IntercentrosProvider = ({ children }) => {
   const [lanchas, setLanchas] = useState([]);
@@ -16,12 +16,9 @@ export const IntercentrosProvider = ({ children }) => {
   const obtenerLanchas = async () => {
     setLoading(true);
     try {
-      const response = await axios.get(
-        "http://localhost:5000/api/intercentro/lanchas",
-        {
-          withCredentials: true,
-        }
-      );
+      const response = await axios.get(`${BaseUrl}/intercentro/lanchas`, {
+        withCredentials: true,
+      });
       setLanchas(response.data.lanchas);
     } catch (err) {
       setError(err.message || "Error al obtener las lanchas");
@@ -34,7 +31,7 @@ export const IntercentrosProvider = ({ children }) => {
   const crearLancha = async (nuevaLancha) => {
     try {
       const response = await axios.post(
-        "http://localhost:5000/api/intercentro/crearLancha",
+        `${BaseUrl}/intercentro/crearLancha`,
         nuevaLancha,
         { withCredentials: true }
       );
@@ -49,12 +46,9 @@ export const IntercentrosProvider = ({ children }) => {
   const obtenerRutasIntercentro = async () => {
     setLoading(true);
     try {
-      const response = await axios.get(
-        "http://localhost:5000/api/intercentro/movimientos",
-        {
-          withCredentials: true,
-        }
-      );
+      const response = await axios.get(`${BaseUrl}/intercentro/movimientos`, {
+        withCredentials: true,
+      });
       setRutasIntercentro(response.data.rutas);
     } catch (err) {
       setError(err.message || "Error al obtener las rutas intercentro");
@@ -67,7 +61,7 @@ export const IntercentrosProvider = ({ children }) => {
   const crearRutaIntercentro = async (nuevaRuta) => {
     try {
       const response = await axios.post(
-        "http://localhost:5000/api/intercentro/crearMovimiento",
+        `${BaseUrl}/intercentro/crearMovimiento`,
         nuevaRuta,
         { withCredentials: true }
       );
@@ -82,7 +76,7 @@ export const IntercentrosProvider = ({ children }) => {
   const agendarRutaIntercentro = async (nuevaSolicitud) => {
     try {
       const response = await axios.post(
-        "http://localhost:5000/api/intercentro/solicitar",
+        `${BaseUrl}/intercentro/solicitar`,
         nuevaSolicitud,
         { withCredentials: true }
       );
@@ -95,7 +89,7 @@ export const IntercentrosProvider = ({ children }) => {
   const agendarIntercentroTrabajadores = async (nuevaSolicitud) => {
     try {
       const response = await axios.post(
-        "http://localhost:5000/api/contratista/agendarTrabajadores",
+        `${BaseUrl}/contratista/agendarTrabajadores`,
         nuevaSolicitud,
         {
           withCredentials: true,
@@ -112,10 +106,9 @@ export const IntercentrosProvider = ({ children }) => {
   const obtenerSolicitudesIntercentro = async () => {
     setLoading(true);
     try {
-      const response = await axios.get(
-        "http://localhost:5000/api/intercentro/solicitudes",
-        { withCredentials: true }
-      );
+      const response = await axios.get(`${BaseUrl}/intercentro/solicitudes`, {
+        withCredentials: true,
+      });
       setSolicitudesIntercentro(response.data.solicitudes);
     } catch (err) {
       setError(
@@ -130,7 +123,7 @@ export const IntercentrosProvider = ({ children }) => {
   const aprobarSolicitudIntercentro = async (solicitudId) => {
     try {
       const response = await axios.post(
-        `http://localhost:5000/api/intercentro/solicitudes/${solicitudId}/aprobar`,
+        `${BaseUrl}/intercentro/solicitudes/${solicitudId}/aprobar`,
         {},
         { withCredentials: true }
       );
@@ -146,7 +139,7 @@ export const IntercentrosProvider = ({ children }) => {
   const rechazarSolicitudIntercentro = async (solicitudId) => {
     try {
       const response = await axios.post(
-        `http://localhost:5000/api/intercentro/solicitudes/${solicitudId}/rechazar`,
+        `${BaseUrl}/intercentro/solicitudes/${solicitudId}/rechazar`,
         {},
         { withCredentials: true }
       );
@@ -162,7 +155,7 @@ export const IntercentrosProvider = ({ children }) => {
   const cancelarSolicitudIntercentro = async (solicitudId) => {
     try {
       const response = await axios.delete(
-        `http://localhost:5000/api/intercentro/cancelarSolicitud/${solicitudId}`,
+        `${BaseUrl}/intercentro/cancelarSolicitud/${solicitudId}`,
         { withCredentials: true }
       );
       return response.data;
@@ -176,7 +169,7 @@ export const IntercentrosProvider = ({ children }) => {
   const obtenerLanchasPorMovimiento = async (movimientoId) => {
     try {
       const response = await axios.get(
-        `http://localhost:5000/api/intercentro/movimientos/${movimientoId}/lanchas`,
+        `${BaseUrl}/intercentro/movimientos/${movimientoId}/lanchas`,
         { withCredentials: true }
       );
       return response.data.lanchas;
@@ -189,7 +182,7 @@ export const IntercentrosProvider = ({ children }) => {
   const obtenerPontonesPorMovimiento = async (movimientoId) => {
     try {
       const response = await axios.get(
-        `http://localhost:5000/api/intercentro/movimientos/${movimientoId}/pontones`,
+        `${BaseUrl}/intercentro/movimientos/${movimientoId}/pontones`,
         { withCredentials: true }
       );
       return response.data.pontones;
@@ -199,6 +192,10 @@ export const IntercentrosProvider = ({ children }) => {
       );
     }
   };
+
+  useEffect(() => {
+    obtenerRutasIntercentro();
+  }, []);
 
   return (
     <IntercentrosContext.Provider
@@ -219,7 +216,7 @@ export const IntercentrosProvider = ({ children }) => {
         rechazarSolicitudIntercentro,
         cancelarSolicitudIntercentro,
         obtenerLanchasPorMovimiento,
-        obtenerPontonesPorMovimiento
+        obtenerPontonesPorMovimiento,
       }}
     >
       {children}

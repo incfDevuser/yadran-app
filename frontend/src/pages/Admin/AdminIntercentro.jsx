@@ -21,10 +21,6 @@ const AdminIntercentro = () => {
   const [lanchas, setLanchas] = useState([]);
   const [selectedMovimiento, setSelectedMovimiento] = useState(null);
 
-  useEffect(() => {
-    obtenerRutasIntercentro();
-  }, []);
-
   const handleVerDetalles = async (movimientoId) => {
     console.log("Ver detalles para movimiento:", movimientoId);
     try {

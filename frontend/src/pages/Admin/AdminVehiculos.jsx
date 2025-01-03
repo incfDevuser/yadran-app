@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import AdminAside from "./AdminAside";
 //Importar el contexto
 import { useVehiculos } from "../../Context/VehiculosContext";
@@ -11,8 +11,13 @@ import CrearTripulanteModal from "./Modals/CrearTripulanteModal";
 import { IoPersonAdd } from "react-icons/io5";
 
 const AdminVehiculos = () => {
-  const { vehiculos, crearVehiculo, eliminarVehiculo } = useVehiculos();
-  const { proveedores, loading: loadingProveedores } = useProveedores();
+  const { vehiculos, obtenerVehiculos, crearVehiculo, eliminarVehiculo } =
+    useVehiculos();
+  const {
+    proveedores,
+    loading: loadingProveedores,
+    obtenerProveedores,
+  } = useProveedores();
   //Estados para abrir y cerral el modal
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isCreateModelOpen, setIsCreateModelOpen] = useState(false);
@@ -21,9 +26,9 @@ const AdminVehiculos = () => {
   const [tripulantesModalOpen, setTripulantesModalOpen] = useState(false);
   const [tripulantesCreateOpen, setTripulantesCreateOpen] = useState(false);
 
-  const { choferes, loading: loadingChoferes } = useChofer();
+  const { choferes, loading: loadingChoferes, obtenerChoferes } = useChofer();
   //Estado para crear el nuevo vehiculos
-  const [nuevoVehiculo, setNuevoVehiculo] = useState({
+  const initialState = {
     proveedor_id: null,
     chofer_id: null,
     num_tripulantes: 0,
@@ -34,10 +39,12 @@ const AdminVehiculos = () => {
     estado: "",
     documentacion_ok: true,
     velocidad_promedio: 0,
-  });
+  };
+  const [nuevoVehiculo, setNuevoVehiculo] = useState(initialState);
 
   const closeCreateModal = () => {
     setIsCreateModelOpen(false);
+    setNuevoVehiculo(initialState);
   };
   const closeTripulantesCreateModal = () => {
     setTripulantesCreateOpen(false);
@@ -62,14 +69,15 @@ const AdminVehiculos = () => {
     setTripulantesModalOpen(false);
     setSelectedVehiculo(null);
   };
-  //Crear el vehiculo
   const createVehiculo = async (e) => {
     e.preventDefault();
     try {
       await crearVehiculo(nuevoVehiculo);
-      closeCreateModal();
+      setNuevoVehiculo(initialState);
+      await obtenerVehiculos(); 
+      closeCreateModal(); 
     } catch (error) {
-      console.error("Hubo un error al crear el vehiculo: ", error);
+      console.error("Hubo un error al crear el vehículo: ", error);
     }
   };
   return (
@@ -380,6 +388,7 @@ const AdminVehiculos = () => {
           <CrearChoferModal
             isOpen={isChoferModalOpen}
             onClose={() => setIsChoferModalOpen(false)}
+            actualizarChoferes={obtenerChoferes}
           />
           <TripulantesModal
             show={tripulantesModalOpen}

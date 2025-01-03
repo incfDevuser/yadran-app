@@ -2,35 +2,61 @@ import React, { useState } from "react";
 import { useVehiculos } from "../../../Context/VehiculosContext";
 
 const CrearTripulanteModal = ({ vehiculoId, closeModal }) => {
-  const [nombre, setNombre] = useState("");
-  const [rut, setRut] = useState("");
-  const [fechaNacimiento, setFechaNacimiento] = useState("");
-  const [empresa, setEmpresa] = useState("");
-  const [cargo, setCargo] = useState("");
+  const { asignarTripulante, obtenerVehiculos } = useVehiculos();
+
+  // Estado inicial para el tripulante
+  const initialState = {
+    nombre_tripulante: "",
+    rut_tripulante: "",
+    fecha_nacimiento: "",
+    empresa: "",
+    cargo: "",
+  };
+
+  const [tripulante, setTripulante] = useState(initialState);
   const [error, setError] = useState("");
 
-  const { asignarTripulante } = useVehiculos();
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setTripulante((prevState) => ({
+      ...prevState,
+      [name]: value,
+    }));
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!nombre || !rut || !fechaNacimiento || !empresa || !cargo) {
+
+    // Validación básica
+    if (
+      !tripulante.nombre_tripulante ||
+      !tripulante.rut_tripulante ||
+      !tripulante.fecha_nacimiento ||
+      !tripulante.empresa ||
+      !tripulante.cargo
+    ) {
       setError("Todos los campos son requeridos.");
       return;
     }
-    const tripulante = {
-      nombre_tripulante: nombre,
-      rut_tripulante: rut,
-      fecha_nacimiento: fechaNacimiento,
-      empresa,
-      cargo,
-    };
+
     try {
       await asignarTripulante(vehiculoId, tripulante);
+
+      // Actualiza la lista de vehículos y limpia el formulario
+      await obtenerVehiculos();
+      setTripulante(initialState);
       closeModal();
     } catch (error) {
       console.error("Error al asignar el tripulante:", error);
       setError("Hubo un error al asignar el tripulante.");
     }
+  };
+
+  const handleCancel = () => {
+    // Limpia el formulario y cierra el modal
+    setTripulante(initialState);
+    setError("");
+    closeModal();
   };
 
   return (
@@ -45,8 +71,9 @@ const CrearTripulanteModal = ({ vehiculoId, closeModal }) => {
             <label className="block text-gray-700 font-bold mb-2">Nombre</label>
             <input
               type="text"
-              value={nombre}
-              onChange={(e) => setNombre(e.target.value)}
+              name="nombre_tripulante"
+              value={tripulante.nombre_tripulante}
+              onChange={handleChange}
               className="w-full border border-gray-300 p-2 rounded"
               required
             />
@@ -55,8 +82,9 @@ const CrearTripulanteModal = ({ vehiculoId, closeModal }) => {
             <label className="block text-gray-700 font-bold mb-2">RUT</label>
             <input
               type="text"
-              value={rut}
-              onChange={(e) => setRut(e.target.value)}
+              name="rut_tripulante"
+              value={tripulante.rut_tripulante}
+              onChange={handleChange}
               className="w-full border border-gray-300 p-2 rounded"
               required
             />
@@ -67,8 +95,9 @@ const CrearTripulanteModal = ({ vehiculoId, closeModal }) => {
             </label>
             <input
               type="date"
-              value={fechaNacimiento}
-              onChange={(e) => setFechaNacimiento(e.target.value)}
+              name="fecha_nacimiento"
+              value={tripulante.fecha_nacimiento}
+              onChange={handleChange}
               className="w-full border border-gray-300 p-2 rounded"
               required
             />
@@ -79,8 +108,9 @@ const CrearTripulanteModal = ({ vehiculoId, closeModal }) => {
             </label>
             <input
               type="text"
-              value={empresa}
-              onChange={(e) => setEmpresa(e.target.value)}
+              name="empresa"
+              value={tripulante.empresa}
+              onChange={handleChange}
               className="w-full border border-gray-300 p-2 rounded"
               required
             />
@@ -89,8 +119,9 @@ const CrearTripulanteModal = ({ vehiculoId, closeModal }) => {
             <label className="block text-gray-700 font-bold mb-2">Cargo</label>
             <input
               type="text"
-              value={cargo}
-              onChange={(e) => setCargo(e.target.value)}
+              name="cargo"
+              value={tripulante.cargo}
+              onChange={handleChange}
               className="w-full border border-gray-300 p-2 rounded"
               required
             />
@@ -98,7 +129,7 @@ const CrearTripulanteModal = ({ vehiculoId, closeModal }) => {
           <div className="flex justify-end gap-2">
             <button
               type="button"
-              onClick={closeModal}
+              onClick={handleCancel}
               className="bg-gray-500 text-white px-4 py-2 rounded"
             >
               Cancelar

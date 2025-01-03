@@ -156,14 +156,6 @@ const FlightExplore = () => {
                     {viaje.tipo_viaje === "gerencial" ? "Gerencial" : "Normal"}
                   </p>
 
-                  <div className="flex items-center mt-4 text-gray-800">
-                    <FiClock className="mr-2" />
-                    <span>
-                      Duración Total: {totalDuration.hours}h{" "}
-                      {totalDuration.minutes}min
-                    </span>
-                  </div>
-
                   {/* Información del Centro */}
                   {centro.nombre_centro && (
                     <div className="mt-4">

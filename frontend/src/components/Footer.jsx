@@ -40,8 +40,6 @@ const Footer = () => {
             <li className="footerLi">PersonalTrack para Android</li>
             <li className="footerLi">PersonalTrack para iOS</li>
             <li className="footerLi">Sitio móvil</li>
-            <img src={appStore} alt="appStore" className="" />
-            <img src={googlePlay} alt="googlePlay" />
           </ul>
         </div>
         <div className="border-t-2 border-[#CBD4E6] py-8 flex justify-between items-center">
@@ -50,7 +48,7 @@ const Footer = () => {
             <img src={instagram} alt="instagram" className="cursor-pointer object-cover w-5 h-5 sm:w-7 sm:h-7" />
             <img src={facebook} alt="facebook" className="cursor-pointer object-cover w-5 h-5 sm:w-7 sm:h-7" />
           </div>
-          <p className="text-[#7C8DB0] text-sm sm:text-base">&copy; 2023 PersonalTrack, Inc.</p>
+          <p className="text-[#7C8DB0] text-sm sm:text-base">&copy; 2025 PersonalTrack, Inc.</p>
         </div>
       </div>
     </>

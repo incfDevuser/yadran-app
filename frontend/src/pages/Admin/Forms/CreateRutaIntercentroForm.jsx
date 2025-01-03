@@ -3,8 +3,8 @@ import { useIntercentros } from "../../../Context/IntercentroContext";
 import { useCentros } from "../../../Context/CentrosContext";
 
 const CreateRutaIntercentroForm = ({ closeModal }) => {
-  const { crearRutaIntercentro, lanchas, obtenerLanchas } = useIntercentros();
-  const { centros } = useCentros();
+  const { crearRutaIntercentro, lanchas, obtenerLanchas, obtenerRutasIntercentro } = useIntercentros();
+  const { centros, obtenerCentros } = useCentros();
 
   const [fecha, setFecha] = useState("");
   const [centroOrigen, setCentroOrigen] = useState("");
@@ -13,6 +13,7 @@ const CreateRutaIntercentroForm = ({ closeModal }) => {
   const [comentarios, setComentarios] = useState("");
 
   useEffect(() => {
+    obtenerCentros();
     obtenerLanchas();
   }, []);
 
@@ -27,6 +28,7 @@ const CreateRutaIntercentroForm = ({ closeModal }) => {
         estado: "pendiente",
         comentarios,
       });
+      await obtenerRutasIntercentro()
       closeModal();
     } catch (error) {
       console.error("Error al crear la ruta:", error.message);

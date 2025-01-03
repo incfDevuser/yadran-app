@@ -6,15 +6,23 @@ const agregarTrabajador = async (
   nombre,
   email,
   identificacion,
-  telefono
+  telefono,
+  fecha_nacimiento
 ) => {
   try {
     const query = `
-        INSERT INTO trabajadores (nombre, email, identificacion, telefono, contratista_id)
-        VALUES ($1, $2, $3, $4, $5)
+        INSERT INTO trabajadores (nombre, email, identificacion, telefono, contratista_id, fecha_nacimiento)
+        VALUES ($1, $2, $3, $4, $5, $6)
         RETURNING *;
       `;
-    const values = [nombre, email, identificacion, telefono, contratistaId];
+    const values = [
+      nombre,
+      email,
+      identificacion,
+      telefono,
+      contratistaId,
+      fecha_nacimiento,
+    ];
     const response = await pool.query(query, values);
     return response.rows[0];
   } catch (error) {
@@ -249,7 +257,8 @@ const obtenerTrabajadoresPorContratista = async (contratistaId) => {
         t.nombre AS trabajador_nombre,
         t.email AS trabajador_email,
         t.identificacion,
-        t.telefono
+        t.telefono,
+        t.fecha_nacimiento
       FROM trabajadores t
       WHERE t.contratista_id = $1
       ORDER BY t.id;

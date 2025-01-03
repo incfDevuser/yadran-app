@@ -2,7 +2,7 @@ import React, { createContext, useContext, useState, useEffect } from "react";
 import axios from "axios";
 
 const RolesContext = createContext();
-
+const BaseUrl = import.meta.env.VITE_BASE_URL;
 export const RolesProvider = ({ children }) => {
   const [roles, setRoles] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -12,7 +12,7 @@ export const RolesProvider = ({ children }) => {
   const obtenerRoles = async () => {
     setLoading(true);
     try {
-      const response = await axios.get("http://localhost:5000/api/roles");
+      const response = await axios.get(`${BaseUrl}/roles`);
       setRoles(response.data);
     } catch (err) {
       setError(err.message || "Error al obtener los roles");
@@ -27,7 +27,7 @@ export const RolesProvider = ({ children }) => {
     setLoading(true);
     try {
       const response = await axios.post(
-        "http://localhost:5000/api/roles/crearRol",
+        `${BaseUrl}/roles/crearRol`,
         nuevoRol
       );
       // Actualizar la lista de roles con el nuevo rol creado
@@ -45,7 +45,7 @@ export const RolesProvider = ({ children }) => {
     setLoading(true);
     try {
       await axios.put(
-        "http://localhost:5000/api/roles/modificar-rol-usuario",
+        `${BaseUrl}/roles/modificar-rol-usuario`,
         datosAsignacion
       );
       console.log("Rol asignado correctamente");
@@ -61,7 +61,7 @@ export const RolesProvider = ({ children }) => {
   const eliminarRol = async (id) => {
     setLoading(true);
     try {
-      await axios.delete(`http://localhost:5000/api/roles/${id}`);
+      await axios.delete(`${BaseUrl}/roles/${id}`);
       // Actualizar la lista de roles eliminando el rol correspondiente
       setRoles((prevRoles) => prevRoles.filter((rol) => rol.id !== id));
       console.log("Rol eliminado correctamente");

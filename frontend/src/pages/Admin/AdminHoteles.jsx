@@ -5,44 +5,28 @@ import { FaPlusCircle } from "react-icons/fa";
 import { HiOutlineOfficeBuilding, HiOutlineUserCircle } from "react-icons/hi";
 
 const AdminHoteles = () => {
-  const { hoteles, obtenerHoteles, crearHotel, obtenerUsuariosPorHotelId } =
+  const { hoteles, crearHotel, obtenerHoteles, obtenerUsuariosPorHotelId } =
     useHoteles();
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [nuevoHotel, setNuevoHotel] = useState({
+  const initialState = {
     nombre: "",
     ciudad: "",
     direccion: "",
     telefono: "",
     capacidad: "",
-  });
+  };
+  const [nuevoHotel, setNuevoHotel] = useState(initialState);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const [isUserModalOpen, setIsUserModalOpen] = useState(false);
   const [selectedHotelUsers, setSelectedHotelUsers] = useState([]);
-
   const openHotelModal = () => setIsModalOpen(true);
-  const closeHotelModal = () => setIsModalOpen(false);
-
-  const openUserModal = async (hotelId) => {
-    try {
-      const usuarios = await obtenerUsuariosPorHotelId(hotelId);
-      setSelectedHotelUsers(usuarios);
-      setIsUserModalOpen(true);
-    } catch (error) {
-      console.error("Error al cargar los usuarios:", error);
-    }
+  const closeHotelModal = () => {
+    setNuevoHotel(initialState);
+    setIsModalOpen(false);
   };
-
-  const closeUserModal = () => {
-    setSelectedHotelUsers([]);
-    setIsUserModalOpen(false);
-  };
-
   const handleChange = (e) => {
-    setNuevoHotel({
-      ...nuevoHotel,
-      [e.target.name]: e.target.value,
-    });
+    const { name, value } = e.target;
+    setNuevoHotel((prev) => ({ ...prev, [name]: value }));
   };
-
   const handleCreateHotel = async (e) => {
     e.preventDefault();
 
@@ -56,22 +40,27 @@ const AdminHoteles = () => {
       console.error("Faltan datos obligatorios");
       return;
     }
-
     try {
-      await crearHotel(nuevoHotel);
-      closeHotelModal();
-      setNuevoHotel({
-        nombre: "",
-        ciudad: "",
-        direccion: "",
-        telefono: "",
-        capacidad: "",
-      });
+      await crearHotel(nuevoHotel); 
+      await obtenerHoteles();
+      closeHotelModal(); 
     } catch (error) {
       console.error("Error al crear el hotel:", error);
     }
   };
-
+  const openUserModal = async (hotelId) => {
+    try {
+      const usuarios = await obtenerUsuariosPorHotelId(hotelId);
+      setSelectedHotelUsers(usuarios);
+      setIsUserModalOpen(true);
+    } catch (error) {
+      console.error("Error al cargar los usuarios:", error);
+    }
+  };
+  const closeUserModal = () => {
+    setSelectedHotelUsers([]);
+    setIsUserModalOpen(false);
+  };
   return (
     <div className="flex w-full h-full mt-11">
       <AdminAside />
@@ -86,7 +75,6 @@ const AdminHoteles = () => {
             Crear Hotel
           </button>
         </div>
-
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {hoteles.map((hotel) => (
             <div
@@ -120,7 +108,6 @@ const AdminHoteles = () => {
             </div>
           ))}
         </div>
-
         {isModalOpen && (
           <div className="fixed inset-0 bg-gray-600 bg-opacity-75 flex justify-center items-center z-50">
             <div className="bg-white p-8 rounded-lg shadow-lg max-w-md w-full">
@@ -200,7 +187,6 @@ const AdminHoteles = () => {
             </div>
           </div>
         )}
-
         {isUserModalOpen && (
           <div className="fixed inset-0 bg-gray-600 bg-opacity-75 flex justify-center items-center z-50">
             <div className="bg-white p-8 rounded-lg shadow-lg max-w-md w-full">
@@ -242,4 +228,3 @@ const AdminHoteles = () => {
 };
 
 export default AdminHoteles;
-

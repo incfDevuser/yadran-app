@@ -1,6 +1,7 @@
 import axios from "axios";
-import React, { useState, useEffect, createContext, useContext } from "react";
+import React, { useState, useCallback, createContext, useContext } from "react";
 
+const BaseUrl = import.meta.env.VITE_BASE_URL;
 const PuertosContext = createContext();
 
 export const PuertosProvider = ({ children }) => {
@@ -8,45 +9,44 @@ export const PuertosProvider = ({ children }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  useEffect(() => {
-    const obtenerPuertos = async () => {
-      setLoading(true);
-      try {
-        const response = await axios.get(`http://localhost:5000/api/puertos/`);
-        const data = response.data.puertos;
-        console.log(data);
-        setPuertos(data);
-      } catch (error) {
-        setError(error.message || "Hubo un error al cargar las bases");
-      } finally {
-        setLoading(false);
-      }
-    };
-    obtenerPuertos();
-  }, []);
+  const obtenerPuertos = useCallback(async () => {
+    setLoading(true);
+    try {
+      const response = await axios.get(`${BaseUrl}/puertos/`);
+      const data = response.data.puertos;
+      setPuertos(data);
+    } catch (error) {
+      setError(error.message || "Hubo un error al cargar los puertos");
+    } finally {
+      setLoading(false);
+    }
+  }, []); // Memoizar para evitar referencias cambiantes
+
   const crearPuerto = async (nuevoPuerto) => {
     try {
       const response = await axios.post(
-        "http://localhost:5000/api/puertos/create",
+        `${BaseUrl}/puertos/create`,
         nuevoPuerto
       );
       if (response.status === 201) {
-        //ACTUALIZAR LA LISTA DE PUERTOS
-        setPuertos([...puertos, response.data]);
+        setPuertos((prev) => [...prev, response.data]);
         return response.data;
       } else {
-        console.error("Error al crear el puerto", response.data);
         throw new Error(response.data.message || "Error al crear el puerto");
       }
     } catch (error) {
-      console.error("Hubo un error al crear el puerto", error.message);
+      console.error("Hubo un error al crear el puerto:", error.message);
       throw error;
     }
   };
+
   return (
-    <PuertosContext.Provider value={{ puertos, loading, error, crearPuerto }}>
+    <PuertosContext.Provider
+      value={{ puertos, loading, error, obtenerPuertos, crearPuerto }}
+    >
       {children}
     </PuertosContext.Provider>
   );
 };
+
 export const usePuertos = () => useContext(PuertosContext);

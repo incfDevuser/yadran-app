@@ -52,7 +52,6 @@ const DashboardInformation = () => {
   const [createJurisdiccionModal, setCreateJurisdiccionModal] = useState(false);
   const [createZonaModal, setCreateZonaModal] = useState(false);
   const [createConcesionModal, setCreateConcecionModal] = useState(false);
-  const [createPontonModal, setCreatePontonModal] = useState(false);
   const [createCentroModal, setCreateCentroModal] = useState(false);
   const [createBaseModal, setCreateBaseModal] = useState(false);
   const [createAeropuertoModal, setCreateAeropuertoModal] = useState(false);

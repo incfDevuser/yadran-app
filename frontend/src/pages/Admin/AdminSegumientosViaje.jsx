@@ -156,10 +156,7 @@ const AdminSegumientosViaje = () => {
                         <p>
                           <strong>Hotel:</strong> {trayecto.trayecto_origen}
                         </p>
-                        <p>
-                          <strong>Duración:</strong>{" "}
-                          {trayecto.trayecto_duracion} minutos
-                        </p>
+                       
                         <h5 className="text-gray-700 mt-4">
                           Usuarios en el área:
                         </h5>
@@ -212,10 +209,6 @@ const AdminSegumientosViaje = () => {
                       </p>
                       <p>
                         <strong>Destino:</strong> {trayecto.trayecto_destino}
-                      </p>
-                      <p>
-                        <strong>Duración:</strong> {trayecto.trayecto_duracion}{" "}
-                        minutos
                       </p>
                       <p>
                         <strong>Vehículo:</strong>{" "}

@@ -3,7 +3,7 @@ import React, { useEffect, useState, createContext, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 
 const UsuariosContext = createContext();
-
+const BaseUrl = import.meta.env.VITE_BASE_URL;
 // Proveedor del contexto
 export const UsuariosProvider = ({ children }) => {
   const [usuarios, setUsuarios] = useState(null);
@@ -21,7 +21,7 @@ export const UsuariosProvider = ({ children }) => {
       setLoading(true);
       try {
         const response = await axios.get(
-          "http://localhost:5000/api/usuarios/miPerfil",
+          `${BaseUrl}/usuarios/miPerfil`,
           {
             withCredentials: true,
           }
@@ -42,7 +42,7 @@ export const UsuariosProvider = ({ children }) => {
   const obtenerUsuarios = async () => {
     setLoading(true);
     try {
-      const response = await axios.get("http://localhost:5000/api/usuarios", {
+      const response = await axios.get(`${BaseUrl}/usuarios`, {
         withCredentials: true,
       });
       setListaUsuarios(response.data);
@@ -54,7 +54,7 @@ export const UsuariosProvider = ({ children }) => {
   };
   const iniciarSesion = async () => {
     try {
-      const googleAuthUrl = "http://localhost:5000/auth/google";
+      const googleAuthUrl = `http://localhost:5001/auth/google`;
       window.location.href = googleAuthUrl;
     } catch (error) {
       console.error("Error al iniciar sesión:", error);
@@ -67,7 +67,7 @@ export const UsuariosProvider = ({ children }) => {
   const cerrarSesion = async () => {
     try {
       await axios.post(
-        "http://localhost:5000/api/usuarios/logout",
+        `${BaseUrl}/usuarios/logout`,
         {},
         {
           withCredentials: true,
@@ -84,7 +84,7 @@ export const UsuariosProvider = ({ children }) => {
   const cancelarViaje = async (solicitudId) => {
     try {
       const response = await axios.delete(
-        `http://localhost:5000/api/viajes/cancelar-solicitud/${solicitudId}`,
+        `${BaseUrl}/viajes/cancelar-solicitud/${solicitudId}`,
         {
           withCredentials: true,
         }
@@ -99,7 +99,7 @@ export const UsuariosProvider = ({ children }) => {
   const actualizarUsuario = async (id, camposActualizados) => {
     try {
       const response = await axios.put(
-        `http://localhost:5000/api/usuarios/usuario/${id}`,
+        `${BaseUrl}/usuarios/usuario/${id}`,
         camposActualizados,
         {
           withCredentials: true,

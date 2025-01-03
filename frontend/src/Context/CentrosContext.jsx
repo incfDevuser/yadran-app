@@ -2,32 +2,31 @@ import axios from "axios";
 import React, { useState, useEffect, createContext, useContext } from "react";
 
 const CentrosContext = createContext();
+const BaseUrl = import.meta.env.VITE_BASE_URL;
 
 export const CentrosProvider = ({ children }) => {
   const [centros, setCentros] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  useEffect(() => {
-    const obtenerCentros = async () => {
-      setLoading(true);
-      try {
-        const response = await axios.get(`http://localhost:5000/api/centros/`);
-        const data = response.data.centros;
-        console.log(data);
-        setCentros(data);
-      } catch (error) {
-        setError(error.message || "Hubo un error al cargar los centros");
-      } finally {
-        setLoading(false);
-      }
-    };
-    obtenerCentros();
-  }, []);
+  //Obtener Centros
+  const obtenerCentros = async () => {
+    setLoading(true);
+    try {
+      const response = await axios.get(`${BaseUrl}/centros/`);
+      const data = response.data.centros;
+      console.log(data);
+      setCentros(data);
+    } catch (error) {
+      setError(error.message || "Hubo un error al cargar los centros");
+    } finally {
+      setLoading(false);
+    }
+  };
   const crearCentro = async (nuevoCentro) => {
     try {
       const response = await axios.post(
-        `http://localhost:5000/api/centros/create`,
+        `${BaseUrl}/centros/create`,
         nuevoCentro
       );
       if (response.status === 201) {
@@ -47,7 +46,7 @@ export const CentrosProvider = ({ children }) => {
     setLoading(true);
     try {
       const response = await axios.put(
-        `http://localhost:5000/api/centros/${id}`,
+        `${BaseUrl}/centros/${id}`,
         datosActualizados
       );
       const centroActualizado = response.data;
@@ -66,7 +65,7 @@ export const CentrosProvider = ({ children }) => {
 
   return (
     <CentrosContext.Provider
-      value={{ centros, loading, error, crearCentro, actualizarCentro }}
+      value={{ centros, loading, error, obtenerCentros, crearCentro, actualizarCentro }}
     >
       {children}
     </CentrosContext.Provider>

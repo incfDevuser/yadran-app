@@ -1,52 +1,42 @@
 import axios from "axios";
-import React, { useState, useEffect, createContext, useContext } from "react";
+import React, { createContext, useContext, useMemo, useState } from "react";
 
 const BasesContext = createContext();
+const BaseUrl = import.meta.env.VITE_BASE_URL;
 
 export const BasesProvider = ({ children }) => {
   const [bases, setBases] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
-
-  useEffect(() => {
-    const obtenerBases = async () => {
-      setLoading(true);
-      try {
-        const response = await axios.get(`http://localhost:5000/api/bases/`);
-        const data = response.data.bases;
-        console.log(data);
-        setBases(data);
-      } catch (error) {
-        setError(error.message || "Hubo un error al cargar las bases");
-      } finally {
-        setLoading(false);
-      }
-    };
-    obtenerBases();
-  }, []);
+  const obtenerBases = async () => {
+    try {
+      const response = await axios.get(`${BaseUrl}/bases/`);
+      return response.data.bases;
+    } catch (error) {
+      console.error("Hubo un error al cargar las bases:", error.message);
+      throw new Error(error.message || "Error al cargar las bases");
+    }
+  };
   const crearBase = async (nuevaBase) => {
     try {
-      const response = await axios.post(
-        "http://localhost:5000/api/bases/create",
-        nuevaBase
-      );
+      const response = await axios.post(`${BaseUrl}/bases/create`, nuevaBase);
       if (response.status === 201) {
-        //ACTUALIZAR LA LISTA
-        setBases([...bases, response.data]);
         return response.data;
       } else {
-        console.error("Error al crear la base", response.data);
         throw new Error(response.data.message || "Error al crear la base");
       }
     } catch (error) {
-      console.error("Hubo un error al crear la base", error.message);
+      console.error("Hubo un error al crear la base:", error.message);
       throw error;
     }
   };
+
+  // Contexto memoizado
+  const contextValue = useMemo(() => ({ obtenerBases, bases, crearBase }), []);
+
   return (
-    <BasesContext.Provider value={{ bases, loading, error, crearBase }}>
+    <BasesContext.Provider value={contextValue}>
       {children}
     </BasesContext.Provider>
   );
 };
+
 export const useBases = () => useContext(BasesContext);

@@ -199,7 +199,6 @@ const AdminSolicitudes = () => {
             ))}
           </div>
         </section>
-        {/* Modal de Detalles */}
         {selectedSolicitud && (
           <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
             <div className="bg-white p-8 rounded-lg max-w-2xl w-full shadow-xl overflow-y-auto max-h-[80vh]">
@@ -211,36 +210,100 @@ const AdminSolicitudes = () => {
               </p>
               <p>
                 <strong>Comentario:</strong>{" "}
-                {selectedSolicitud.comentario_usuario || "N/A"}
+                {selectedSolicitud.comentario || "N/A"}
               </p>
               <hr className="my-4" />
               <h3 className="text-xl font-bold text-gray-800 mb-4">
                 Información del Solicitante
               </h3>
-              <p>
-                <strong>RUT:</strong>{" "}
-                {selectedSolicitud.rut_solicitante || "N/A"}
-              </p>
-              <p>
-                <strong>Empresa:</strong>{" "}
-                {selectedSolicitud.empresa_solicitante || "N/A"}
-              </p>
-              <p>
-                <strong>Cargo:</strong>{" "}
-                {selectedSolicitud.cargo_solicitante || "N/A"}
-              </p>
-              <p>
-                <strong>Contacto:</strong>{" "}
-                {selectedSolicitud.contacto_solicitante || "N/A"}
-              </p>
-              <p>
-                <strong>Fecha de Nacimiento:</strong>{" "}
-                {selectedSolicitud.fecha_nacimiento_solicitante
-                  ? new Date(
-                      selectedSolicitud.fecha_nacimiento_solicitante
-                    ).toLocaleDateString()
-                  : "N/A"}
-              </p>
+              {selectedSolicitud.centro_origen_id &&
+              selectedSolicitud.centro_destino_id ? (
+                <>
+                  <p>
+                    <strong>Nombre:</strong> {selectedSolicitud.nombre || "N/A"}
+                  </p>
+                  <p>
+                    <strong>RUT:</strong> {selectedSolicitud.rut || "N/A"}
+                  </p>
+                  <p>
+                    <strong>Email:</strong> {selectedSolicitud.email || "N/A"}
+                  </p>
+                  <p>
+                    <strong>Fecha de Nacimiento:</strong>{" "}
+                    {selectedSolicitud.fecha_nacimiento
+                      ? new Date(
+                          selectedSolicitud.fecha_nacimiento
+                        ).toLocaleDateString()
+                      : "N/A"}
+                  </p>
+                  <p>
+                    <strong>Contacto:</strong>{" "}
+                    {selectedSolicitud.contacto || "N/A"}
+                  </p>
+                  <p>
+                    <strong>Lancha:</strong>{" "}
+                    {selectedSolicitud.lancha_nombre || "N/A"}
+                  </p>
+                </>
+              ) : selectedSolicitud.trabajador ? (
+                <>
+                  <p>
+                    <strong>Nombre:</strong>{" "}
+                    {selectedSolicitud.trabajador.nombre || "N/A"}
+                  </p>
+                  <p>
+                    <strong>RUT:</strong>{" "}
+                    {selectedSolicitud.trabajador.rut || "N/A"}
+                  </p>
+                  <p>
+                    <strong>Email:</strong>{" "}
+                    {selectedSolicitud.trabajador.email || "N/A"}
+                  </p>
+                  <p>
+                    <strong>Fecha de Nacimiento:</strong>{" "}
+                    {selectedSolicitud.trabajador.fecha_nacimiento
+                      ? new Date(
+                          selectedSolicitud.trabajador.fecha_nacimiento
+                        ).toLocaleDateString()
+                      : "N/A"}
+                  </p>
+                  <p>
+                    <strong>Contacto:</strong>{" "}
+                    {selectedSolicitud.trabajador.contacto || "N/A"}
+                  </p>
+                  <p>
+                    <strong>Contratista:</strong>{" "}
+                    {selectedSolicitud.contratista?.nombre || "N/A"}
+                  </p>
+                </>
+              ) : (
+                <>
+                  <p>
+                    <strong>RUT:</strong>{" "}
+                    {selectedSolicitud.rut_solicitante || "N/A"}
+                  </p>
+                  <p>
+                    <strong>Empresa:</strong>{" "}
+                    {selectedSolicitud.empresa_solicitante || "N/A"}
+                  </p>
+                  <p>
+                    <strong>Cargo:</strong>{" "}
+                    {selectedSolicitud.cargo_solicitante || "N/A"}
+                  </p>
+                  <p>
+                    <strong>Contacto:</strong>{" "}
+                    {selectedSolicitud.contacto_solicitante || "N/A"}
+                  </p>
+                  <p>
+                    <strong>Fecha de Nacimiento:</strong>{" "}
+                    {selectedSolicitud.fecha_nacimiento_solicitante
+                      ? new Date(
+                          selectedSolicitud.fecha_nacimiento_solicitante
+                        ).toLocaleDateString()
+                      : "N/A"}
+                  </p>
+                </>
+              )}
               <button
                 className="mt-4 bg-red-500 text-white px-4 py-2 rounded-lg"
                 onClick={() => setSelectedSolicitud(null)}

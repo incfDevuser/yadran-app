@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import AdminAside from "./AdminAside";
 import { useProveedores } from "../../Context/ProveedoresContext";
 //Iconos
@@ -7,13 +7,17 @@ import { HiPencilSquare } from "react-icons/hi2";
 import { BsInfoSquare } from "react-icons/bs";
 
 const AdminProveedores = () => {
-  const { proveedores, eliminarProveedor, agregarProveedor } = useProveedores();
+  const {
+    proveedores,
+    obtenerProveedores,
+    eliminarProveedor,
+    agregarProveedor,
+  } = useProveedores();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedProveedor, setSelectedProveedor] = useState(null);
   const [isCreateModalOpen, setIsCreateModelOpen] = useState(false);
 
-  // Estado para crear el nuevo proveedor
-  const [nuevoProveedor, setNuevoProveedor] = useState({
+  const initialState = {
     nombre_proveedor: "",
     rut: "",
     encargado: "",
@@ -30,7 +34,9 @@ const AdminProveedores = () => {
     duracion: "",
     frecuencia_servicio: "",
     cantidad_usuarios_autorizados: 0,
-  });
+  };
+
+  const [nuevoProveedor, setNuevoProveedor] = useState(initialState);
 
   const handleDelete = async (id) => {
     try {
@@ -41,27 +47,21 @@ const AdminProveedores = () => {
       console.error(error);
     }
   };
-
   const handleViewInfo = (proveedor) => {
     setSelectedProveedor(proveedor);
     setIsModalOpen(true);
   };
-
   const closeModal = () => {
     setIsModalOpen(false);
     setSelectedProveedor(null);
   };
-
-  // Abrir el modal para crear un nuevo proveedor
   const openModalCreate = () => {
     setIsCreateModelOpen(true);
   };
-
-  // Cerrar el modal de creación de proveedor
   const closeModalCreate = () => {
     setIsCreateModelOpen(false);
+    setNuevoProveedor(initialState);
   };
-
   const handleChange = (e) => {
     setNuevoProveedor({
       ...nuevoProveedor,
@@ -73,6 +73,8 @@ const AdminProveedores = () => {
     e.preventDefault();
     try {
       await agregarProveedor(nuevoProveedor);
+      await obtenerProveedores()
+      setNuevoProveedor(initialState);
       closeModalCreate();
     } catch (error) {
       console.error("Hubo un error al crear el proveedor", error);
@@ -156,6 +158,7 @@ const AdminProveedores = () => {
                       type="text"
                       name="nombre_proveedor"
                       value={nuevoProveedor.nombre_proveedor}
+                      placeholder="Ingresa un Nombre"
                       onChange={handleChange}
                       className="w-full border border-gray-300 p-2 rounded"
                       required
@@ -169,6 +172,7 @@ const AdminProveedores = () => {
                       type="text"
                       name="rut"
                       value={nuevoProveedor.rut}
+                      placeholder="Ingresa un Rut"
                       onChange={handleChange}
                       className="w-full border border-gray-300 p-2 rounded"
                       required
@@ -185,6 +189,7 @@ const AdminProveedores = () => {
                       type="text"
                       name="encargado"
                       value={nuevoProveedor.encargado}
+                      placeholder="Ingresa el Encargado"
                       onChange={handleChange}
                       className="w-full border border-gray-300 p-2 rounded"
                       required
@@ -198,6 +203,7 @@ const AdminProveedores = () => {
                       type="text"
                       name="contacto"
                       value={nuevoProveedor.contacto}
+                      placeholder="Ingresa numero contacto"
                       onChange={handleChange}
                       className="w-full border border-gray-300 p-2 rounded"
                       required
@@ -213,6 +219,7 @@ const AdminProveedores = () => {
                     type="email"
                     name="email_encargado"
                     value={nuevoProveedor.email_encargado}
+                    placeholder="Ej: usuario@example.com"
                     onChange={handleChange}
                     className="w-full border border-gray-300 p-2 rounded"
                     required
@@ -228,6 +235,7 @@ const AdminProveedores = () => {
                       type="text"
                       name="telefono_encargado"
                       value={nuevoProveedor.telefono_encargado}
+                      placeholder="Ej: 984452940"
                       onChange={handleChange}
                       className="w-full border border-gray-300 p-2 rounded"
                       required
@@ -240,6 +248,7 @@ const AdminProveedores = () => {
                     <input
                       type="text"
                       name="representante_interno"
+                      placeholder="Ingresa un Representante"
                       value={nuevoProveedor.representante_interno}
                       onChange={handleChange}
                       className="w-full border border-gray-300 p-2 rounded"
@@ -257,6 +266,7 @@ const AdminProveedores = () => {
                       type="text"
                       name="tipo_servicio"
                       value={nuevoProveedor.tipo_servicio}
+                      placeholder="Ej: Transporte Personal"
                       onChange={handleChange}
                       className="w-full border border-gray-300 p-2 rounded"
                       required
@@ -270,6 +280,7 @@ const AdminProveedores = () => {
                       type="text"
                       name="ciclo_cultivo"
                       value={nuevoProveedor.ciclo_cultivo}
+                      placeholder="Ej: Engorda, Cosecha o N/A"
                       onChange={handleChange}
                       className="w-full border border-gray-300 p-2 rounded"
                       required
@@ -287,6 +298,7 @@ const AdminProveedores = () => {
                       type="text"
                       name="tarea_realizar"
                       value={nuevoProveedor.tarea_realizar}
+                      placeholder="Ej: Transporte a Melinka"
                       onChange={handleChange}
                       className="w-full border border-gray-300 p-2 rounded"
                       required
@@ -323,6 +335,7 @@ const AdminProveedores = () => {
                       type="text"
                       name="frecuencia_servicio"
                       value={nuevoProveedor.frecuencia_servicio}
+                      placeholder="Diaria / Semanal"
                       onChange={handleChange}
                       className="w-full border border-gray-300 p-2 rounded"
                       required

@@ -1,73 +1,64 @@
-import React, { useState, useEffect, createContext, useContext } from "react";
+import React, { useState, useEffect, createContext, useContext, useCallback } from "react";
 import axios from "axios";
 
-//Crear el contexto
+// Crear el contexto
 const ProveedoresContext = createContext();
+
+const BaseUrl = import.meta.env.VITE_BASE_URL;
 
 export const ProveedoresProvider = ({ children }) => {
   const [proveedores, setProveedores] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-
-  //Renderizar los proveedores
-  useEffect(() => {
-    const obtenerProveedores = async () => {
-      setLoading(true);
-      try {
-        const response = await axios.get(
-          `http://localhost:5000/api/proveedores/`,
-          {
-            withCredentials: true,
-          }
-        );
-        const data = response.data.proveedores;
-        setProveedores(data);
-      } catch (error) {
-        setError(error.message || "Hubo un error al cargar los proveedores");
-      } finally {
-        setLoading(false);
-      }
-    };
-    obtenerProveedores();
-  }, []);
-  const agregarProveedor = async (nuevoProveedor) => {
+  const obtenerProveedores = useCallback(async () => {
+    setLoading(true);
+    setError(null);
     try {
-      const response = await axios.post(
-        `http://localhost:5000/api/proveedores/create`,
-        nuevoProveedor
-      );
+      const response = await axios.get(`${BaseUrl}/proveedores/`, {
+        withCredentials: true,
+      });
+      setProveedores(response.data.proveedores);
+    } catch (error) {
+      setError(error.message || "Hubo un error al cargar los proveedores");
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+  const agregarProveedor = useCallback(async (nuevoProveedor) => {
+    try {
+      const response = await axios.post(`${BaseUrl}/proveedores/create`, nuevoProveedor);
       if (response.status === 201) {
-        //Actualiza la lista de proveedores
-        setProveedores([...proveedores, response.data]);
+        setProveedores((prev) => [...prev, response.data]);
         return response.data;
       } else {
-        console.error("Error al crear el proveedor", response.data);
         throw new Error(response.data.message || "Error al crear el proveedor");
       }
     } catch (error) {
       console.error("Error al agregar proveedor:", error.message);
       throw error;
     }
-  };
-  const eliminarProveedor = async (proveedorId) => {
+  }, []);
+  const eliminarProveedor = useCallback(async (proveedorId) => {
     try {
-      await axios.delete(
-        `http://localhost:5000/api/proveedores/${proveedorId}`
-      );
-      setProveedores((prevProveedores) =>
-        prevProveedores.filter((proveedor) => proveedor.id !== proveedorId)
-      );
+      await axios.delete(`${BaseUrl}/proveedores/${proveedorId}`);
+      setProveedores((prev) => prev.filter((proveedor) => proveedor.id !== proveedorId));
     } catch (error) {
       console.error("Error al eliminar al proveedor:", error.message);
       throw error;
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    obtenerProveedores();
+  }, [obtenerProveedores]);
+
   return (
     <ProveedoresContext.Provider
       value={{
         proveedores,
         loading,
         error,
+        obtenerProveedores,
         agregarProveedor,
         eliminarProveedor,
       }}
@@ -77,4 +68,5 @@ export const ProveedoresProvider = ({ children }) => {
   );
 };
 
-export const useProveedores = ()=> useContext(ProveedoresContext)
+// Hook para consumir el contexto
+export const useProveedores = () => useContext(ProveedoresContext);

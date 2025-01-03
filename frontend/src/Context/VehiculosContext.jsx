@@ -1,73 +1,62 @@
-import React, { useState, useEffect, createContext, useContext } from "react";
+import React, { useState, useEffect, createContext, useContext, useCallback } from "react";
 import axios from "axios";
+
 const VehiculosContext = createContext();
+const BaseUrl = import.meta.env.VITE_BASE_URL;
 
 export const VehiculosProvider = ({ children }) => {
   const [vehiculos, setVehiculos] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  //Renderizar la lista de vehiculos cuando se llama al componente
-  useEffect(() => {
-    const obtenerVehiculos = async () => {
-      setLoading(true);
-      try {
-        const response = await axios.get(
-          `http://localhost:5000/api/vehiculos/`,
-          {
-            withCredentials: true,
-          }
-        );
-        const data = response.data.vehiculos;
-        setVehiculos(data);
-      } catch (error) {
-        setError(error.message || "Hubo un error al cargar los vehiculos");
-      } finally {
-        setLoading(false);
-      }
-    };
-    obtenerVehiculos();
+  // Función para obtener los vehículos
+  const obtenerVehiculos = useCallback(async () => {
+    setLoading(true);
+    setError(null); 
+    try {
+      const response = await axios.get(`${BaseUrl}/vehiculos/`, {
+        withCredentials: true,
+      });
+      setVehiculos(response.data.vehiculos);
+    } catch (error) {
+      setError(error.message || "Hubo un error al cargar los vehículos");
+    } finally {
+      setLoading(false);
+    }
   }, []);
 
-  //Crear un vehiculos
-  const crearVehiculo = async (nuevoVehiculo) => {
+  const crearVehiculo = useCallback(async (nuevoVehiculo) => {
     try {
-      const response = await axios.post(
-        `http://localhost:5000/api/vehiculos/create`,
-        nuevoVehiculo
-      );
+      const response = await axios.post(`${BaseUrl}/vehiculos/create`, nuevoVehiculo);
       if (response.status === 201) {
-        //Actualizar la lsita de vehiculos
-        setVehiculos([...vehiculos, response.data]);
+        setVehiculos((prev) => [...prev, response.data]);
       } else {
-        console.error("Error al crear el vehiculo", response.data);
-        throw new Error(response.data.message || "Error al crear el vehiculo");
+        throw new Error(response.data.message || "Error al crear el vehículo");
       }
     } catch (error) {
-      console.error("Error al crear el vehiculo:", error.message);
+      console.error("Error al crear el vehículo:", error.message);
       throw error;
     }
-  };
-  //Eliminar un vehiculo
-  const eliminarVehiculo = async (vehiculoId) => {
+  }, []);
+
+  const eliminarVehiculo = useCallback(async (vehiculoId) => {
     try {
-      await axios.delete(`http://localhost:5000/api/vehiculos/${vehiculoId}`);
-      setTrayectos((prevVehiculos) =>
+      await axios.delete(`${BaseUrl}/vehiculos/${vehiculoId}`);
+      setVehiculos((prevVehiculos) =>
         prevVehiculos.filter((vehiculo) => vehiculo.id !== vehiculoId)
       );
     } catch (error) {
-      console.error("Error al eliminar el vehiculo:", error.message);
+      console.error("Error al eliminar el vehículo:", error.message);
       throw error;
     }
-  };
-  const asignarTripulante = async (vehiculoId, tripulante) => {
+  }, []);
+  const asignarTripulante = useCallback(async (vehiculoId, tripulante) => {
     try {
       const response = await axios.post(
-        `http://localhost:5000/api/vehiculos/${vehiculoId}/tripulantes`,
+        `${BaseUrl}/vehiculos/${vehiculoId}/tripulantes`,
         tripulante,
         { withCredentials: true }
       );
-      console.log("Respuesta de la asignación:", response.data);
 
       setVehiculos((prevVehiculos) =>
         prevVehiculos.map((vehiculo) =>
@@ -75,7 +64,7 @@ export const VehiculosProvider = ({ children }) => {
             ? {
                 ...vehiculo,
                 tripulantes: [
-                  ...vehiculo.tripulantes,
+                  ...(vehiculo.tripulantes || []),
                   response.data.tripulante,
                 ],
               }
@@ -84,8 +73,12 @@ export const VehiculosProvider = ({ children }) => {
       );
     } catch (error) {
       console.error("Error al asignar tripulante:", error.message);
+      throw error;
     }
-  };
+  }, []);
+  useEffect(() => {
+    obtenerVehiculos();
+  }, [obtenerVehiculos]);
 
   return (
     <VehiculosContext.Provider
@@ -93,6 +86,7 @@ export const VehiculosProvider = ({ children }) => {
         vehiculos,
         loading,
         error,
+        obtenerVehiculos,
         crearVehiculo,
         eliminarVehiculo,
         asignarTripulante,
@@ -102,4 +96,6 @@ export const VehiculosProvider = ({ children }) => {
     </VehiculosContext.Provider>
   );
 };
+
+// Hook para consumir el contexto
 export const useVehiculos = () => useContext(VehiculosContext);

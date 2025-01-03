@@ -2,7 +2,7 @@ import { createContext, useContext, useState, useEffect } from "react";
 import axios from "axios";
 
 const SolicitudesContext = createContext();
-
+const BaseUrl = import.meta.env.VITE_BASE_URL;
 export const SolicitudesProvider = ({ children }) => {
   const [solicitudesNormales, setSolicitudesNormales] = useState([]);
   const [solicitudesTrabajadores, setSolicitudesTrabajadores] = useState([]);
@@ -14,7 +14,7 @@ export const SolicitudesProvider = ({ children }) => {
     try {
       setLoadingSolicitudes(true);
       const response = await axios.get(
-        "http://localhost:5000/api/viajes/solicitudes-usuarios"
+        `${BaseUrl}/viajes/solicitudes-usuarios`
       );
       setSolicitudesNormales(response.data.solicitudes);
     } catch (error) {
@@ -28,7 +28,7 @@ export const SolicitudesProvider = ({ children }) => {
     try {
       setLoadingSolicitudes(true);
       const response = await axios.get(
-        "http://localhost:5000/api/viajes/solicitudes-trabajadores"
+        `${BaseUrl}/viajes/solicitudes-trabajadores`
       );
       setSolicitudesTrabajadores(response.data.solicitudes);
     } catch (error) {
@@ -42,7 +42,7 @@ export const SolicitudesProvider = ({ children }) => {
     try {
       setLoadingSolicitudes(true);
       const response = await axios.get(
-        "http://localhost:5000/api/intercentro/solicitudes"
+        `${BaseUrl}/intercentro/solicitudes`
       );
       setSolicitudesIntercentro(response.data.solicitudes);
     } catch (error) {
@@ -55,7 +55,7 @@ export const SolicitudesProvider = ({ children }) => {
   const aprobarViaje = async (id) => {
     try {
       const response = await axios.put(
-        `http://localhost:5000/api/viajes/solicitud/${id}/aprobar`
+        `${BaseUrl}/viajes/solicitud/${id}/aprobar`
       );
       return response.data;
     } catch (error) {
@@ -66,7 +66,7 @@ export const SolicitudesProvider = ({ children }) => {
   const rechazarViaje = async (id) => {
     try {
       const response = await axios.patch(
-        `http://localhost:5000/api/viajes/solicitud/${id}/rechazar`
+        `${BaseUrl}/viajes/solicitud/${id}/rechazar`
       );
       return response.data;
     } catch (error) {
@@ -77,7 +77,7 @@ export const SolicitudesProvider = ({ children }) => {
   const aprobarIntercentro = async (id) => {
     try {
       const response = await axios.put(
-        `http://localhost:5000/api/intercentro/solicitudes/${id}/aprobar`
+        `${BaseUrl}/intercentro/solicitudes/${id}/aprobar`
       );
       return response.data;
     } catch (error) {
@@ -88,7 +88,7 @@ export const SolicitudesProvider = ({ children }) => {
   const rechazarIntercentro = async (id) => {
     try {
       const response = await axios.put(
-        `http://localhost:5000/api/intercentro/solicitudes/${id}/cancelar`
+        `${BaseUrl}/intercentro/solicitudes/${id}/cancelar`
       );
       return response.data;
     } catch (error) {

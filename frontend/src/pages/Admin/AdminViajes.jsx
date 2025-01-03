@@ -19,7 +19,7 @@ import {
 } from "react-icons/fa";
 
 const AdminViajes = () => {
-  const { viajes, loading, error, crearViaje } = useViajes();
+  const { viajes, loading, error, crearViaje, obtenerViajes } = useViajes();
   const { rutas, loading: loadingRutas } = useRutas();
   const [selectedViaje, setSelectedViaje] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -38,6 +38,7 @@ const AdminViajes = () => {
     e.preventDefault();
     try {
       await crearViaje(newViaje);
+      await obtenerViajes();
       setIsModalOpen(false);
     } catch (error) {
       console.error("Error al crear el viaje:", error);

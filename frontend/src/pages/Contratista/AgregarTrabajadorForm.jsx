@@ -1,39 +1,42 @@
 import React, { useState } from "react";
-import { toast } from "react-toastify";
 
-const AgregarTrabajadorForm = ({ agregarTrabajadores }) => {
+const AgregarTrabajadorForm = ({
+  agregarTrabajadores,
+  obtenerTrabajadores,
+}) => {
   const [nuevoTrabajador, setNuevoTrabajador] = useState({
     nombre: "",
     email: "",
     identificacion: "",
     telefono: "",
+    fecha_nacimiento: "",
   });
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setNuevoTrabajador((prev) => ({ ...prev, [name]: value }));
   };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
       await agregarTrabajadores(nuevoTrabajador);
+      await obtenerTrabajadores();
       setNuevoTrabajador({
         nombre: "",
         email: "",
         identificacion: "",
         telefono: "",
+        fecha_nacimiento: "",
       });
-      toast.success("Trabajador agregado exitosamente");
     } catch (error) {
       console.error("Error al agregar trabajador:", error);
-      toast.error("Hubo un error al agregar el trabajador");
     }
   };
-
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
-      <h2 className="text-lg font-semibold text-purple-700">Agregar Trabajador</h2>
+      <h2 className="text-lg font-semibold text-purple-700">
+        Agregar Trabajador
+      </h2>
       <div className="flex flex-col">
         <label className="text-sm font-medium text-gray-700" htmlFor="nombre">
           Nombre
@@ -74,6 +77,20 @@ const AgregarTrabajadorForm = ({ agregarTrabajadores }) => {
           id="identificacion"
           name="identificacion"
           value={nuevoTrabajador.identificacion}
+          onChange={handleChange}
+          required
+          className="border border-gray-300 rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500"
+        />
+      </div>
+      <div className="flex flex-col">
+        <label className="text-sm font-medium text-gray-700" htmlFor="nombre">
+          Fecha de Nacimiento
+        </label>
+        <input
+          type="date"
+          id="fecha_nacimiento"
+          name="fecha_nacimiento"
+          value={nuevoTrabajador.fecha_nacimiento}
           onChange={handleChange}
           required
           className="border border-gray-300 rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500"

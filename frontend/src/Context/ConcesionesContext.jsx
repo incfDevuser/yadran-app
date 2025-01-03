@@ -1,82 +1,90 @@
 import axios from "axios";
-import React, { useState, useEffect, createContext, useContext } from "react";
+import React, {
+  useState,
+  useEffect,
+  createContext,
+  useContext,
+  useMemo,
+} from "react";
 
 const ConcesionesContext = createContext();
+const BaseUrl = import.meta.env.VITE_BASE_URL;
 
 export const ConcesionesProvider = ({ children }) => {
   const [concesiones, setConcesiones] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  useEffect(() => {
-    const obtenerConcesiones = async () => {
-      setLoading(true);
-      try {
-        const response = await axios.get(
-          `http://localhost:5000/api/concesiones/`
-        );
-        const data = response.data.concesiones;
-        console.log(data);
-        setConcesiones(data);
-      } catch (error) {
-        setError(error.message || "Hubo un error al cargar las concesiones");
-      } finally {
-        setLoading(false);
-      }
-    };
-    obtenerConcesiones();
-  }, []);
+  //Obtener concesiones
+  const obtenerConcesiones = async () => {
+    setLoading(true);
+    try {
+      const response = await axios.get(`${BaseUrl}/concesiones/`);
+      setConcesiones(response.data.concesiones || []);
+    } catch (error) {
+      setError(error.message || "Hubo un error al cargar las concesiones.");
+    } finally {
+      setLoading(false);
+    }
+  };
   const crearConcesion = async (nuevaConcesion) => {
     try {
       const response = await axios.post(
-        "http://localhost:5000/api/concesiones/create",
+        `${BaseUrl}/concesiones/create`,
         nuevaConcesion
       );
       if (response.status === 201) {
-        setConcesiones([...concesiones, response.data]);
-        return response.data;
+        const concesionCreada = response.data;
+        setConcesiones((prev) => [...prev, concesionCreada]);
+        return concesionCreada;
       } else {
-        console.error("Error al crear la concesion", response.data);
-        throw new Error(response.data.message || "Error al crear la concesion");
+        throw new Error(
+          response.data.message || "Error al crear la concesión."
+        );
       }
     } catch (error) {
-      console.error("Hubo un error al crear la concesion", error.message);
+      setError(error.message || "Hubo un error al crear la concesión.");
       throw error;
     }
   };
+
   const actualizarConcesion = async (id, datosActualizados) => {
     setLoading(true);
     try {
       const response = await axios.put(
-        `http://localhost:5000/api/concesiones/${id}`,
+        `${BaseUrl}/concesiones/${id}`,
         datosActualizados
       );
       const concesionActualizada = response.data;
-
       setConcesiones((prev) =>
         prev.map((c) => (c.id === id ? concesionActualizada : c))
       );
       return concesionActualizada;
     } catch (error) {
-      console.error("Error al actualizar la concesión:", error.message);
+      setError(error.message || "Hubo un error al actualizar la concesión.");
       throw error;
     } finally {
       setLoading(false);
     }
   };
 
+  const contextValue = useMemo(
+    () => ({
+      concesiones,
+      loading,
+      error,
+      obtenerConcesiones,
+      crearConcesion,
+      actualizarConcesion,
+    }),
+    [concesiones, loading, error]
+  );
+
   return (
-    <ConcesionesContext.Provider
-      value={{
-        concesiones,
-        loading,
-        error,
-        crearConcesion,
-        actualizarConcesion,
-      }}
-    >
+    <ConcesionesContext.Provider value={contextValue}>
       {children}
     </ConcesionesContext.Provider>
   );
 };
+
 export const useConcesion = () => useContext(ConcesionesContext);
