@@ -3,11 +3,12 @@ import { Html5QrcodeScanner } from "html5-qrcode";
 import { useQr } from "../../Context/QrContext";
 
 const Validaciones = () => {
-  const { validarTrayecto, validarPonton } = useQr(); 
+  const { validarTrayecto, validarPonton } = useQr();
   const [mensaje, setMensaje] = useState(null);
   const [error, setError] = useState(null);
-  const [isScanning, setIsScanning] = useState(false); 
-  const [tipoValidacion, setTipoValidacion] = useState("trayecto"); 
+  const [isScanning, setIsScanning] = useState(false);
+  const [tipoValidacion, setTipoValidacion] = useState("trayecto");
+
   useEffect(() => {
     let scanner;
 
@@ -22,35 +23,47 @@ const Validaciones = () => {
         async (text) => {
           try {
             const qrContent = JSON.parse(text);
+
             if (tipoValidacion === "trayecto") {
-              // Validación para trayectos
               const response = await validarTrayecto({
                 trayecto_id: qrContent.trayecto_id,
                 vehiculo_id: qrContent.vehiculo_id,
               });
               setMensaje(response.message);
             } else if (tipoValidacion === "ponton") {
-              // Validación para pontones
               const response = await validarPonton({
                 ponton_id: qrContent.ponton_id,
               });
-              setMensaje(response.message); 
+              setMensaje(response.message);
             }
+
             setError(null);
-            scanner.clear();
             setIsScanning(false);
+            scanner.clear();
           } catch (err) {
             console.error("Error al procesar el QR:", err);
-            setError("El código QR no es válido.");
+
+            if (err instanceof SyntaxError) {
+              setError("El código QR no tiene un formato válido.");
+            } else {
+              setError("Ocurrió un error al procesar el QR.");
+            }
             setMensaje(null);
           }
         },
-        (err) => {
-          console.error("Error al escanear el QR:", err);
-          setError("No se pudo acceder a la cámara.");
+        (errorMessage) => {
+          if (errorMessage.includes("NotFoundException")) {
+            console.warn("Código QR no detectado. Intenta nuevamente.");
+          } else {
+            console.error("Error al escanear el QR:", errorMessage);
+            setError(
+              "No se pudo acceder a la cámara o hubo un problema con el escaneo."
+            );
+          }
         }
       );
     }
+
     return () => {
       if (scanner) {
         scanner.clear();
@@ -67,7 +80,9 @@ const Validaciones = () => {
       <div className="flex gap-4 mb-4">
         <button
           className={`px-4 py-2 rounded ${
-            tipoValidacion === "trayecto" ? "bg-blue-500 text-white" : "bg-gray-200"
+            tipoValidacion === "trayecto"
+              ? "bg-blue-500 text-white"
+              : "bg-gray-200"
           }`}
           onClick={() => setTipoValidacion("trayecto")}
         >
@@ -75,7 +90,9 @@ const Validaciones = () => {
         </button>
         <button
           className={`px-4 py-2 rounded ${
-            tipoValidacion === "ponton" ? "bg-blue-500 text-white" : "bg-gray-200"
+            tipoValidacion === "ponton"
+              ? "bg-blue-500 text-white"
+              : "bg-gray-200"
           }`}
           onClick={() => setTipoValidacion("ponton")}
         >

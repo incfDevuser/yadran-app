@@ -97,7 +97,6 @@ const sendEmail = async (emailCliente, emailData) => {
       },
     });
     await transporter.sendMail(mailOptions);
-    console.log("Correo enviado exitosamente a:", emailCliente);
   } catch (error) {
     console.error("Error al enviar el correo:", error);
     throw new Error("Error al enviar el correo");
@@ -163,7 +162,6 @@ const sendEmailIntercentro = async (emailCliente, emailData) => {
       },
     });
     await transporter.sendMail(mailOptions);
-    console.log("Correo enviado exitosamente a:", emailCliente);
   } catch (error) {
     console.error("Error al enviar el correo:", error);
     throw new Error("Error al enviar el correo");
@@ -228,7 +226,6 @@ const sendEmailContratista = async (emailCliente, emailData) => {
       },
     });
     await transporter.sendMail(mailOptions);
-    console.log("Correo enviado exitosamente a:", emailCliente);
   } catch (error) {
     console.error("Error al enviar el correo:", error);
     throw new Error("Error al enviar el correo");
@@ -294,7 +291,6 @@ const sendEmailContratistaIntercentro = async (emailCliente, emailData) => {
       },
     });
     await transporter.sendMail(mailOptions);
-    console.log("Correo enviado exitosamente a:", emailCliente);
   } catch (error) {
     console.error("Error al enviar el correo:", error);
     throw new Error("Error al enviar el correo");

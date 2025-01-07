@@ -1,6 +1,7 @@
 import React, { useEffect } from "react";
+import { FaQrcode } from "react-icons/fa";
 import { usePontones } from "../../../../Context/PontonesContext";
-import QRCode from "qrcode";
+import DescargarPDFPontonButton from "../../../../components/DescargarPDFPontonButton";
 
 const ListaPontonesModal = ({ isOpen, onClose }) => {
   const { pontones, obtenerPontones, loading, error } = usePontones();
@@ -12,18 +13,6 @@ const ListaPontonesModal = ({ isOpen, onClose }) => {
   }, [isOpen]);
 
   if (!isOpen) return null;
-
-  const handleDownloadQR = async (id, nombrePonton) => {
-    try {
-      const qrCodeData = await QRCode.toDataURL(`${id}`);
-      const link = document.createElement("a");
-      link.href = qrCodeData;
-      link.download = `QR_${nombrePonton || "Ponton"}.png`;
-      link.click();
-    } catch (error) {
-      console.error("Error al generar el código QR:", error);
-    }
-  };
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
@@ -46,7 +35,7 @@ const ListaPontonesModal = ({ isOpen, onClose }) => {
             {pontones.length > 0 ? (
               pontones.map((ponton) => (
                 <div
-                  key={ponton.id}
+                  key={ponton.ponton_id}
                   className="p-4 border rounded-md shadow-sm mb-2 flex justify-between items-center"
                 >
                   <div>
@@ -67,14 +56,9 @@ const ListaPontonesModal = ({ isOpen, onClose }) => {
                       {ponton.habitabilidad_externa || "No especificado"}
                     </p>
                   </div>
-                  <button
-                    onClick={() =>
-                      handleDownloadQR(ponton.id, ponton.nombre_ponton)
-                    }
-                    className="bg-blue-500 text-white px-3 py-2 rounded shadow hover:bg-blue-600"
-                  >
-                    Descargar QR
-                  </button>
+                  <div className="mt-4 flex items-center gap-4">
+                    <DescargarPDFPontonButton ponton={ponton} />
+                  </div>
                 </div>
               ))
             ) : (

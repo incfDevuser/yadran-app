@@ -40,7 +40,6 @@ export const HotelesProvider = ({ children }) => {
         }
       );
       if (response.status === 201) {
-        console.log("Hotel creado exitosamente:", response.data);
         setHoteles((prevHoteles) => [...prevHoteles, response.data.hotel]);
       } else {
         console.error("Error al crear el hotel:", response.data.message);
@@ -82,7 +81,6 @@ export const HotelesProvider = ({ children }) => {
       );
 
       if (response.status === 201) {
-        console.log("Hotel asignado correctamente:", response.data);
         return response.data;
       } else {
         console.error("Error al asignar el hotel:", response.data.message);

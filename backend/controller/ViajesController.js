@@ -130,7 +130,6 @@ const solicitarViajeUsuarioNatural = async (req, res) => {
 };
 //Cancelar Viaje Usuario
 const cancelarViajeUsuarioHandler = async (req, res) => {
-  console.log(req.params);
   const { solicitudId } = req.params;
   try {
     if (!solicitudId) {

@@ -14,11 +14,6 @@ const NotificacionesUsuario = () => {
   useEffect(() => {
     obtenerNotificacionesPorUsuario();
   }, []);
-
-  const handleMarcarComoLeida = (notificacionId) => {
-    console.log("Notificación marcada como leída:", notificacionId);
-  };
-
   const getNotificacionEstilo = (tipo) => {
     switch (tipo) {
       case "alerta":

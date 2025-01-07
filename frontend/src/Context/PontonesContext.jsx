@@ -13,7 +13,6 @@ export const PontonesProvider = ({ children }) => {
     try {
       const response = await axios.get(`${BaseUrl}/pontones/`);
       const data = response.data.pontones;
-      console.log(data);
       setPontones(data);
     } catch (error) {
       setError(error.message || "Hubo un error al cargar los pontones");

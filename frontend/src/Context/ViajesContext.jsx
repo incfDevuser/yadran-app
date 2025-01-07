@@ -96,7 +96,6 @@ export const ViajesProvider = ({ children }) => {
         {},
         { withCredentials: true }
       );
-      console.log("Entidades limpiadas correctamente");
     } catch (error) {
       console.error("Error al limpiar las entidades:", error.message);
     }

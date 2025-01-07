@@ -12,6 +12,8 @@ import { IoAddCircleOutline } from "react-icons/io5";
 import { HiOutlineOfficeBuilding } from "react-icons/hi";
 import { FaQrcode } from "react-icons/fa";
 import { jsPDF } from "jspdf";
+//PDF
+import DescargarPDFButton from "../../components/DescargarPDFButton";
 
 const AdminRoutes = () => {
   const { rutas, eliminarRuta, crearRuta, obtenerRutas } = useRutas();
@@ -63,17 +65,17 @@ const AdminRoutes = () => {
     vehiculo_id: "",
   };
   const [trayecto, setTrayecto] = useState(initialStateTrayecto);
-  const descargarPDF = (trayecto) => {
-    if (!trayecto.qr_code) {
-      console.error("El trayecto no tiene un QR asignado.");
-      return;
-    }
-    const doc = new jsPDF();
-    doc.setFontSize(16);
-    doc.text(`Trayecto: ${trayecto.origen} → ${trayecto.destino}`, 10, 20);
-    doc.addImage(trayecto.qr_code, "JPEG", 10, 30, 100, 100);
-    doc.save(`Trayecto_${trayecto.id}.pdf`);
-  };
+  // const descargarPDF = (trayecto) => {
+  //   if (!trayecto.qr_code) {
+  //     console.error("El trayecto no tiene un QR asignado.");
+  //     return;
+  //   }
+  //   const doc = new jsPDF();
+  //   doc.setFontSize(16);
+  //   doc.text(`Trayecto: ${trayecto.origen} → ${trayecto.destino}`, 10, 20);
+  //   doc.addImage(trayecto.qr_code, "JPEG", 10, 30, 100, 100);
+  //   doc.save(`Trayecto_${trayecto.id}.pdf`);
+  // };
   //Hoteles
   const openHotelModal = (rutaId) => {
     setSelectedRuta(rutaId);
@@ -550,36 +552,34 @@ const AdminRoutes = () => {
                           </div>
                         ) : (
                           // Renderizar información normal del trayecto
-                          <div className="flex justify-center items-center gap-4">
-                            <div className="flex gap-4 font-semibold justify-center items-center">
+                          <div className="flex justify-between items-center gap-4">
+                            <div className="flex gap-4 justify-center items-center">
                               <div className="flex flex-col">
-                                Origen
+                                <p className="font-semibold">Origen</p>
                                 <p className="text-gray-500">
                                   {trayecto.origen}
                                 </p>
                               </div>
                               <FaLongArrowAltRight className="text-green-500 text-xl" />
                               <div className="flex flex-col">
-                                Destino
+                                <p className="font-semibold">Destino</p>
                                 <p className="text-gray-500">
                                   {trayecto.destino}
                                 </p>
                               </div>
                             </div>
-                            <p>{formatInterval(trayecto.duracion_estimada)}</p>
-
+                            {/* <p>{formatInterval(trayecto.duracion_estimada)}</p> */}
+                            <div className="flex flex-col justify-center items-center">
+                              <p className="font-semibold">Chofer Asociado</p>
+                              <p className="text-gray-500">{trayecto.chofer.nombre}</p>
+                            </div>
                             <div className="text-center ml-3">
                               <p className="font-semibold">Vehículo Asociado</p>
                               <p className="text-gray-500">
                                 {trayecto.nombre_vehiculo}
                               </p>
                             </div>
-                            <button
-                              onClick={() => descargarPDF(trayecto)}
-                              className="text-blue-500 hover:text-blue-700"
-                            >
-                              <FaQrcode size={24} />
-                            </button>
+                              <DescargarPDFButton trayecto={trayecto} />
                           </div>
                         )}
                       </div>

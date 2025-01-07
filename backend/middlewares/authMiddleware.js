@@ -21,7 +21,6 @@ const authToken = async (req, res, next) => {
 };
 
 const isAdmin = (req, res, next) => { 
-  console.log("Verirficando si el usuario es admin:", req.user)
   try {
     if (req.user.isadmin) {
       next();

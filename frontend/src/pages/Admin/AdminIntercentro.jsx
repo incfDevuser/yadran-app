@@ -22,7 +22,6 @@ const AdminIntercentro = () => {
   const [selectedMovimiento, setSelectedMovimiento] = useState(null);
 
   const handleVerDetalles = async (movimientoId) => {
-    console.log("Ver detalles para movimiento:", movimientoId);
     try {
       const lanchasData = await obtenerLanchasPorMovimiento(movimientoId);
       setLanchas(lanchasData);
@@ -33,7 +32,6 @@ const AdminIntercentro = () => {
     }
   };
   const handleVerDetallesPontones = async (movimientoId) => {
-    console.log("Ver detalles para movimiento (pontones):", movimientoId);
     try {
       const pontonesData = await obtenerPontonesPorMovimiento(movimientoId);
       setPontones(pontonesData);
@@ -104,7 +102,6 @@ const AdminIntercentro = () => {
                   <div className="flex gap-2 items-center justify-start">
                     <button
                       onClick={() => {
-                        console.log("Movimiento ID:", ruta.movimiento_id);
                         handleVerDetalles(ruta.movimiento_id);
                       }}
                       className="bg-blue-500 text-white px-4 py-2 mt-4 rounded-md"

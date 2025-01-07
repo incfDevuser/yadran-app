@@ -18,7 +18,6 @@ export const ZonasProvider = ({ children }) => {
     setLoading(true);
     try {
       const response = await axios.get(`${BaseUrl}/zonas/`);
-      console.log(response.data);
       setZonas(response.data.zonas || []);
     } catch (error) {
       setError(error.message || "Hubo un error al cargar las zonas.");

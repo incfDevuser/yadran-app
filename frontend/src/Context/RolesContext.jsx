@@ -48,7 +48,6 @@ export const RolesProvider = ({ children }) => {
         `${BaseUrl}/roles/modificar-rol-usuario`,
         datosAsignacion
       );
-      console.log("Rol asignado correctamente");
     } catch (err) {
       setError(err.message || "Error al asignar el rol");
       console.error("Error al asignar el rol:", err);
@@ -64,7 +63,6 @@ export const RolesProvider = ({ children }) => {
       await axios.delete(`${BaseUrl}/roles/${id}`);
       // Actualizar la lista de roles eliminando el rol correspondiente
       setRoles((prevRoles) => prevRoles.filter((rol) => rol.id !== id));
-      console.log("Rol eliminado correctamente");
     } catch (err) {
       setError(err.message || "Error al eliminar el rol");
       console.error("Error al eliminar el rol:", err);

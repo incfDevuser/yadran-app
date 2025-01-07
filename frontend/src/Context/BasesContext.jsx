@@ -6,9 +6,11 @@ const BaseUrl = import.meta.env.VITE_BASE_URL;
 
 export const BasesProvider = ({ children }) => {
   const [bases, setBases] = useState([]);
+
   const obtenerBases = async () => {
     try {
       const response = await axios.get(`${BaseUrl}/bases/`);
+      setBases(response.data.bases);
       return response.data.bases;
     } catch (error) {
       console.error("Hubo un error al cargar las bases:", error.message);
@@ -28,9 +30,10 @@ export const BasesProvider = ({ children }) => {
       throw error;
     }
   };
-
-  // Contexto memoizado
-  const contextValue = useMemo(() => ({ obtenerBases, bases, crearBase }), []);
+  const contextValue = useMemo(
+    () => ({ bases, obtenerBases, crearBase }),
+    [bases]
+  );
 
   return (
     <BasesContext.Provider value={contextValue}>

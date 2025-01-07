@@ -53,7 +53,6 @@ const AdminDashboard2 = () => {
                             <BasesCard />
                             <AeropuertosCard />
                             <PuertosCard />
-                            {/* Agrega más tarjetas aquí si es necesario */}
                           </div>
                         </div>
                       </PuertosProvider>

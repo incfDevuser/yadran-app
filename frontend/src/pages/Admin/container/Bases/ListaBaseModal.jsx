@@ -12,6 +12,7 @@ const ListaBaseModal = ({ isOpen, onClose }) => {
 
   if (!isOpen) return null;
 
+
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
       <div className="bg-white rounded-lg shadow-lg w-[600px] p-5 max-h-[80vh] overflow-y-auto">
@@ -37,8 +38,10 @@ const ListaBaseModal = ({ isOpen, onClose }) => {
                   className="p-4 border rounded-md shadow-sm mb-2"
                 >
                   <h3 className="font-bold">{base.nombre_base}</h3>
-                  <p>Ubicación: {base.ubicacion || "No especificada"}</p>
-                  <p>Responsable: {base.responsable || "No especificado"}</p>
+                  <p>Jefe: {base.jefe_base || "No especificado"}</p>
+                  <p>
+                    Pontón Asociado: {base.nombre_ponton || "No especificado"}
+                  </p>
                 </div>
               ))
             ) : (

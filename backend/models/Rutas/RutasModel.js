@@ -133,10 +133,13 @@ const obtenerRutasConTrayectos = async () => {
         h.direccion AS hotel_direccion, -- Dirección del hotel
         h.telefono AS hotel_telefono, -- Teléfono del hotel
         h.capacidad AS hotel_capacidad, -- Capacidad del hotel
-        v.tipo_vehiculo AS nombre_vehiculo -- Obtener el nombre del vehículo
+        v.tipo_vehiculo AS nombre_vehiculo, -- Obtener el nombre del vehículo
+        c.nombre AS chofer_nombre, -- Obtener el nombre del chofer
+        c.telefono AS chofer_telefono -- Obtener el teléfono del chofer
       FROM rutas r
       LEFT JOIN trayectos t ON r.id = t.ruta_id
       LEFT JOIN vehiculos v ON t.vehiculo_id = v.id -- Asociar vehículo al trayecto
+      LEFT JOIN choferes c ON v.chofer_id = c.id -- Asociar chofer al vehículo
       LEFT JOIN hoteles h ON t.hotel_id = h.id -- Asociar hotel al trayecto
       ORDER BY r.id, t.created_at ASC -- Ordenar trayectos por fecha de creación
     `;
@@ -170,6 +173,12 @@ const obtenerRutasConTrayectos = async () => {
           vehiculo_id: row.vehiculo_id,
           nombre_vehiculo: row.nombre_vehiculo,
           qr_code: row.qr_code,
+          chofer: row.chofer_nombre
+            ? {
+                nombre: row.chofer_nombre,
+                telefono: row.chofer_telefono,
+              }
+            : null,
           hotel: row.hotel_id
             ? {
                 id: row.hotel_id,
@@ -179,7 +188,7 @@ const obtenerRutasConTrayectos = async () => {
                 telefono: row.hotel_telefono,
                 capacidad: row.hotel_capacidad,
               }
-            : null, // Si no hay hotel asociado, devolver null
+            : null,
         });
       }
     });

@@ -25,7 +25,6 @@ export const JurisdiccionProvider = ({ children }) => {
       const response = await axios.get(`${BaseUrl}/jurisdicciones/`, {
         withCredentials: true,
       });
-      console.log(response.data);
       setJurisdicciones(response.data.jurisdicciones || []);
     } catch (error) {
       handleError(error, "Hubo un error al cargar las jurisdicciones.");
@@ -51,7 +50,6 @@ export const JurisdiccionProvider = ({ children }) => {
             ...prevJurisdicciones,
             jurisdiccionCreada,
           ];
-          console.log("Estado actualizado:", nuevasJurisdicciones);
           return nuevasJurisdicciones;
         });
 

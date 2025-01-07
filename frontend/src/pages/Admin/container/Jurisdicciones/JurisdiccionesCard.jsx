@@ -5,14 +5,13 @@ import ListaJurisdiccionesModal from "./ListaJurisdiccionesModal";
 import { GoLaw } from "react-icons/go";
 
 const JurisdiccionesCard = () => {
-  const { jurisdicciones, obtenerJurisdicciones } = useJurisdiccion(); // Incluye la función del contexto
+  const { jurisdicciones, obtenerJurisdicciones } = useJurisdiccion();
   const [isCrearModalOpen, setIsCrearModalOpen] = useState(false);
   const [isListaModalOpen, setIsListaModalOpen] = useState(false);
   useEffect(() => {
     obtenerJurisdicciones();
   }, []);
   const handleVerLista = () => {
-    console.log("Jurisdicciones actuales:", jurisdicciones);
     setIsListaModalOpen(true);
   };
   return (

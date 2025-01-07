@@ -12,7 +12,6 @@ const ZonasCard = () => {
     obtenerZonas();
   }, []);
   const handleVerLista = () => {
-    console.log("Zonas actuales:", zonas);
     setIsListaModalOpen(true);
   };
   return (

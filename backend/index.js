@@ -127,10 +127,8 @@ app.use("/api/limpieza", limpiezaRoutes);
 
 //Node cron para obtener los vuelos
 const cronJob = cron.schedule("*/10 * * * *", async () => {
-  console.log("Iniciando la actualizacion de vuelos");
   try {
     await obtenerVuelos();
-    console.log("Obteniendo vuelos y actualizandolos correctamente");
   } catch (error) {
     console.error("Error al actualizar vuelos", error.message);
   }

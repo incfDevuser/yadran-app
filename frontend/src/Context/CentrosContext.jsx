@@ -15,7 +15,6 @@ export const CentrosProvider = ({ children }) => {
     try {
       const response = await axios.get(`${BaseUrl}/centros/`);
       const data = response.data.centros;
-      console.log(data);
       setCentros(data);
     } catch (error) {
       setError(error.message || "Hubo un error al cargar los centros");

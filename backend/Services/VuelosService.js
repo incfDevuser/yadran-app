@@ -54,9 +54,6 @@ const insertarOActualizarVuelo = async (vuelo) => {
 
   try {
     await pool.query(query, values);
-    console.log(
-      `Vuelo ${vuelo.flight.iata} insertado/actualizado correctamente.`
-    );
   } catch (error) {
     console.error("Error al insertar/actualizar el vuelo:", error.message);
   }

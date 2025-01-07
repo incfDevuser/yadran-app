@@ -19,7 +19,7 @@ const Navbar = () => {
   ];
 
   const handleCerrarSesion = () => {
-    cerrarSesion(); 
+    cerrarSesion();
     setToggle(false);
   };
 
@@ -40,53 +40,67 @@ const Navbar = () => {
                 onClick={() => setToggle(true)}
               />
             )}
-            {toggle && usuarios && (
-              <ul className="absolute w-32 z-10 h-fit bg-[#FFFFFF] shadow-xl top-14 left-0 text-[#7C8DB0] flex flex-col gap-2 items-start p-4 scaleUp">
-                {rol === "Colaborador"
-                  ? colaboradorNavBar.map((item) => (
-                      <li
-                        key={item.id}
-                        className={`text-base hover:text-[#605DEC] transition-all duration-200 ${
-                          locationPath(item.path) && "text-[#605DEC]"
-                        }`}
+            {toggle && (
+              <ul className="absolute w-32 z-10 h-fit shadow-xl top-14 left-0 text-[#7C8DB0] flex flex-col gap-2 items-start p-4 scaleUp bg-white">
+                {usuarios ? (
+                  <>
+                    {rol === "Colaborador"
+                      ? colaboradorNavBar.map((item) => (
+                          <li
+                            key={item.id}
+                            className={`text-base hover:text-[#605DEC] transition-all duration-200 ${
+                              locationPath(item.path) && "text-[#605DEC]"
+                            }`}
+                          >
+                            <Link to={item.path}>{item.label}</Link>
+                          </li>
+                        ))
+                      : mainNavBar.map((item) => (
+                          <li
+                            key={item.id}
+                            className={`text-base hover:text-[#605DEC] transition-all duration-200 ${
+                              locationPath(item.path) && "text-[#605DEC]"
+                            }`}
+                          >
+                            <Link to={item.path}>{item.label}</Link>
+                          </li>
+                        ))}
+                    {rol === "Colaborador Autorizado" && !isAdmin && (
+                      <Link className="text-gray-500" to="/validar">
+                        Validar
+                      </Link>
+                    )}
+                    {isAdmin && rol !== "Colaborador" && (
+                      <Link
+                        to="/admin"
+                        className="text-[#605DEC] py-2 px-4 rounded-md transition-all duration-200"
                       >
-                        <Link to={item.path}>{item.label}</Link>
-                      </li>
-                    ))
-                  : mainNavBar.map((item) => (
-                      <li
-                        key={item.id}
-                        className={`text-base hover:text-[#605DEC] transition-all duration-200 ${
-                          locationPath(item.path) && "text-[#605DEC]"
-                        }`}
+                        Admin Panel
+                      </Link>
+                    )}
+                    {rol === "Contratista" && (
+                      <Link
+                        to="/contratista-dashboard"
+                        className="text-[#7C8DB0]"
                       >
-                        <Link to={item.path}>{item.label}</Link>
-                      </li>
-                    ))}
-                {rol === "Colaborador Autorizado" && !isAdmin && (
-                  <Link className="text-gray-500" to="/validar">
-                    Validar
-                  </Link>
-                )}
-                {isAdmin && rol !== "Colaborador" && (
-                  <Link
-                    to="/admin"
-                    className="text-[#605DEC] py-2 px-4 rounded-md transition-all duration-200"
+                        Mis Trabajadores
+                      </Link>
+                    )}
+                    <button
+                      className="py-2 px-4 md:py-3 md:px-5 rounded-[5px] text-base text-red-500"
+                      onClick={handleCerrarSesion}
+                    >
+                      Cerrar sesión
+                    </button>
+                  </>
+                ) : (
+                  <button
+                    className="py-2 px-4 rounded-md text-white bg-[#605DEC] hover:bg-white hover:text-[#605DEC] border-2 border-[#605DEC] transition-all duration-200"
+                    onClick={() => setSignin(true)}
                   >
-                    Admin Panel
-                  </Link>
+                    Iniciar Sesión
+                  </button>
                 )}
-                {rol === "Contratista" && (
-                  <Link to="/contratista-dashboard" className="text-[#7C8DB0]">
-                    Mis Trabajadores
-                  </Link>
-                )}
-                <button
-                  className="py-2 px-4 md:py-3 md:px-5 rounded-[5px] text-base text-red-500"
-                  onClick={handleCerrarSesion}
-                >
-                  Cerrar sesión
-                </button>
               </ul>
             )}
           </div>
@@ -152,7 +166,7 @@ const Navbar = () => {
               className="bg-[#605DEC] py-2 px-4 md:py-3 md:px-5 rounded-[5px] border-2 border-[#605DEC] text-base text-[#FAFAFA] hover:text-[#605DEC] hover:bg-white hover:border-2 hover:border-[#605DEC] transition-all duration-200"
               onClick={() => setSignin(true)}
             >
-              Sign up
+              Iniciar Sesión
             </button>
           )}
         </div>

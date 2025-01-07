@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useBases } from "../../../../Context/BasesContext";
 import { usePontones } from "../../../../Context/PontonesContext";
 
@@ -6,12 +6,15 @@ const CreateBaseModal = ({ isOpen, onClose }) => {
   const { crearBase } = useBases();
   const { pontones, loading: loadingPontones } = usePontones();
 
-  const [nuevaBase, setNuevaBase] = useState({
+  const initialState = {
     nombre_base: "",
     jefe_base: "",
     ponton_id: null,
-  });
+  };
 
+  const [nuevaBase, setNuevaBase] = useState(initialState);
+
+  // Manejar cambios en los campos de entrada
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setNuevaBase({
@@ -20,9 +23,18 @@ const CreateBaseModal = ({ isOpen, onClose }) => {
     });
   };
 
+  // Resetea el estado al cerrar el modal
+  useEffect(() => {
+    if (!isOpen) {
+      setNuevaBase(initialState);
+    }
+  }, [isOpen]);
+
+  // Crear nueva base
   const handleCreate = async () => {
     try {
       await crearBase(nuevaBase);
+      setNuevaBase(initialState);
       onClose();
     } catch (error) {
       console.error("Error al crear la base:", error.message);
@@ -72,20 +84,21 @@ const CreateBaseModal = ({ isOpen, onClose }) => {
               <select
                 name="ponton_id"
                 value={nuevaBase.ponton_id || ""}
-                onChange={(e) =>
+                onChange={(e) => {
+                  const selectedValue = e.target.value;
                   setNuevaBase({
                     ...nuevaBase,
                     ponton_id:
-                      e.target.value === "" ? null : Number(e.target.value),
-                  })
-                }
+                      selectedValue === "" ? null : parseInt(selectedValue, 10),
+                  });
+                }}
                 className="w-full px-3 py-2 border rounded"
                 required
               >
                 <option value="">Selecciona un Ponton</option>
                 {pontones.length > 0 ? (
                   pontones.map((ponton) => (
-                    <option key={ponton.id} value={ponton.id}>
+                    <option key={ponton.ponton_id} value={ponton.ponton_id}>
                       {ponton.nombre_ponton}
                     </option>
                   ))

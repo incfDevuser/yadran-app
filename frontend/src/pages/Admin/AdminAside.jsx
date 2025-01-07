@@ -11,7 +11,7 @@ const AdminAside = () => {
   };
 
   return (
-    <div className="relative">
+    <div className="relative bg-white selection">
       {/* Botón de menú hamburguesa para Admin Panel */}
       <button
         className="md:hidden flex items-center p-4 text-gray-700 fixed top-16 left-0 w-full"
@@ -29,7 +29,7 @@ const AdminAside = () => {
       <aside
         className={`${
           isMenuOpen ? "block" : "hidden"
-        } md:block w-full md:w-1/4 h-full  p-5 fixed md:relative z-40 top-20 left-0 transition-transform duration-300`}
+        } md:block w-full md:w-1/4 h-full  p-5 fixed md:relative z-40 top-20 left-0 transition-transform duration-300 bg-white`}
       >
         {/* Botón de cierre adicional para pantallas pequeñas */}
         <button

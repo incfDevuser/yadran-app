@@ -89,7 +89,6 @@ export const UsuariosProvider = ({ children }) => {
           withCredentials: true,
         }
       );
-      console.log("Viaje cancelado:", response.data);
       return response.data;
     } catch (error) {
       console.error("Error al cancelar el viaje:", error);
