@@ -1,6 +1,6 @@
 import React from "react";
 import { FaPlaneDeparture, FaPlaneArrival, FaPlane } from "react-icons/fa";
-import latamImage from '../../../assets/images/Aerolineas/latam image.png'
+// import latamImage from '../../../assets/images/Aerolineas/latam image.png'
 const formatoFecha = (fechaISO) => {
   const fecha = new Date(fechaISO);
   return fecha.toLocaleDateString("es-ES", {
@@ -31,11 +31,11 @@ const VueloCard = ({ vuelo }) => {
     <div className="flex flex-col gap-4 p-7 shadow-lg rounded-xl w-[500px] hover:scale-105 transition-transform duration-300 ease-in-out hover:shadow-2xl">
       <div className="flex justify-between">
         <div className="flex justify-start items-center gap-2">
-          <img
+          {/* <img
             src={latamImage}
             alt="aerolineaImg"
             className="w-[70px] rounded-xl"
-          />
+          /> */}
           <div className="flex flex-col">
             <p className="font-bold">{vuelo.numero_vuelo}</p>
             <p className="font-semibold text-gray-500">{vuelo.aerolinea}</p>

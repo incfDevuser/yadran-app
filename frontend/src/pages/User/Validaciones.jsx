@@ -1,9 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { Html5QrcodeScanner } from "html5-qrcode";
 import { useQr } from "../../Context/QrContext";
+import { useUsuario } from "../../Context/UsuarioContext";
+import { Navigate } from "react-router-dom";
+import NotUser from "./NotUser";
 
 const Validaciones = () => {
   const { validarTrayecto, validarPonton } = useQr();
+  const { usuarios, loading } = useUsuario();
   const [mensaje, setMensaje] = useState(null);
   const [error, setError] = useState(null);
   const [isScanning, setIsScanning] = useState(false);
@@ -70,6 +74,18 @@ const Validaciones = () => {
       }
     };
   }, [isScanning, tipoValidacion, validarTrayecto, validarPonton]);
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <p>Cargando...</p>
+      </div>
+    );
+  }
+
+  if (!usuarios) {
+    return <NotUser />;
+  }
 
   return (
     <div className="max-w-5xl mx-auto p-6 bg-white shadow-lg rounded-lg mt-10">

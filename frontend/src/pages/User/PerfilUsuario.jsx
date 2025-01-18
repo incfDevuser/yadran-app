@@ -73,7 +73,7 @@ const PerfilUsuario = () => {
   };
 
   if (!usuarios) {
-    return <NotUser/>;
+    return <NotUser />;
   }
 
   return (
@@ -188,12 +188,14 @@ const PerfilUsuario = () => {
                 >
                   Ver Trayectos
                 </button>
-                <button
-                  onClick={() => handleCancelarViaje(viaje.solicitud_id)}
-                  className="bg-red-500 text-white px-4 py-2 rounded-md shadow hover:bg-red-600"
-                >
-                  Cancelar Viaje
-                </button>
+                {viaje.estado !== "Aprobado" && (
+                  <button
+                    onClick={() => handleCancelarViaje(viaje.solicitud_id)}
+                    className="bg-red-500 text-white px-4 py-2 rounded-md shadow hover:bg-red-600"
+                  >
+                    Cancelar Viaje
+                  </button>
+                )}
               </div>
             </div>
           ))
@@ -241,12 +243,16 @@ const PerfilUsuario = () => {
               <p className="text-gray-700 mb-4">
                 <strong>Comentario:</strong> {solicitud.comentario || "N/A"}
               </p>
-              <button
-                onClick={() => handleCancelarSolicitud(solicitud.solicitud_id)}
-                className="bg-red-500 text-white px-4 py-2 rounded-md shadow hover:bg-red-600"
-              >
-                Cancelar Solicitud
-              </button>
+              {solicitud.estado !== "aprobado" && (
+                <button
+                  onClick={() =>
+                    handleCancelarSolicitud(solicitud.solicitud_id)
+                  }
+                  className="bg-red-500 text-white px-4 py-2 rounded-md shadow hover:bg-red-600"
+                >
+                  Cancelar Solicitud
+                </button>
+              )}
             </div>
           ))
         ) : (
@@ -256,7 +262,6 @@ const PerfilUsuario = () => {
         )}
       </div>
 
-      {/* Modal para mostrar los trayectos */}
       {/* Modal para mostrar los trayectos */}
       {modalOpen && (
         <div

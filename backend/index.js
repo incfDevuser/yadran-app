@@ -48,6 +48,9 @@ import seguimientoViajes from "./routes/seguimiento.routes.js";
 import hotelesRoutes from "./routes/hoteles.routes.js";
 //Limpieza de entidades
 import limpiezaRoutes from "./routes/limpieza.routes.js";
+import path from "path";
+const __dirname = path.resolve();
+
 //Definiciones y variables globales
 dotenv.config();
 pool;
@@ -124,6 +127,10 @@ app.use("/api/seguimiento", seguimientoViajes);
 app.use("/api/hoteles", hotelesRoutes);
 //Rutas para la limpieza
 app.use("/api/limpieza", limpiezaRoutes);
+app.use(express.static(path.join(__dirname, "../frontend/dist")));
+app.get("*", (req, res) => {
+  res.sendFile(path.join(__dirname, "../frontend/dist", "index.html"));
+});
 
 //Node cron para obtener los vuelos
 const cronJob = cron.schedule("*/10 * * * *", async () => {

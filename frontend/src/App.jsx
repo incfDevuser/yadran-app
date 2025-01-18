@@ -79,6 +79,10 @@ import AdminNotificaciones from "./pages/Admin/AdminNotificaciones";
 import NotificacionesUsuario from "./pages/User/NotificacionesUsuario";
 import { NotificacionesProvider } from "./Context/NotificacionesContext";
 
+//Vista sin autorizar
+import Unauthorized from "./pages/Unauthorized";
+
+
 const App = () => {
   return (
     <UsuariosProvider>
@@ -91,6 +95,8 @@ const App = () => {
             <Routes>
               {/* Home Page */}
               <Route path="/" element={<Flights />} />
+
+              <Route path="/unauthorized" element={<Unauthorized />} />
 
               <Route
                 path="/contratista-dashboard"

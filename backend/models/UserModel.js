@@ -34,57 +34,39 @@ const obtenerUsuarioConViajes = async (id) => {
   try {
     const query = `
       SELECT 
-        u.*,
-        r.nombre_rol,
-        -- Viajes del usuario
-        COALESCE(
-          json_agg(
-            DISTINCT jsonb_build_object(
-              'id', v.id,
-              'nombre', v.nombre,
-              'descripcion', v.descripcion,
-              'fecha_inicio', uv.fecha_inicio,
-              'fecha_fin', uv.fecha_fin,
-              'comentario_usuario', uv.comentario_usuario,
-              'estado', uv.estado,
-              'solicitud_id', uv.id,
-              'trayectos', (
-                SELECT COALESCE(
-                  json_agg(
-                    json_build_object(
-                      'id', t.id,
-                      'origen', t.origen,
-                      'destino', t.destino,
-                      'estado', t.estado,
-                      'vehiculo_id', t.vehiculo_id,
-                      'tipo_vehiculo', vh.tipo_vehiculo,
-                      'duracion_estimada', t.duracion_estimada
-                    )
-                    ORDER BY t.orden -- Ordenar los trayectos por el campo orden
-                  ), '[]'
-                )
-                FROM trayectos t
-                LEFT JOIN vehiculos vh ON t.vehiculo_id = vh.id
-                WHERE t.ruta_id = v.ruta_id
-              )
-            )
-          ) FILTER (WHERE v.id IS NOT NULL), '[]'
-        ) AS viajes,
-        -- Solicitudes intercentro
-        COALESCE(
-          json_agg(
-            DISTINCT jsonb_build_object(
-              'solicitud_id', si.id,
-              'movimiento_id', si.movimiento_id,
-              'estado', si.estado,
-              'comentario', si.comentario,
-              'fecha_movimiento', mi.fecha,
-              'centro_origen', co.nombre_centro,
-              'centro_destino', cd.nombre_centro,
-              'lancha', l.nombre
-            )
-          ) FILTER (WHERE si.id IS NOT NULL), '[]'
-        ) AS solicitudes_intercentro
+          u.*,
+          r.nombre_rol,
+          -- Viajes del usuario
+          COALESCE(
+              json_agg(
+                  DISTINCT jsonb_build_object(
+                      'id', v.id,
+                      'nombre', v.nombre,
+                      'descripcion', v.descripcion,
+                      'fecha_inicio', uv.fecha_inicio,
+                      'fecha_fin', uv.fecha_fin,
+                      'comentario_usuario', uv.comentario_usuario,
+                      'estado', uv.estado,
+                      'solicitud_id', uv.id,
+                      'trayectos', trayectos_ordenados.trayectos
+                  )
+              ) FILTER (WHERE v.id IS NOT NULL), '[]'
+          ) AS viajes,
+          -- Solicitudes intercentro
+          COALESCE(
+              json_agg(
+                  DISTINCT jsonb_build_object(
+                      'solicitud_id', si.id,
+                      'movimiento_id', si.movimiento_id,
+                      'estado', si.estado,
+                      'comentario', si.comentario,
+                      'fecha_movimiento', mi.fecha,
+                      'centro_origen', co.nombre_centro,
+                      'centro_destino', cd.nombre_centro,
+                      'lancha', l.nombre
+                  )
+              ) FILTER (WHERE si.id IS NOT NULL), '[]'
+          ) AS solicitudes_intercentro
       FROM usuarios u
       JOIN roles r ON u.rol_id = r.id
       LEFT JOIN usuarios_viajes uv ON u.id = uv.usuario_id
@@ -94,9 +76,27 @@ const obtenerUsuarioConViajes = async (id) => {
       LEFT JOIN centro co ON mi.centro_origen_id = co.id
       LEFT JOIN centro cd ON mi.centro_destino_id = cd.id
       LEFT JOIN lanchas l ON mi.lancha_id = l.id
+      LEFT JOIN LATERAL (
+          SELECT 
+              json_agg(
+                  json_build_object(
+                      'id', t.id,
+                      'origen', t.origen,
+                      'destino', t.destino,
+                      'estado', t.estado,
+                      'vehiculo_id', t.vehiculo_id,
+                      'tipo_vehiculo', vh.tipo_vehiculo,
+                      'duracion_estimada', t.duracion_estimada
+                  ) ORDER BY t.id ASC
+              ) AS trayectos
+          FROM trayectos t
+          LEFT JOIN vehiculos vh ON t.vehiculo_id = vh.id
+          WHERE t.ruta_id = v.ruta_id
+      ) trayectos_ordenados ON TRUE
       WHERE u.id = $1
       GROUP BY u.id, r.nombre_rol;
     `;
+
     const values = [id];
     const response = await pool.query(query, values);
     return response.rows[0];
@@ -168,5 +168,5 @@ export const UserModel = {
   eliminarUsuario,
   findUser,
   obtenerUsuarioConViajes,
-  actualizarUsuario
+  actualizarUsuario,
 };

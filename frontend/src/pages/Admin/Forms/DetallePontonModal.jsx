@@ -2,20 +2,6 @@ import React from "react";
 import { FaEnvelope, FaCircle } from "react-icons/fa";
 
 const DetallePontonModal = ({ pontones = [], closeModal }) => {
-  const getEstadoColor = (estado) => {
-    switch (estado) {
-      case "activo":
-        return "text-green-500 bg-green-300 rounded-xl p-1";
-      case "Confirmado":
-        return "text-green-500 bg-green-300 rounded-xl p-1";
-      case "inactivo":
-        return "text-gray-500 bg-gray-300 rounded-xl p-1";
-      case "pendiente":
-        return "text-red-500 bg-red-300 rounded-xl p-1";
-      default:
-        return "text-gray-400 bg-gray-300 rounded-xl p-1";
-    }
-  };
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
@@ -42,15 +28,6 @@ const DetallePontonModal = ({ pontones = [], closeModal }) => {
                         {persona.email}
                       </p>
                     </div>
-                    <span
-                      className={`ml-auto font-bold ${getEstadoColor(
-                        persona.estado
-                      )}`}
-                    >
-                      {persona.estado === "pendiente"
-                        ? "Pendiente"
-                        : persona.estado}
-                    </span>
                   </li>
                 ))}
               </ul>

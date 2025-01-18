@@ -33,16 +33,6 @@ const AdminRoutes = () => {
   const [selectedHotel, setSelectedHotel] = useState(null);
   const [searchHotel, setSearchHotel] = useState("");
 
-  const formatInterval = (duracion) => {
-    if (!duracion || typeof duracion !== "object") return "N/A";
-
-    const hours = duracion.hours || 0;
-    const minutes = duracion.minutes || 0;
-    const seconds = duracion.seconds || 0;
-
-    return `${hours}h ${minutes}m ${seconds}s`;
-  };
-
   //RUTAS
   const initialStateRuta = {
     nombre_ruta: "",
@@ -59,23 +49,12 @@ const AdminRoutes = () => {
     ruta_id: "",
     origen: "",
     destino: "",
-    duracion_estimada: "00:00:00",
+    duracion_estimada: null,
     orden: 1,
     estado: "Pendiente",
     vehiculo_id: "",
   };
   const [trayecto, setTrayecto] = useState(initialStateTrayecto);
-  // const descargarPDF = (trayecto) => {
-  //   if (!trayecto.qr_code) {
-  //     console.error("El trayecto no tiene un QR asignado.");
-  //     return;
-  //   }
-  //   const doc = new jsPDF();
-  //   doc.setFontSize(16);
-  //   doc.text(`Trayecto: ${trayecto.origen} → ${trayecto.destino}`, 10, 20);
-  //   doc.addImage(trayecto.qr_code, "JPEG", 10, 30, 100, 100);
-  //   doc.save(`Trayecto_${trayecto.id}.pdf`);
-  // };
   //Hoteles
   const openHotelModal = (rutaId) => {
     setSelectedRuta(rutaId);
@@ -164,13 +143,8 @@ const AdminRoutes = () => {
   const handleCreateTrayecto = async (e) => {
     e.preventDefault();
     try {
-      const duracionEnInterval = new Date(trayecto.duracion_estimada * 60000)
-        .toISOString()
-        .substr(11, 8);
-
       const trayectoData = {
         ...trayecto,
-        duracion_estimada: duracionEnInterval,
       };
       await crearTrayecto(trayectoData);
       await obtenerRutas();

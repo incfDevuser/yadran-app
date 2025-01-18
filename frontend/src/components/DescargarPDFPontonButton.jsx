@@ -4,10 +4,6 @@ import PDFPontonDocument from "./PDFPontonDocument";
 import { FaQrcode } from "react-icons/fa";
 
 const DescargarPDFPontonButton = ({ ponton }) => {
-  if (!ponton || !ponton.qr_code) {
-    console.error("Datos insuficientes:", ponton);
-    return null;
-  }
   return (
     <PDFDownloadLink
       document={<PDFPontonDocument ponton={ponton} />}

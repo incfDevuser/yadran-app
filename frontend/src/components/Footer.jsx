@@ -1,4 +1,3 @@
-import { appStore, facebook, googlePlay, instagram, twitter } from "../assets/icons";
 
 const Footer = () => {
   return (
@@ -43,11 +42,6 @@ const Footer = () => {
           </ul>
         </div>
         <div className="border-t-2 border-[#CBD4E6] py-8 flex justify-between items-center">
-          <div className="flex items-center justify-center gap-3">
-            <img src={twitter} alt="twitter" className="cursor-pointer object-cover w-5 h-5 sm:w-7 sm:h-7" />
-            <img src={instagram} alt="instagram" className="cursor-pointer object-cover w-5 h-5 sm:w-7 sm:h-7" />
-            <img src={facebook} alt="facebook" className="cursor-pointer object-cover w-5 h-5 sm:w-7 sm:h-7" />
-          </div>
           <p className="text-[#7C8DB0] text-sm sm:text-base">&copy; 2025 PersonalTrack, Inc.</p>
         </div>
       </div>
