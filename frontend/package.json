@@ -12,6 +12,7 @@
   "dependencies": {
     "@headlessui/react": "^2.1.8",
     "@heroicons/react": "^2.1.5",
+    "@maptiler/sdk": "^3.0.0",
     "@react-oauth/google": "^0.12.1",
     "@react-pdf/renderer": "^4.1.6",
     "@remixicon/react": "^4.5.0",
