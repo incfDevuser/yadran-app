@@ -2,16 +2,11 @@ import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import { VitePWA } from "vite-plugin-pwa";
 
+// https://vitejs.dev/config/
 export default defineConfig({
   plugins: [
     react(),
     VitePWA({
-      strategies: "injectManifest",
-      injectManifest: {
-        swSrc: "src/service-worker.js",
-        swDest: "dist/sw.js",
-        maximumFileSizeToCacheInBytes: 5 * 1024 * 1024,
-      },
       manifest: {
         name: "PersonalTrack",
         short_name: "PersonalTrack",
@@ -74,16 +69,10 @@ export default defineConfig({
         ],
       },
       workbox: {
-        maximumFileSizeToCacheInBytes: 5 * 1024 * 1024, // Tamaño máximo de caché
-        runtimeCaching: [
-          {
-            urlPattern: /^https:\/\/accounts\.google\.com\/.*/, // Ignorar caché para OAuth
-            handler: "NetworkOnly", // Usar red directamente
-          },
-        ],
+        maximumFileSizeToCacheInBytes: 5 * 1024 * 1024,
       },
       devOptions: {
-        enabled: true, // Habilitar para desarrollo
+        enabled: true,
       },
     }),
   ],

@@ -54,8 +54,7 @@ export const UsuariosProvider = ({ children }) => {
   };
   const iniciarSesion = async () => {
     try {
-      const googleAuthUrl = `http://localhost:5001/auth/google`;
-      window.location.href = googleAuthUrl;
+      window.location.href = "http://localhost:5001/auth/google"
     } catch (error) {
       console.error("Error al iniciar sesión:", error);
       setUsuarios(null);
