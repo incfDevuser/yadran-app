@@ -17,7 +17,6 @@ import AdminSolicitudes from "./pages/Admin/AdminSolicitudes";
 import AdminDashboard2 from "./pages/Admin/AdminDashboard2";
 
 import Trips from "./pages/Flight/Trips";
-import MisCentros from "./pages/MisCentros";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 //Importar el contexto de los proveedores
@@ -143,9 +142,6 @@ const App = () => {
               />
               {/* Solicitudes del Usuario */}
               <Route path="/trips" element={<Trips />} />
-
-              {/* Centros los cuales el usuario ha visitado */}
-              <Route path="/mis-centros" element={<MisCentros />} />
 
               {/* Confirmacion de viaje del usuario al agendar una visita */}
               <Route

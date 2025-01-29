@@ -34,7 +34,7 @@ router.get(
       maxAge: 24 * 60 * 60 * 1000,
       sameSite: "Strict",
     });
-    res.redirect(`${process.env.REACT_URL_APP}/`)
+    res.redirect(`${process.env.REACT_URL_APP}`)
   }
 );
 export default router;

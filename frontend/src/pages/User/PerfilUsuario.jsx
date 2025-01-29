@@ -3,7 +3,7 @@ import { useUsuario } from "../../Context/UsuarioContext";
 import { useIntercentros } from "../../Context/IntercentroContext";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import ModalEditarPerfil from "./ModalEditarPerfil.JSX";
+import ModalEditarPerfil from "./ModalEditarPerfil";
 import NotUser from "./NotUser";
 const PerfilUsuario = () => {
   const { usuarios, cancelarViaje, actualizarUsuario } = useUsuario();
