@@ -74,17 +74,23 @@ export default defineConfig({
         ],
       },
       workbox: {
-        maximumFileSizeToCacheInBytes: 5 * 1024 * 1024, // Tamaño máximo de caché
+        maximumFileSizeToCacheInBytes: 5 * 1024 * 1024,
         runtimeCaching: [
           {
-            urlPattern: /^https:\/\/accounts\.google\.com\/.*/, // Ignorar caché para OAuth
-            handler: "NetworkOnly", // Usar red directamente
+            urlPattern: /^https:\/\/accounts\.google\.com\/.*/,
+            handler: "NetworkOnly",
           },
         ],
       },
       devOptions: {
-        enabled: true, // Habilitar para desarrollo
+        enabled: true,
       },
     }),
   ],
+  server: {
+    headers: {
+      "Content-Security-Policy":
+        "default-src 'self'; script-src 'self' 'unsafe-inline' https://apis.google.com https://accounts.google.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; connect-src 'self' https://oauth2.googleapis.com https://accounts.google.com; frame-src 'self' https://accounts.google.com;",
+    },
+  },
 });
