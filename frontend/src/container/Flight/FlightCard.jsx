@@ -1,16 +1,3 @@
-const formatDuration = (duration) => {
-  if (!duration) {
-    return "Duración no disponible";
-  }
-  const [hours, minutes, seconds] = duration.split(":").map(Number);
-  const totalMinutes = hours * 60 + minutes + Math.floor(seconds / 60);
-  const formattedHours = Math.floor(totalMinutes / 60);
-  const remainingMinutes = totalMinutes % 60;
-  return formattedHours > 0
-    ? `${formattedHours}h ${remainingMinutes}min`
-    : `${remainingMinutes}min`;
-};
-
 const FlightCard = ({ duration, name, origin, destination, vehiculo }) => {
   return (
     <div className="w-full max-w-md mx-auto p-6 border rounded-lg shadow-lg bg-white mb-6">
@@ -29,15 +16,6 @@ const FlightCard = ({ duration, name, origin, destination, vehiculo }) => {
           <p className="text-md text-gray-600 mb-2">
             <span className="font-semibold text-gray-700">Vehículo:</span>{" "}
             {vehiculo || "No especificado"}
-          </p>
-        </div>
-
-        <div className="flex flex-col items-center bg-blue-100 p-4 rounded-md w-full">
-          <h3 className="font-semibold text-md text-blue-700">
-            Duración Estimada
-          </h3>
-          <p className="text-lg font-bold text-blue-900">
-            {formatDuration(duration)}
           </p>
         </div>
       </div>

@@ -39,9 +39,7 @@ export const PontonesProvider = ({ children }) => {
   };
   const asignarQrPonton = async (id) => {
     try {
-      const response = await axios.post(
-        `${BaseUrl}i/qr/asignar-qr/${id}`
-      );
+      const response = await axios.post(`${BaseUrl}i/qr/asignar-qr/${id}`);
       if (response.status === 200) {
         setPontones((prevPontones) =>
           prevPontones.map((ponton) =>
@@ -69,12 +67,14 @@ export const PontonesProvider = ({ children }) => {
         `${BaseUrl}/pontones/${id}`,
         datosActualizados
       );
-      const pontonActualizado = response.data;
-
-      setPontones((prev) =>
-        prev.map((p) => (p.id === id ? pontonActualizado : p))
-      );
-      return pontonActualizado;
+      if (response.status === 200) {
+        setPontones((prev) =>
+          prev.map((p) =>
+            p.ponton_id === id ? { ...p, ...datosActualizados } : p
+          )
+        );
+      }
+      return response.data;
     } catch (error) {
       console.error("Error al actualizar el pontón:", error.message);
       throw error;

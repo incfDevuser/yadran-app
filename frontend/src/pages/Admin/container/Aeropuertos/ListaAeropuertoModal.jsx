@@ -1,14 +1,22 @@
-import React, {useEffect} from "react";
+import React, { useEffect, useState } from "react";
 import { useAeropuertos } from "../../../../Context/AeropuertosContext";
+import EditarAeropuerto from "./EditarAeropuerto";
 
 const ListaAeropuertoModal = ({ isOpen, onClose }) => {
-  const { aeropuertos, obtenerAeropuertos,  loading } = useAeropuertos();
+  const { aeropuertos, obtenerAeropuertos, loading, error } = useAeropuertos();
+  const [aeropuertoSeleccionado, setAeropuertoSeleccionado] = useState(null);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
-    useEffect(() => {
-      if (isOpen) {
-        obtenerAeropuertos();
-      }
-    }, [isOpen]);
+  useEffect(() => {
+    if (isOpen) {
+      obtenerAeropuertos();
+    }
+  }, [isOpen]);
+
+  const abrirModalEditar = (aeropuerto) => {
+    setAeropuertoSeleccionado(aeropuerto);
+    setIsEditModalOpen(true);
+  };
 
   if (!isOpen) return null;
 
@@ -19,25 +27,33 @@ const ListaAeropuertoModal = ({ isOpen, onClose }) => {
           <h2 className="text-xl font-bold">Lista de Aeropuertos</h2>
           <button
             onClick={onClose}
-            className="text-gray-600 hover:text-gray-900"
+            className="text-gray-600 hover:text-gray-900 text-lg font-bold"
           >
             X
           </button>
         </div>
         {loading ? (
           <p>Cargando aeropuertos...</p>
+        ) : error ? (
+          <p className="text-red-500">{error}</p>
         ) : (
           <div>
             {aeropuertos.length > 0 ? (
               aeropuertos.map((aeropuerto) => (
                 <div
                   key={aeropuerto.id}
-                  className="p-4 border rounded-md shadow-sm mb-2"
+                  className="p-4 border rounded-md shadow-sm mb-2 bg-gray-100"
                 >
                   <h3 className="font-bold">{aeropuerto.nombre_aeropuerto}</h3>
                   <p>Ubicación: {aeropuerto.ubicacion_aeropuerto}</p>
                   <p>Localidad: {aeropuerto.localidad}</p>
                   <p>Estado: {aeropuerto.estado}</p>
+                  <button
+                    onClick={() => abrirModalEditar(aeropuerto)}
+                    className="bg-yellow-500 text-white px-4 py-2 rounded mt-2"
+                  >
+                    Editar
+                  </button>
                 </div>
               ))
             ) : (
@@ -45,6 +61,11 @@ const ListaAeropuertoModal = ({ isOpen, onClose }) => {
             )}
           </div>
         )}
+        <EditarAeropuerto
+          isOpen={isEditModalOpen}
+          onClose={() => setIsEditModalOpen(false)}
+          aeropuerto={aeropuertoSeleccionado}
+        />
       </div>
     </div>
   );

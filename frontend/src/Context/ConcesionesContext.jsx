@@ -55,11 +55,14 @@ export const ConcesionesProvider = ({ children }) => {
         `${BaseUrl}/concesiones/${id}`,
         datosActualizados
       );
-      const concesionActualizada = response.data;
-      setConcesiones((prev) =>
-        prev.map((c) => (c.id === id ? concesionActualizada : c))
-      );
-      return concesionActualizada;
+      if (response.status === 200) {
+        setConcesiones((prevConcesiones) =>
+          prevConcesiones.map((c) =>
+            c.id === id ? { ...c, ...datosActualizados } : c
+          )
+        );
+      }
+      return response.data;
     } catch (error) {
       setError(error.message || "Hubo un error al actualizar la concesión.");
       throw error;

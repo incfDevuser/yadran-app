@@ -48,14 +48,16 @@ export const CentrosProvider = ({ children }) => {
         `${BaseUrl}/centros/${id}`,
         datosActualizados
       );
-      const centroActualizado = response.data;
-
-      setCentros((prev) =>
-        prev.map((c) => (c.id === id ? centroActualizado : c))
-      );
-      return centroActualizado;
+      if (response.status === 200) {
+        setCentros((prevCentros) =>
+          prevCentros.map((centro) =>
+            centro.id === id ? { ...centro, ...datosActualizados } : centro
+          )
+        );
+      }
+      return response.data;
     } catch (error) {
-      console.error("Error al actualizar el centro:", error.message);
+      setError(error.message || "Hubo un error al actualizar el centro.");
       throw error;
     } finally {
       setLoading(false);
@@ -64,7 +66,14 @@ export const CentrosProvider = ({ children }) => {
 
   return (
     <CentrosContext.Provider
-      value={{ centros, loading, error, obtenerCentros, crearCentro, actualizarCentro }}
+      value={{
+        centros,
+        loading,
+        error,
+        obtenerCentros,
+        crearCentro,
+        actualizarCentro,
+      }}
     >
       {children}
     </CentrosContext.Provider>

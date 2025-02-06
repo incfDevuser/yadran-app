@@ -74,9 +74,13 @@ export const JurisdiccionProvider = ({ children }) => {
         datosActualizados,
         { withCredentials: true }
       );
-      setJurisdicciones((prev) =>
-        prev.map((j) => (j.id === id ? response.data : j))
-      );
+  
+      if (response.status === 200) {
+        setJurisdicciones((prev) =>
+          prev.map((j) => (j.id === id ? { ...j, ...datosActualizados } : j))
+        );
+      }
+  
       return response.data;
     } catch (error) {
       handleError(error, "Hubo un error al actualizar la jurisdicción.");

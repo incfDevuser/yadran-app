@@ -45,16 +45,6 @@ const FlightExplore = () => {
     setModalOpen(false);
   };
 
-  const getTotalDuration = (trayectos) => {
-    const totalMinutes = trayectos.reduce(
-      (acc, trayecto) => acc + trayecto.duracion_estimada,
-      0
-    );
-    const hours = Math.floor(totalMinutes / 60);
-    const minutes = totalMinutes % 60;
-    return { hours, minutes };
-  };
-
   // Filtrar los viajes según el rol del usuario
   const filteredViajes = viajes
     .filter((viaje) => {
@@ -126,7 +116,6 @@ const FlightExplore = () => {
       <div className="mt-16 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
         {filteredViajes.length > 0 ? (
           filteredViajes.map((viaje) => {
-            const totalDuration = getTotalDuration(viaje.trayectos);
             const centro = viaje.centro_asociado || {};
             const clima = centro.clima || {};
             const descripcionClima =
@@ -247,7 +236,6 @@ const FlightExplore = () => {
                   return (
                     <FlightCard
                       key={trayecto.id}
-                      duration={trayecto.duracion_estimada}
                       name={`${trayecto.origen} a ${trayecto.destino}`}
                       origin={trayecto.origen}
                       destination={trayecto.destino}

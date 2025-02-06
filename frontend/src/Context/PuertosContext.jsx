@@ -20,14 +20,11 @@ export const PuertosProvider = ({ children }) => {
     } finally {
       setLoading(false);
     }
-  }, []); // Memoizar para evitar referencias cambiantes
+  }, []);
 
   const crearPuerto = async (nuevoPuerto) => {
     try {
-      const response = await axios.post(
-        `${BaseUrl}/puertos/create`,
-        nuevoPuerto
-      );
+      const response = await axios.post(`${BaseUrl}/puertos/create`, nuevoPuerto);
       if (response.status === 201) {
         setPuertos((prev) => [...prev, response.data]);
         return response.data;
@@ -39,10 +36,32 @@ export const PuertosProvider = ({ children }) => {
       throw error;
     }
   };
+  const actualizarPuerto = async (id, datosActualizados) => {
+    setLoading(true);
+    try {
+      const response = await axios.put(
+        `${BaseUrl}/puertos/${id}`,
+        datosActualizados
+      );
+      if (response.status === 200) {
+        setPuertos((prev) =>
+          prev.map((puerto) =>
+            puerto.id === id ? { ...puerto, ...datosActualizados } : puerto
+          )
+        );
+      }
+      return response.data;
+    } catch (error) {
+      console.error("Error al actualizar el puerto:", error.message);
+      throw error;
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <PuertosContext.Provider
-      value={{ puertos, loading, error, obtenerPuertos, crearPuerto }}
+      value={{ puertos, loading, error, obtenerPuertos, crearPuerto, actualizarPuerto }}
     >
       {children}
     </PuertosContext.Provider>

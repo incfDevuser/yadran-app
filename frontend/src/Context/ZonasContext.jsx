@@ -44,7 +44,6 @@ export const ZonasProvider = ({ children }) => {
     }
   };
 
-  // Actualizar una zona existente
   const actualizarZona = async (id, datosActualizados) => {
     setLoading(true);
     try {
@@ -52,11 +51,14 @@ export const ZonasProvider = ({ children }) => {
         `${BaseUrl}/zonas/${id}`,
         datosActualizados
       );
-      const zonaActualizada = response.data;
-      setZonas((prevZonas) =>
-        prevZonas.map((zona) => (zona.id === id ? zonaActualizada : zona))
-      );
-      return zonaActualizada;
+      if (response.status === 200) {
+        setZonas((prevZonas) =>
+          prevZonas.map((zona) =>
+            zona.id === id ? { ...zona, ...datosActualizados } : zona
+          )
+        );
+      }
+      return response.data;
     } catch (error) {
       setError(error.message || "Hubo un error al actualizar la zona.");
       throw error;

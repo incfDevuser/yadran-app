@@ -42,6 +42,29 @@ export const AeropuertosProvider = ({ children }) => {
     }
   };
 
+  const actualizarAeropuerto = async (id, datosActualizados) => {
+    setLoading(true);
+    try {
+      const response = await axios.put(
+        `${BaseUrl}/aeropuertos/${id}`,
+        datosActualizados
+      );
+      if (response.status === 200) {
+        setAeropuertos((prev) =>
+          prev.map((aero) =>
+            aero.id === id ? { ...aero, ...datosActualizados } : aero
+          )
+        );
+      }
+      return response.data;
+    } catch (error) {
+      console.error("Error al actualizar el aeropuerto:", error.message);
+      throw error;
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <AeropuertosContext.Provider
       value={{
@@ -50,6 +73,7 @@ export const AeropuertosProvider = ({ children }) => {
         error,
         obtenerAeropuertos,
         crearAeropuerto,
+        actualizarAeropuerto,
       }}
     >
       {children}

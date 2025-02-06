@@ -1,16 +1,24 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { FaQrcode } from "react-icons/fa";
 import { usePontones } from "../../../../Context/PontonesContext";
 import DescargarPDFPontonButton from "../../../../components/DescargarPDFPontonButton";
+import EditarPonton from "./EditarPonton";
 
 const ListaPontonesModal = ({ isOpen, onClose }) => {
   const { pontones, obtenerPontones, loading, error } = usePontones();
+  const [pontonSeleccionado, setPontonSeleccionado] = useState(null);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
   useEffect(() => {
     if (isOpen) {
       obtenerPontones();
     }
   }, [isOpen]);
+
+  const abrirModalEditar = (ponton) => {
+    setPontonSeleccionado(ponton);
+    setIsEditModalOpen(true);
+  };
 
   if (!isOpen) return null;
 
@@ -29,7 +37,7 @@ const ListaPontonesModal = ({ isOpen, onClose }) => {
         {loading ? (
           <p>Cargando pontones...</p>
         ) : error ? (
-          <p>Error: {error}</p>
+          <p className="text-red-500">Error: {error}</p>
         ) : (
           <div>
             {pontones.length > 0 ? (
@@ -57,6 +65,12 @@ const ListaPontonesModal = ({ isOpen, onClose }) => {
                     </p>
                   </div>
                   <div className="mt-4 flex items-center gap-4">
+                    <button
+                      onClick={() => abrirModalEditar(ponton)}
+                      className="bg-yellow-500 text-white px-4 py-2 rounded"
+                    >
+                      Editar
+                    </button>
                     <DescargarPDFPontonButton ponton={ponton} />
                   </div>
                 </div>
@@ -66,6 +80,11 @@ const ListaPontonesModal = ({ isOpen, onClose }) => {
             )}
           </div>
         )}
+        <EditarPonton
+          isOpen={isEditModalOpen}
+          onClose={() => setIsEditModalOpen(false)}
+          ponton={pontonSeleccionado}
+        />
       </div>
     </div>
   );
