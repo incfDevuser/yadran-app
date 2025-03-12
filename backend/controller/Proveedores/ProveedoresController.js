@@ -13,10 +13,8 @@ const obtenerProveedores = async (req, res) => {
     res.status(500).json({ message: "Error al obtener los proveedores" });
   }
 };
-
-// Obtener un proveedor específico con sus vehículos
 const obtenerProveedorConVehiculos = async (req, res) => {
-  const { nombre_proveedor, rut } = req.body; // Puedes ajustar a req.params si es necesario
+  const { nombre_proveedor, rut } = req.body; 
   try {
     const proveedor = await ProveedoresModel.obtenerProveedorConVehiculos({
       nombre_proveedor,
@@ -102,9 +100,28 @@ const eliminarProveedor = async (req, res) => {
   }
 };
 
+const actualizarProveedor = async (req, res) => {
+  const { id } = req.params;
+  const datosActualizados = req.body;
+  const { vehiculos, ...datosParaActualizar } = datosActualizados;
+  try {
+    const proveedorActualizado = await ProveedoresModel.actualizarProveedor(id, datosParaActualizar);
+    if (!proveedorActualizado) {
+      return res.status(404).json({ message: "Proveedor no encontrado" });
+    }
+    res.status(200).json({
+      message: "Proveedor actualizado correctamente",
+      proveedor: proveedorActualizado
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Error al actualizar el proveedor" });
+  }
+};
 export const ProveedoresController = {
   obtenerProveedores,
   obtenerProveedorConVehiculos,
   crearProveedor,
   eliminarProveedor,
+  actualizarProveedor,
 };

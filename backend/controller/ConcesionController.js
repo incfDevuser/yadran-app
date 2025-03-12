@@ -36,7 +36,7 @@ const obtenerConcesion = async (req, res) => {
   }
 };
 const crearConcesion = async (req, res) => {
-  const { nombre_concesion, vigencia, zona_id } = req.body;
+  const { nombre_concesion, zona_id } = req.body;
   //Verificar si la zona existe
   const zonaExiste = await ZonasModel.obtenerZona(zona_id);
   if (!zonaExiste) {
@@ -47,7 +47,6 @@ const crearConcesion = async (req, res) => {
   //Instanciar la nueva concesion
   const concesion = {
     nombre_concesion,
-    vigencia,
     zona_id,
   };
   try {

@@ -10,7 +10,6 @@ const CreatePontonModal = ({ isOpen, onClose }) => {
   const [nuevoPonton, setNuevoPonton] = useState({
     nombre_ponton: "",
     concesion_id: null,
-    tipo_ponton: "",
     habitabilidad_general: 0,
     habitabilidad_interna: 0,
     habitabilidad_externa: 0,
@@ -78,19 +77,6 @@ const CreatePontonModal = ({ isOpen, onClose }) => {
               </select>
             )}
           </div>
-
-          <div className="mb-4">
-            <label className="block text-gray-700 mb-2">Tipo Ponton</label>
-            <input
-              type="text"
-              name="tipo_ponton"
-              value={nuevoPonton.tipo_ponton}
-              onChange={handleInputChange}
-              className="w-full px-3 py-2 border rounded"
-              placeholder="Tipo de Ponton"
-            />
-          </div>
-
           <div className="mb-4">
             <label className="block text-gray-700 mb-2">
               Habitabilidad General

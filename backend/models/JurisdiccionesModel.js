@@ -29,7 +29,6 @@ const crearJurisdiccion = async ({
   estado,
   tipo_embarcacion,
   contacto,
-  integracion,
   fecha_ultima_modificacion,
 }) => {
   try {
@@ -41,9 +40,8 @@ const crearJurisdiccion = async ({
         estado, 
         tipo_embarcacion, 
         contacto, 
-        integracion,
         fecha_ultima_modificacion
-      ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+      ) VALUES ($1, $2, $3, $4, $5, $6, $7)
       RETURNING *;
     `;
 
@@ -54,7 +52,6 @@ const crearJurisdiccion = async ({
       estado,
       tipo_embarcacion,
       contacto,
-      integracion,
       fecha_ultima_modificacion,
     ];
 

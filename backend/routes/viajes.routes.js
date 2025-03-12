@@ -49,4 +49,11 @@ router.put(
   ViajesController.aprobarSolicitudViaje
 );
 
+// Agregar esta nueva ruta antes del export
+router.delete(
+  "/:id",
+  AuthMiddleware.authToken,
+  ViajesController.eliminarViaje
+);
+
 export default router;

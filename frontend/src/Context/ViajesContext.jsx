@@ -38,7 +38,6 @@ export const ViajesProvider = ({ children }) => {
         withCredentials: true,
       });
       if (response.status === 201) {
-        setViajes((prevViajes) => [...prevViajes, response.data]);
         return response.data;
       } else {
         throw new Error(response.data.message || "Error al crear el viaje");
@@ -101,6 +100,40 @@ export const ViajesProvider = ({ children }) => {
     }
   };
 
+  const eliminarViaje = async (id) => {
+    try {
+      await axios.delete(`${BaseUrl}/viajes/${id}`, {
+        withCredentials: true,
+      });
+      setViajes(viajes.filter((viaje) => viaje.id !== id));
+      return true;
+    } catch (error) {
+      console.error("Error al eliminar el viaje:", error);
+      throw error;
+    }
+  };
+
+  const eliminarUsuarioSeguimiento = async (usuarioData) => {
+    try {
+      const id = usuarioData.usuario_id || usuarioData.trabajador_id;
+      const tipo = usuarioData.usuario_id ? "usuario" : "trabajador";
+
+      await axios.delete(`${BaseUrl}/seguimiento/usuarios/${id}?tipo=${tipo}`, {
+        withCredentials: true,
+      });
+      if (detalleViaje) {
+        const viajeActualizado = await obtenerDetalleViaje(
+          detalleViaje.viaje.viaje_id
+        );
+        setDetalleViaje(viajeActualizado);
+      }
+      return true;
+    } catch (error) {
+      console.error("Error al eliminar usuario del seguimiento:", error);
+      throw error;
+    }
+  };
+
   useEffect(() => {
     obtenerViajes();
   }, [obtenerViajes]);
@@ -118,6 +151,8 @@ export const ViajesProvider = ({ children }) => {
         solicitarViaje,
         obtenerDetalleViaje,
         limpiarEntidades,
+        eliminarViaje,
+        eliminarUsuarioSeguimiento,
       }}
     >
       {children}

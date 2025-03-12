@@ -61,7 +61,6 @@ const obtenerPonton = async (id) => {
 const crearPonton = async ({
   nombre_ponton,
   concesion_id,
-  tipo_ponton,
   habitabilidad_general,
   habitabilidad_interna,
   habitabilidad_externa,
@@ -73,18 +72,16 @@ const crearPonton = async ({
       INSERT INTO ponton (
         nombre_ponton,
         concesion_id,
-        tipo_ponton,
         habitabilidad_general,
         habitabilidad_interna,
         habitabilidad_externa,
         qr_code
       ) 
-      VALUES ($1, $2, $3, $4, $5, $6, NULL) RETURNING *;
+      VALUES ($1, $2, $3, $4, $5, NULL) RETURNING *;
     `;
     const insertValues = [
       nombre_ponton,
       concesion_id,
-      tipo_ponton,
       habitabilidad_general,
       habitabilidad_interna,
       habitabilidad_externa,

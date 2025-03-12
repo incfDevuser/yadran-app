@@ -1,18 +1,38 @@
 import { ChoferesModel } from "../models/ChoferModel.js";
 
-//Crear un nuevo chofer
-const crearChofer = async (req, res) => {
+const crearChoferController = async (req, res) => {
   const { nombre, telefono, email } = req.body;
+  const { proveedor_id } = req.user;  
+  console.log(proveedor_id)
+  if (!nombre || !telefono || !email || !proveedor_id) {
+    return res.status(400).json({ error: "Datos incompletos" });
+  }
   try {
-    const chofer = await ChoferesModel.crearChofer({
+    const choferCreado = await ChoferesModel.crearChofer({
       nombre,
       telefono,
       email,
+      proveedor_id,
     });
-    res.status(201).json({ message: "Chofer creado exitosamente", chofer });
+    return res.status(201).json({
+      message: "Chofer creado exitosamente",
+      chofer: choferCreado,
+    });
   } catch (error) {
-    console.error("Error al crear el chofer:", error);
-    res.status(500).json({ message: "Error al crear el chofer" });
+    console.error("Error al crear chofer:", error);
+    return res.status(500).json({ error: "Error al crear chofer" });
+  }
+};
+const obtenerChoferesPorProveedor = async (req, res) => {
+  const { proveedor_id } = req.user;
+  try {
+    const choferes = await ChoferesModel.obtenerChoferesPorProveedor(
+      proveedor_id
+    );
+    return res.status(200).json({ choferes });
+  } catch (error) {
+    console.error("Error al obtener choferes:", error);
+    return res.status(500).json({ error: "Error al obtener choferes" });
   }
 };
 //Obtener la lista de choferes
@@ -46,7 +66,8 @@ const obtenerUsuariosPorTrayectoParaChofer = async (req, res) => {
 };
 
 export const ChoferController = {
-  crearChofer,
+  crearChoferController,
   obtenerChoferes,
-  obtenerUsuariosPorTrayectoParaChofer
+  obtenerChoferesPorProveedor,
+  obtenerUsuariosPorTrayectoParaChofer,
 };

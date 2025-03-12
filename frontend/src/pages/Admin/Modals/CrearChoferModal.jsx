@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { useChofer } from "../../../Context/ChoferContext";
 
-const CrearChoferModal = ({ isOpen, onClose, actualizarChoferes }) => {
-  const { crearChofer } = useChofer();
+const CrearChoferModal = ({ show, handleClose }) => {
+  const { crearChofer, obtenerChoferesProveedor } = useChofer();
 
   const initialState = {
     nombre: "",
@@ -25,14 +25,14 @@ const CrearChoferModal = ({ isOpen, onClose, actualizarChoferes }) => {
     try {
       await crearChofer(nuevoChofer);
       setNuevoChofer(initialState);
-      onClose();
-      actualizarChoferes();
+      await obtenerChoferesProveedor();
+      handleClose();
     } catch (error) {
       console.error("Error al crear el chofer:", error);
     }
   };
 
-  if (!isOpen) return null;
+  if (!show) return null;
 
   return (
     <div className="fixed inset-0 bg-gray-500 bg-opacity-75 flex items-center justify-center z-50">
@@ -78,7 +78,7 @@ const CrearChoferModal = ({ isOpen, onClose, actualizarChoferes }) => {
           </div>
           <div className="flex justify-end">
             <button
-              onClick={onClose}
+              onClick={handleClose}
               type="button"
               className="bg-gray-500 text-white px-4 py-2 rounded mr-2"
             >

@@ -8,6 +8,10 @@ import cookieParser from "cookie-parser";
 import cron from "node-cron";
 import helmet from "helmet";
 import path from "path";
+import fs from "fs";
+import https from "https";
+import http from 'http'
+import { execSync } from "child_process";
 
 const __dirname = path.resolve();
 
@@ -42,18 +46,15 @@ dotenv.config();
 pool;
 const port = process.env.PORT;
 const app = express();
-
 app.use(express.json());
 app.use(cookieParser());
-
 const allowedOrigins = [
-  "http://tu-dominio.com",
+  "https://localhost:5000",
   "http://localhost:5000",
   "http://localhost:5001",
   "http://localhost:5173",
   "https://accounts.google.com",
 ];
-
 app.use(
   cors({
     origin: function (origin, callback) {
@@ -67,13 +68,11 @@ app.use(
     credentials: true,
   })
 );
-
 app.use(
   helmet({
     contentSecurityPolicy: {
       directives: {
         defaultSrc: ["'self'"],
-        // Se agrega 'unsafe-eval' y se permite el acceso a Google
         scriptSrc: [
           "'self'",
           "'unsafe-inline'",
@@ -84,13 +83,13 @@ app.use(
         styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
         fontSrc: ["'self'", "https://fonts.gstatic.com", "data:"],
         imgSrc: ["'self'", "data:", "https://lh3.googleusercontent.com"],
-        // Se permite conexión a data: para el PDF y a Google Fonts
         connectSrc: [
           "'self'",
           "data:",
           "http://localhost:5000",
           "http://localhost:5001",
           "http://localhost:5173",
+          "https://localhost:5000",
           "https://oauth2.googleapis.com",
           "https://accounts.google.com",
           "https://www.googleapis.com",
@@ -107,20 +106,16 @@ app.use(
     referrerPolicy: { policy: "strict-origin-when-cross-origin" },
   })
 );
-
 app.use(
   session({
     secret: process.env.COOKIE_SECRET,
     resave: false,
     saveUninitialized: false,
-    cookie: { secure: false },
+    cookie: { secure: true },
   })
 );
-
 app.use(passport.initialize());
 app.use(passport.session());
-
-// Rutas de la API
 app.use("/api/jurisdicciones", jurisdiccionesRoutes);
 app.use("/api/zonas", zonasRoutes);
 app.use("/api/concesiones", concesionesRoutes);
@@ -146,13 +141,10 @@ app.use("/api/qr", qrRoutes);
 app.use("/api/seguimiento", seguimientoViajes);
 app.use("/api/hoteles", hotelesRoutes);
 app.use("/api/limpieza", limpiezaRoutes);
-
-// Servir archivos estáticos del frontend
 app.use(express.static(path.join(__dirname, "../frontend/dist")));
 app.get("*", (req, res) => {
   res.sendFile(path.join(__dirname, "../frontend/dist", "index.html"));
 });
-
-app.listen(port, () => {
-  console.log(`✅ Servidor escuchando en el puerto ${port}`);
-});
+app.listen(port, ()=>{
+  console.log(`Servidor HTTP escuchando en el puerto ${port}`);
+})

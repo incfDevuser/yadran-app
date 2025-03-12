@@ -29,11 +29,11 @@ const obtenerConcesion = async (id) => {
     throw new Error("Hubo un error con la operacion obtenerConcesion");
   }
 };
-const crearConcesion = async ({ nombre_concesion, vigencia, zona_id }) => {
+const crearConcesion = async ({ nombre_concesion, zona_id }) => {
   try {
     const query =
-      "INSERT INTO concesion(nombre_concesion,vigencia, zona_id) VALUES($1, $2, $3) RETURNING *";
-    const values = [nombre_concesion, vigencia, zona_id];
+      "INSERT INTO concesion(nombre_concesion, zona_id) VALUES($1, $2 ) RETURNING *";
+    const values = [nombre_concesion, zona_id];
     const response = await pool.query(query, values);
     return response.rows[0];
   } catch (error) {

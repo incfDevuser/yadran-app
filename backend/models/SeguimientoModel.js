@@ -197,8 +197,37 @@ const getDetalleCompletoIntercentro = async (intercentroId) => {
     client.release();
   }
 };
-
+const eliminarUsuarioSeguimiento = async (id, tipo) => {
+  const client = await pool.connect();
+  try {
+    await client.query("BEGIN");
+    const deleteVehiculoQuery = `
+      DELETE FROM vehiculo_usuarios 
+      WHERE ${tipo === "usuario" ? "usuario_id" : "trabajador_id"} = $1
+    `;
+    await client.query(deleteVehiculoQuery, [id]);
+    const deletePontonQuery = `
+      DELETE FROM usuarios_pontones 
+      WHERE ${tipo === "usuario" ? "usuario_id" : "trabajador_id"} = $1
+    `;
+    await client.query(deletePontonQuery, [id]);
+    const deleteViajeQuery = `
+      DELETE FROM usuarios_viajes 
+      WHERE ${tipo === "usuario" ? "usuario_id" : "trabajador_id"} = $1
+    `;
+    await client.query(deleteViajeQuery, [id])
+    await client.query("COMMIT");
+    return { success: true };
+  } catch (error) {
+    await client.query("ROLLBACK");
+    console.error("Error al eliminar usuario del seguimiento:", error);
+    throw error;
+  } finally {
+    client.release();
+  }
+};
 export const SeguimientoModel = {
   getDetalleCompletoViaje,
   getDetalleCompletoIntercentro,
+  eliminarUsuarioSeguimiento,
 };

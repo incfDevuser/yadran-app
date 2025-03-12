@@ -39,10 +39,8 @@ const crearZona = async (req, res) => {
   const {
     nombre_zona,
     pais,
-    region,
     jurisdiccion_id,
     estado_zona,
-    descripcion,
   } = req.body;
 
   const jurisdiccionExiste = await JurisdiccionesModel.obtenerJurisdiccion(
@@ -57,14 +55,11 @@ const crearZona = async (req, res) => {
   const zona = {
     nombre_zona,
     pais,
-    region,
     jurisdiccion_id,
     estado_zona,
-    descripcion,
   };
 
   try {
-    // Crear la zona
     const nuevaZona = await ZonasModel.crearZona(zona);
     if (!nuevaZona) {
       return res.status(400).json({
@@ -85,7 +80,7 @@ const crearZona = async (req, res) => {
 const actualizarZona = async (req, res) => {
   const { id } = req.params;
   const camposActualizados = req.body;
-
+  
   try {
     const zonaExistente = await ZonasModel.obtenerZona(id);
     if (!zonaExistente) {

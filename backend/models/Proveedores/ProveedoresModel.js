@@ -118,28 +118,22 @@ const crearProveedor = async ({
   encargado,
   contacto,
   email_encargado,
-  telefono_encargado,
   representante_interno,
   estado = "Activo",
   tipo_servicio,
   ciclo_cultivo,
   tarea_realizar,
-  fecha_inicio_servicio,
   duracion,
-  fecha_termino_servicio,
-  frecuencia_servicio,
-  cantidad_usuarios_autorizados,
+  frecuencia_servicio
 }) => {
   try {
     const query = `
       INSERT INTO proveedores 
       (
-        nombre_proveedor, rut, encargado, contacto, email_encargado, 
-        telefono_encargado, representante_interno, estado, tipo_servicio, 
-        ciclo_cultivo, tarea_realizar, fecha_inicio_servicio, duracion, 
-        fecha_termino_servicio, frecuencia_servicio, cantidad_usuarios_autorizados
+        nombre_proveedor, rut, encargado, contacto, email_encargado, representante_interno, estado, tipo_servicio, 
+        ciclo_cultivo, tarea_realizar, duracion, frecuencia_servicio
       ) 
-      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16) 
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12 ) 
       RETURNING *;
     `;
     const values = [
@@ -148,17 +142,13 @@ const crearProveedor = async ({
       encargado,
       contacto,
       email_encargado,
-      telefono_encargado,
       representante_interno,
       estado,
       tipo_servicio,
       ciclo_cultivo,
       tarea_realizar,
-      fecha_inicio_servicio,
       duracion,
-      fecha_termino_servicio,
       frecuencia_servicio,
-      cantidad_usuarios_autorizados,
     ];
     const response = await pool.query(query, values);
     return response.rows[0];
@@ -180,9 +170,32 @@ const eliminarProveedor = async (id) => {
   }
 };
 
+const actualizarProveedor = async (id, datosActualizados) => {
+  try {
+    const fields = Object.keys(datosActualizados)
+      .map((key, index) => `${key} = $${index + 2}`)
+      .join(", ");
+    
+    const values = Object.values(datosActualizados);
+    
+    const query = `
+      UPDATE proveedores 
+      SET ${fields}
+      WHERE id = $1 
+      RETURNING *;
+    `;
+    
+    const response = await pool.query(query, [id, ...values]);
+    return response.rows[0];
+  } catch (error) {
+    console.error("Error al actualizar el proveedor:", error);
+    throw error;
+  }
+};
 export const ProveedoresModel = {
   obtenerProveedoresConVehiculos,
   obtenerProveedorConVehiculos,
   crearProveedor,
   eliminarProveedor,
+  actualizarProveedor,
 };

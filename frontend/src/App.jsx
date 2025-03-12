@@ -78,7 +78,15 @@ import AdminNotificaciones from "./pages/Admin/AdminNotificaciones";
 import NotificacionesUsuario from "./pages/User/NotificacionesUsuario";
 import { NotificacionesProvider } from "./Context/NotificacionesContext";
 
+//Inicio/registros tradicionales para Contratista y Proveedor
+// import LoginPageContratista from "./pages/Contratista/Pages/LoginPage";
+// import RegisterPage from "./pages/Contratista/Pages/RegisterPage";
 
+import LoginPage from "./pages/Proveedores/Pages/LoginPage";
+import RegisterPage from "./pages/Proveedores/Pages/RegisterPage";
+//Obtener los vehiculos por proveedor
+import MisTransportesPage from "./pages/Proveedores/Pages/MisTransportesPage";
+import GestionRutasPage from "./pages/Proveedores/Pages/GestionRutasPage";
 const App = () => {
   return (
     <UsuariosProvider>
@@ -309,6 +317,30 @@ const App = () => {
               <Route
                 path="/notificaciones"
                 element={<NotificacionesUsuario />}
+              />
+              {/* Autenticacion con metodo tradicional */}
+              <Route path="/login-proveedor" element={<LoginPage />} />
+              <Route path="/register-proveedor" element={<RegisterPage />} />
+
+              <Route
+                path="/mis-transportes"
+                element={
+                  <ProveedoresProvider>
+                    <VehiculosProvider>
+                      <ChoferProvider>
+                        <MisTransportesPage />
+                      </ChoferProvider>
+                    </VehiculosProvider>
+                  </ProveedoresProvider>
+                }
+              />
+              <Route
+                path="/gestion-rutas"
+                element={
+                  <VehiculosProvider>
+                    <GestionRutasPage />
+                  </VehiculosProvider>
+                }
               />
             </Routes>
           </div>

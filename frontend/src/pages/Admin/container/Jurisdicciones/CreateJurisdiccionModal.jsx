@@ -15,10 +15,9 @@ const CreateJurisdiccionModal = ({ isOpen, onClose }) => {
     nombre_jurisdiccion: "",
     ubicacion_geografica: "",
     sectores: "",
-    estado: "",
+    estado: "Abierta",
     tipo_embarcacion: "",
     contacto: "",
-    integracion: "",
     fecha_ultima_modificacion: fechaActual(),
   };
 
@@ -26,7 +25,7 @@ const CreateJurisdiccionModal = ({ isOpen, onClose }) => {
 
   useEffect(() => {
     if (!isOpen) {
-      setNuevaJurisdiccion(initialState); // Reinicia los valores al cerrar el modal
+      setNuevaJurisdiccion(initialState);
     }
   }, [isOpen]);
 
@@ -42,7 +41,7 @@ const CreateJurisdiccionModal = ({ isOpen, onClose }) => {
   const handleCreate = async () => {
     try {
       await crearJurisdiccion(nuevaJurisdiccion);
-      setNuevaJurisdiccion(initialState); // Reinicia el formulario después de crear
+      setNuevaJurisdiccion(initialState);
       onClose();
     } catch (error) {
       console.error("Error al crear jurisdicción:", error);
@@ -97,14 +96,16 @@ const CreateJurisdiccionModal = ({ isOpen, onClose }) => {
 
           <div className="mb-4">
             <label className="block text-gray-700 mb-2">Estado</label>
-            <input
-              type="text"
+            <select
               name="estado"
               value={nuevaJurisdiccion.estado}
               onChange={handleInputChange}
               className="w-full px-3 py-2 border rounded"
-              placeholder="Estado"
-            />
+            >
+              <option value="">Selecciona un estado</option>
+              <option value="Abierta">Abierta</option>
+              <option value="Cerrada">Cerrada</option>
+            </select>
           </div>
 
           <div className="mb-4">
@@ -130,19 +131,6 @@ const CreateJurisdiccionModal = ({ isOpen, onClose }) => {
               placeholder="Contacto"
             />
           </div>
-
-          <div className="mb-4">
-            <label className="block text-gray-700 mb-2">Integracion</label>
-            <input
-              type="text"
-              name="integracion"
-              value={nuevaJurisdiccion.integracion}
-              onChange={handleInputChange}
-              className="w-full px-3 py-2 border rounded"
-              placeholder="Integracion"
-            />
-          </div>
-
           <div className="mb-4">
             <label className="block text-gray-700 mb-2">
               Fecha Última Modificación
@@ -156,7 +144,6 @@ const CreateJurisdiccionModal = ({ isOpen, onClose }) => {
               placeholder="Fecha Última Modificación"
             />
           </div>
-
           <div className="flex justify-end">
             <button
               type="button"

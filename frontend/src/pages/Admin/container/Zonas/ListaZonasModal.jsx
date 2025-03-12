@@ -39,12 +39,10 @@ const ListaZonasModal = ({ isOpen, onClose }) => {
               <div key={zona.id} className="p-4 border rounded-md shadow-sm mb-2">
                 <h3>{zona.nombre_zona}</h3>
                 <p>País: {zona.pais}</p>
-                <p>Región: {zona.region}</p>
                 <p>
                   Jurisdicción Asociada: {zona.nombre_jurisdiccion || "N/A"}
                 </p>
                 <p>Estado: {zona.estado_zona}</p>
-                <p>Descripción: {zona.descripcion}</p>
                 <button
                   onClick={() => abrirModalEditar(zona)}
                   className="bg-yellow-500 text-white px-4 py-2 rounded mt-2"

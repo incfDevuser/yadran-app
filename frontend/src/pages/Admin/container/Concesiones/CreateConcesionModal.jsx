@@ -7,7 +7,6 @@ const CreateConcesionModal = ({ isOpen, onClose }) => {
   const { zonas, loading: loadingZonas } = useZonas();
 
   const initialState = {
-    vigencia: "",
     zona_id: null,
     nombre_concesion: "",
   };
@@ -59,19 +58,6 @@ const CreateConcesionModal = ({ isOpen, onClose }) => {
               className="w-full px-3 py-2 border rounded"
               placeholder="Nombre de la Concesión"
               required
-            />
-          </div>
-
-          {/* Vigencia */}
-          <div className="mb-4">
-            <label className="block text-gray-700 mb-2">Vigencia</label>
-            <input
-              type="date"
-              name="vigencia"
-              value={nuevaConcesion.vigencia}
-              onChange={handleInputChange}
-              className="w-full px-3 py-2 border rounded"
-              placeholder="Vigencia de la Concesión"
             />
           </div>
 

@@ -41,7 +41,6 @@ const crearPonton = async (req, res) => {
   const {
     nombre_ponton,
     concesion_id,
-    tipo_ponton,
     habitabilidad_general,
     habitabilidad_interna,
     habitabilidad_externa,
@@ -57,7 +56,6 @@ const crearPonton = async (req, res) => {
   const ponton = {
     nombre_ponton,
     concesion_id,
-    tipo_ponton,
     habitabilidad_general,
     habitabilidad_interna,
     habitabilidad_externa,

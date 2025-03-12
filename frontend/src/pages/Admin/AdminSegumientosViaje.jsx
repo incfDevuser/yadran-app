@@ -3,13 +3,15 @@ import AdminAside from "./AdminAside";
 import { useViajes } from "../../Context/ViajesContext";
 import { toast } from "react-toastify";
 import LoadingViajes from "./components/LoadingViajes";
+import { FaTrash } from 'react-icons/fa';
 
 const AdminSegumientosViaje = () => {
-  const { viajes, obtenerDetalleViaje, detalleViaje, limpiarEntidades, loading, error } =
+  const { viajes, obtenerDetalleViaje, detalleViaje, limpiarEntidades, loading, error, eliminarUsuarioSeguimiento } =
     useViajes();
   const [viajeSeleccionado, setViajeSeleccionado] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [filtro, setFiltro] = useState("");
+  const [deleteUserConfirmation, setDeleteUserConfirmation] = useState(null);
 
   const handleSeleccionarViaje = async (id) => {
     setViajeSeleccionado(id);
@@ -39,6 +41,17 @@ const AdminSegumientosViaje = () => {
     viajes.filter((viaje) =>
       viaje.nombre?.toLowerCase().includes(filtro.toLowerCase())
     );
+
+  const handleDeleteUsuario = async (usuario) => {
+    try {
+      await eliminarUsuarioSeguimiento(usuario);
+      setDeleteUserConfirmation(null);
+      // El contexto ya actualiza automáticamente el detalle del viaje
+    } catch (error) {
+      console.error("Error al eliminar usuario:", error);
+      toast.error("Error al eliminar el usuario del seguimiento");
+    }
+  };
 
   if (loading) {
     return (
@@ -186,6 +199,15 @@ const AdminSegumientosViaje = () => {
                                       {usuario.email_usuario}
                                     </p>
                                   </div>
+                                  <button
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      setDeleteUserConfirmation(usuario);
+                                    }}
+                                    className="p-2 text-red-500 hover:text-red-700 transition-colors"
+                                  >
+                                    <FaTrash />
+                                  </button>
                                 </li>
                               ))
                           ) : (
@@ -197,8 +219,6 @@ const AdminSegumientosViaje = () => {
                       </div>
                     );
                   }
-
-                  // Si el trayecto es regular, mostrarlo normalmente
                   return (
                     <div
                       key={trayecto.trayecto_id}
@@ -257,6 +277,15 @@ const AdminSegumientosViaje = () => {
                                     {usuario.estado_usuario}
                                   </div>
                                 </div>
+                                <button
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    setDeleteUserConfirmation(usuario);
+                                  }}
+                                  className="p-2 text-red-500 hover:text-red-700 transition-colors"
+                                >
+                                  <FaTrash />
+                                </button>
                               </li>
                             ))
                         ) : (
@@ -305,13 +334,22 @@ const AdminSegumientosViaje = () => {
                           <div
                             className={`px-3 py-1 text-sm font-semibold rounded-full ${
                               usuario.estado_usuario === "pendiente"
-                                ? "bg-red-100 text-red-600" // Rojo si es pendiente
-                                : "bg-green-100 text-green-600" // Verde si no es pendiente
+                                ? "bg-red-100 text-red-600" 
+                                : "bg-green-100 text-green-600" 
                             }`}
                           >
                             {usuario.estado_usuario}
                           </div>
                         </div>
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setDeleteUserConfirmation(usuario);
+                          }}
+                          className="p-2 text-red-500 hover:text-red-700 transition-colors"
+                        >
+                          <FaTrash />
+                        </button>
                       </li>
                     ))}
                   </ul>
@@ -325,6 +363,31 @@ const AdminSegumientosViaje = () => {
                   className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
                 >
                   Cerrar
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+        {deleteUserConfirmation && (
+          <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+            <div className="bg-white p-6 rounded-lg max-w-sm w-full shadow-xl">
+              <h3 className="text-xl font-bold mb-4">Confirmar eliminación</h3>
+              <p className="mb-6">
+                ¿Estás seguro que deseas eliminar a {deleteUserConfirmation.nombre_usuario} del seguimiento?
+                Esta acción no se puede deshacer.
+              </p>
+              <div className="flex justify-end gap-4">
+                <button
+                  className="px-4 py-2 bg-gray-300 rounded-lg hover:bg-gray-400 transition-colors"
+                  onClick={() => setDeleteUserConfirmation(null)}
+                >
+                  Cancelar
+                </button>
+                <button
+                  className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors"
+                  onClick={() => handleDeleteUsuario(deleteUserConfirmation)}
+                >
+                  Eliminar
                 </button>
               </div>
             </div>

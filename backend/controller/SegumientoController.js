@@ -51,8 +51,31 @@ const obtenerDetalleCompletoIntercentro = async (req, res) => {
     });
   }
 };
+const eliminarUsuarioSeguimiento = async (req, res) => {
+  const { id } = req.params;
+  const { tipo } = req.query;
 
+  try {
+    if (!id || !tipo) {
+      return res.status(400).json({
+        message: "Se requiere el ID y tipo de usuario",
+      });
+    }
+
+    await SeguimientoModel.eliminarUsuarioSeguimiento(id, tipo);
+    res.status(200).json({
+      message: "Usuario eliminado del seguimiento exitosamente",
+    });
+  } catch (error) {
+    console.error("Error al eliminar usuario del seguimiento:", error);
+    res.status(500).json({
+      message: "Error al eliminar usuario del seguimiento",
+      error: error.message,
+    });
+  }
+};
 export const SeguimientoController = {
   obtenerDetalleCompletoViaje,
-  obtenerDetalleCompletoIntercentro
+  obtenerDetalleCompletoIntercentro,
+  eliminarUsuarioSeguimiento
 };

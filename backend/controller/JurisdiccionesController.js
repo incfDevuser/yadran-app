@@ -44,7 +44,6 @@ const crearJurisdiccion = async (req, res) => {
     estado,
     tipo_embarcacion,
     contacto,
-    integracion,
     fecha_ultima_modificacion = new Date(),
   } = req.body;
 
@@ -55,7 +54,6 @@ const crearJurisdiccion = async (req, res) => {
     estado,
     tipo_embarcacion,
     contacto,
-    integracion,
     fecha_ultima_modificacion,
   };
 

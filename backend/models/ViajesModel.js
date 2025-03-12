@@ -28,7 +28,6 @@ const obtenerViajes = async () => {
           'fecha_cierre_productivo', c.fecha_cierre_productivo,
           'jefe_centro', c.jefe_centro,
           'etapa_ciclo_cultivo', c.etapa_ciclo_cultivo,
-          'estructura', c.estructura,
           'latitud', c.latitud,
           'longitud', c.longitud
         ) AS centro_asociado, -- Construimos un objeto JSON con los datos del centro
@@ -768,6 +767,17 @@ const obtenerSolicitudPorId = async (solicitudId) => {
     throw new Error("No se pudo obtener la solicitud");
   }
 };
+const eliminarViaje = async (id) => {
+  try {
+    const query = "DELETE FROM viajes WHERE id = $1";
+    const values = [id];
+    const response = await pool.query(query, values);
+    return response.rows[0];
+  } catch (error) {
+    console.error("Error al eliminar el viaje:", error);
+    throw new Error("Error al eliminar");
+  }
+};
 export const ViajesModel = {
   crearViaje,
   obtenerViajes,
@@ -780,4 +790,5 @@ export const ViajesModel = {
   cancelarViajeUsuarioYTrabajadores,
   getDetallesViajeConTrabajadores,
   obtenerSolicitudPorId,
+  eliminarViaje
 };

@@ -21,6 +21,7 @@ const ConfirmacionIntercentro = () => {
     []
   );
   const [mensaje, setMensaje] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     if (rol === "Contratista") {
@@ -37,6 +38,11 @@ const ConfirmacionIntercentro = () => {
   };
 
   const handleConfirmarAgendamiento = async () => {
+    if (isLoading) return; // Prevent multiple submissions
+
+    setIsLoading(true);
+    setMensaje("");
+
     const nuevaSolicitud =
       rol === "Contratista"
         ? {
@@ -60,6 +66,8 @@ const ConfirmacionIntercentro = () => {
     } catch (error) {
       console.error("Error al agendar la ruta:", error);
       setMensaje("Error al agendar la ruta. Inténtalo nuevamente.");
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -150,10 +158,13 @@ const ConfirmacionIntercentro = () => {
 
       <div className="mt-6 flex flex-col items-center">
         <button
-          className="w-full bg-blue-600 text-white py-3 rounded-lg font-semibold text-lg hover:bg-blue-700 transition-colors duration-300 focus:outline-none focus:ring-4 focus:ring-blue-300"
+          className={`w-full ${
+            isLoading ? 'bg-gray-400 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700'
+          } text-white py-3 rounded-lg font-semibold text-lg transition-colors duration-300 focus:outline-none focus:ring-4 focus:ring-blue-300`}
           onClick={handleConfirmarAgendamiento}
+          disabled={isLoading}
         >
-          Confirmar Agendamiento
+          {isLoading ? 'Procesando...' : 'Confirmar Agendamiento'}
         </button>
         {mensaje && (
           <p className="mt-4 text-center text-green-600 font-semibold">

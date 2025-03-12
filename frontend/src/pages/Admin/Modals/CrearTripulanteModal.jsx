@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useVehiculos } from "../../../Context/VehiculosContext";
 
 const CrearTripulanteModal = ({ vehiculoId, closeModal }) => {
-  const { asignarTripulante, obtenerVehiculos } = useVehiculos();
+  const { asignarTripulante, obtenerVehiculosProveedor } = useVehiculos();
 
   // Estado inicial para el tripulante
   const initialState = {
@@ -41,9 +41,7 @@ const CrearTripulanteModal = ({ vehiculoId, closeModal }) => {
 
     try {
       await asignarTripulante(vehiculoId, tripulante);
-
-      // Actualiza la lista de vehículos y limpia el formulario
-      await obtenerVehiculos();
+      await obtenerVehiculosProveedor();
       setTripulante(initialState);
       closeModal();
     } catch (error) {
@@ -53,7 +51,6 @@ const CrearTripulanteModal = ({ vehiculoId, closeModal }) => {
   };
 
   const handleCancel = () => {
-    // Limpia el formulario y cierra el modal
     setTripulante(initialState);
     setError("");
     closeModal();

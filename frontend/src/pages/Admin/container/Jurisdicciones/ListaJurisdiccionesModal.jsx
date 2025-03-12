@@ -42,7 +42,6 @@ const ListaJurisdiccionesModal = ({ isOpen, onClose }) => {
               <p>Estado: {jurisdiccion.estado}</p>
               <p>Tipo de Embarcación: {jurisdiccion.tipo_embarcacion}</p>
               <p>Contacto: {jurisdiccion.contacto}</p>
-              <p>Integración: {jurisdiccion.integracion}</p>
               <p>
                 Fecha Última Modificación:{" "}
                 {new Date(jurisdiccion.fecha_ultima_modificacion).toLocaleDateString()}

@@ -9,7 +9,6 @@ const EditarPonton = ({ ponton, isOpen, onClose }) => {
   const initialState = {
     nombre_ponton: "",
     concesion_id: null,
-    tipo_ponton: "",
     habitabilidad_general: "",
     habitabilidad_interna: "",
     habitabilidad_externa: "",
@@ -22,7 +21,6 @@ const EditarPonton = ({ ponton, isOpen, onClose }) => {
       setFormData({
         nombre_ponton: ponton.nombre_ponton || "",
         concesion_id: ponton.concesion_id || null,
-        tipo_ponton: ponton.tipo_ponton || "",
         habitabilidad_general: ponton.habitabilidad_general || "",
         habitabilidad_interna: ponton.habitabilidad_interna || "",
         habitabilidad_externa: ponton.habitabilidad_externa || "",
@@ -45,9 +43,8 @@ const EditarPonton = ({ ponton, isOpen, onClose }) => {
 
   const handleUpdate = async () => {
     try {
-      // Usamos ponton.ponton_id en lugar de ponton.id
       await actualizarPonton(ponton.ponton_id, formData);
-      onClose(); // Se cierra el modal al actualizar correctamente
+      onClose(); 
     } catch (error) {
       console.error("Error al actualizar el pontón:", error);
     }
@@ -96,18 +93,6 @@ const EditarPonton = ({ ponton, isOpen, onClose }) => {
                 ))}
               </select>
             )}
-          </div>
-          {/* Tipo de Pontón */}
-          <div className="mb-4">
-            <label className="block text-gray-700 mb-2">Tipo de Pontón</label>
-            <input
-              type="text"
-              name="tipo_ponton"
-              value={formData.tipo_ponton}
-              onChange={handleInputChange}
-              className="w-full px-3 py-2 border rounded"
-              placeholder="Tipo de Pontón"
-            />
           </div>
           {/* Habitabilidad General */}
           <div className="mb-4">

@@ -37,26 +37,21 @@ const crearZona = async ({
   region,
   jurisdiccion_id,
   estado_zona,
-  descripcion,
 }) => {
   try {
     const query = `
       INSERT INTO zonas(
         nombre_zona,
         pais,
-        region,
         jurisdiccion_id,
-        estado_zona,
-        descripcion
-      ) VALUES($1, $2, $3, $4, $5, $6) RETURNING *
+        estado_zona
+      ) VALUES($1, $2, $3, $4) RETURNING *
     `;
     const values = [
       nombre_zona,
       pais,
-      region,
       jurisdiccion_id,
       estado_zona,
-      descripcion,
     ];
     const response = await pool.query(query, values);
     return response.rows[0];

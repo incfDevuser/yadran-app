@@ -16,10 +16,11 @@ import {
   FaHotel,
   FaMapMarkerAlt,
   FaClock,
+  FaTrash,
 } from "react-icons/fa";
 
 const AdminViajes = () => {
-  const { viajes, loading, error, crearViaje, obtenerViajes } = useViajes();
+  const { viajes, loading, error, crearViaje, obtenerViajes, eliminarViaje } = useViajes();
   const { rutas, loading: loadingRutas } = useRutas();
   const [selectedViaje, setSelectedViaje] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -29,6 +30,8 @@ const AdminViajes = () => {
     ruta_id: "",
     tipo_viaje: "",
   });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [deleteConfirmation, setDeleteConfirmation] = useState(null);
 
   const handleChange = (e) => {
     setNewViaje({ ...newViaje, [e.target.name]: e.target.value });
@@ -36,18 +39,33 @@ const AdminViajes = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (isSubmitting) return;
+
+    setIsSubmitting(true);
     try {
       await crearViaje(newViaje);
       await obtenerViajes();
       setIsModalOpen(false);
     } catch (error) {
       console.error("Error al crear el viaje:", error);
+    } finally {
+      setIsSubmitting(false);
     }
   };
+
+  const handleDeleteViaje = async (id) => {
+    try {
+      await eliminarViaje(id);
+      setDeleteConfirmation(null);
+    } catch (error) {
+      console.error("Error al eliminar el viaje:", error);
+    }
+  };
+
   if (loading) {
     return (
       <div className="flex justify-center items-center h-full">
-        <LoadingViajes/>
+        <LoadingViajes />
       </div>
     );
   }
@@ -153,10 +171,24 @@ const AdminViajes = () => {
                 </div>
 
                 {/* Botón para ver trayectos */}
-                <button className="bg-blue-500 rounded-lg p-3 text-white">
-                  <FaInfoCircle className="inline-block mr-2" />
-                  Ver Trayectos
-                </button>
+                <div className="flex justify-between mt-4">
+                  <button 
+                    className="bg-blue-500 rounded-lg p-3 text-white flex-1 mr-2"
+                    onClick={() => handleOpenModal(viaje)}
+                  >
+                    <FaInfoCircle className="inline-block mr-2" />
+                    Ver Trayectos
+                  </button>
+                  <button 
+                    className="bg-red-500 rounded-lg p-3 text-white hover:bg-red-600 transition-colors"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setDeleteConfirmation(viaje);
+                    }}
+                  >
+                    <FaTrash />
+                  </button>
+                </div>
               </div>
             ))}
           </div>
@@ -188,7 +220,6 @@ const AdminViajes = () => {
                     trayecto.origen === trayecto.destino ||
                     !trayecto.vehiculo_id;
 
-                  // Determinar el icono basado en el tipo de vehículo
                   let vehiculoIcono;
                   let estiloVehiculo = "text-gray-600";
 
@@ -355,19 +386,52 @@ const AdminViajes = () => {
                 <div className="text-right">
                   <button
                     type="submit"
-                    className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600"
+                    disabled={isSubmitting}
+                    className={`${
+                      isSubmitting
+                        ? "bg-gray-400 cursor-not-allowed"
+                        : "bg-blue-500 hover:bg-blue-600"
+                    } text-white px-4 py-2 rounded-lg`}
                   >
-                    Crear Viaje
+                    {isSubmitting ? "Creando..." : "Crear Viaje"}
                   </button>
                   <button
                     type="button"
                     onClick={() => setIsModalOpen(false)}
+                    disabled={isSubmitting}
                     className="ml-2 bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600"
                   >
                     Cancelar
                   </button>
                 </div>
               </form>
+            </div>
+          </div>
+        )}
+
+        {/* Modal de confirmación de eliminación */}
+        {deleteConfirmation && (
+          <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+            <div className="bg-white p-6 rounded-lg max-w-sm w-full shadow-xl">
+              <h3 className="text-xl font-bold mb-4">Confirmar eliminación</h3>
+              <p className="mb-6">
+                ¿Estás seguro que deseas eliminar el viaje "{deleteConfirmation.nombre}"?
+                Esta acción no se puede deshacer.
+              </p>
+              <div className="flex justify-end gap-4">
+                <button
+                  className="px-4 py-2 bg-gray-300 rounded-lg hover:bg-gray-400 transition-colors"
+                  onClick={() => setDeleteConfirmation(null)}
+                >
+                  Cancelar
+                </button>
+                <button
+                  className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors"
+                  onClick={() => handleDeleteViaje(deleteConfirmation.id)}
+                >
+                  Eliminar
+                </button>
+              </div>
             </div>
           </div>
         )}

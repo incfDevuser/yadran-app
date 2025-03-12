@@ -1,5 +1,8 @@
 import { UserModel } from "../models/UserModel.js";
 import dotenv from "dotenv";
+import bcryptjs from "bcryptjs";
+import jwt from "jsonwebtoken";
+//Instalar la dependencia de bcryptJS
 dotenv.config();
 
 const obtenerUsuarios = async (req, res) => {
@@ -44,6 +47,135 @@ const eliminarUsuario = async (req, res) => {
     return res.status(500).json({ error: "Error al eliminar el usuario" });
   }
 };
+const registerProveedor = async (req, res) => {
+  const {
+    nombre,
+    rut,
+    genero,
+    telefono,
+    email,
+    fecha_nacimiento,
+    ciudad_origen,
+    empresa,
+    cargo,
+    numero_contacto,
+    password,
+  } = req.body;
+
+  if (
+    !nombre ||
+    !rut ||
+    !genero ||
+    !telefono ||
+    !email ||
+    !fecha_nacimiento ||
+    !ciudad_origen ||
+    !empresa ||
+    !cargo ||
+    !numero_contacto ||
+    !password
+  ) {
+    return res.status(400).json({ error: "Datos incompletos" });
+  }
+  try {
+    const usuario = await UserModel.findUser(email);
+    if (usuario) {
+      return res.status(400).json({ error: "El usuario ya existe" });
+    }
+    const hashedPassword = bcryptjs.hashSync(password, 10);
+    const nuevoUsuario = {
+      nombre,
+      rut,
+      genero,
+      telefono,
+      email,
+      fecha_nacimiento,
+      ciudad_origen,
+      empresa,
+      cargo,
+      numero_contacto,
+      password: hashedPassword,
+    };
+    const usuarioCreado = await UserModel.registerProveedores(nuevoUsuario);
+    const token = jwt.sign(
+      {
+        id: usuarioCreado.id,
+        email: usuarioCreado.email,
+        rol: usuarioCreado.rol_id,
+        proveedor_id: usuarioCreado.proveedor_id,
+      },
+      process.env.JWT_SECRET,
+      { expiresIn: "24h" }
+    );
+
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "Strict",
+      maxAge: 24 * 60 * 60 * 1000,
+    });
+    return res.status(201).json({
+      message: "Usuario registrado exitosamente",
+      usuario: {
+        id: usuarioCreado.id,
+        nombre: usuarioCreado.nombre,
+        email: usuarioCreado.email,
+      },
+    });
+  } catch (error) {
+    console.error("Error en registro:", error);
+    return res.status(500).json({ error: "Error al registrar usuario" });
+  }
+};
+const loginProveedor = async (req, res) => {
+  const { email, password } = req.body;
+  if (!email || !password) {
+    return res.status(400).json({ error: "Email y contraseña son requeridos" });
+  }
+  try {
+    const usuario = await UserModel.findUser(email);
+    if (!usuario) {
+      return res.status(401).json({ error: "Credenciales inválidas" });
+    }
+    const passwordValido = bcryptjs.compareSync(password, usuario.password);
+    if (!passwordValido) {
+      return res.status(401).json({ error: "Credenciales inválidas" });
+    }
+    const token = jwt.sign(
+      {
+        id: usuario.id,
+        email: usuario.email,
+        rol: usuario.rol_id,
+        proveedor_id: usuario.proveedor_id,
+      },
+      process.env.JWT_SECRET,
+      { expiresIn: "24h" }
+    );
+
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "Strict",
+      maxAge: 24 * 60 * 60 * 1000,
+    });
+    return res.status(200).json({
+      message: "Inicio de sesión exitoso",
+      usuario: {
+        id: usuario.id,
+        nombre: usuario.nombre,
+        email: usuario.email,
+        rol: usuario.rol_id,
+        nombre_rol: usuario.nombre_rol,
+        proveedor_id: usuario.proveedor_id || null,
+        nombre_proveedor: usuario.nombre_proveedor || null,
+      },
+    });
+  } catch (error) {
+    console.error("Error en login:", error);
+    return res.status(500).json({ error: "Error al iniciar sesión" });
+  }
+};
+
 const myProfile = async (req, res) => {
   const { id } = req.user;
 
@@ -94,4 +226,6 @@ export const UserController = {
   eliminarUsuario,
   myProfile,
   actualizarUsuario,
+  registerProveedor,
+  loginProveedor,
 };

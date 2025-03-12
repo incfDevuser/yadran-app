@@ -41,7 +41,6 @@ const ListaConcesionesModal = ({ isOpen, onClose }) => {
                 className="p-4 border rounded-md shadow-sm mb-2"
               >
                 <h3>{concesion.nombre_concesion}</h3>
-                <p>Vigencia: {concesion.vigencia}</p>
                 <p>Zona Asociada: {concesion.nombre_zona || "N/A"}</p>
                 <button
                   onClick={() => abrirModalEditar(concesion)}

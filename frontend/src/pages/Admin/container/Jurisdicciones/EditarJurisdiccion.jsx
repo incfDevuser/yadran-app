@@ -11,7 +11,6 @@ const EditarJurisdiccion = ({ isOpen, onClose, jurisdiccion }) => {
     estado: "",
     tipo_embarcacion: "",
     contacto: "",
-    integracion: "",
     fecha_ultima_modificacion: "",
   };
 
@@ -26,7 +25,6 @@ const EditarJurisdiccion = ({ isOpen, onClose, jurisdiccion }) => {
         estado: jurisdiccion.estado || "",
         tipo_embarcacion: jurisdiccion.tipo_embarcacion || "",
         contacto: jurisdiccion.contacto || "",
-        integracion: jurisdiccion.integracion || "",
         fecha_ultima_modificacion: jurisdiccion.fecha_ultima_modificacion
           ? new Date(jurisdiccion.fecha_ultima_modificacion)
               .toISOString()
@@ -91,14 +89,17 @@ const EditarJurisdiccion = ({ isOpen, onClose, jurisdiccion }) => {
           </div>
 
           <div className="mb-4">
-            <label className="block text-gray-700">Estado</label>
-            <input
-              type="text"
+            <label className="block text-gray-700 mb-2">Estado</label>
+            <select
               name="estado"
               value={formData.estado}
               onChange={handleInputChange}
               className="w-full px-3 py-2 border rounded"
-            />
+            >
+              <option value="">Selecciona un estado</option>
+              <option value="Abierta">Abierta</option>
+              <option value="Cerrada">Cerrada</option>
+            </select>
           </div>
 
           <div className="mb-4">
@@ -122,18 +123,6 @@ const EditarJurisdiccion = ({ isOpen, onClose, jurisdiccion }) => {
               className="w-full px-3 py-2 border rounded"
             />
           </div>
-
-          <div className="mb-4">
-            <label className="block text-gray-700">Integración</label>
-            <input
-              type="text"
-              name="integracion"
-              value={formData.integracion}
-              onChange={handleInputChange}
-              className="w-full px-3 py-2 border rounded"
-            />
-          </div>
-
           <div className="mb-4">
             <label className="block text-gray-700">
               Fecha Última Modificación

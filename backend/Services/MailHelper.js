@@ -6,6 +6,22 @@ dotenv.config();
 const userEmail = process.env.EMAIL_SENDER;
 const userPassword = process.env.PASS_SENDER;
 
+const createTransporter = () => {
+  return nodemailer.createTransport({
+    host: "smtp.gmail.com",
+    port: 587,
+    secure: false, 
+    auth: {
+      user: userEmail,
+      pass: userPassword,
+    },
+    tls: {
+      rejectUnauthorized: false, 
+    },
+    timeout: 10000, 
+  });
+};
+
 const sendEmail = async (emailCliente, emailData) => {
   const {
     solicitudId,
@@ -89,20 +105,37 @@ const sendEmail = async (emailCliente, emailData) => {
   };
 
   try {
-    const transporter = nodemailer.createTransport({
-      service: "gmail",
-      auth: {
-        user: userEmail,
-        pass: userPassword,
-      },
+    const transporter = createTransporter();
+
+    // Verificar la conexión antes de enviar
+    await new Promise((resolve, reject) => {
+      transporter.verify(function (error, success) {
+        if (error) {
+          console.log("Error al verificar el transportador:", error);
+          reject(error);
+        } else {
+          resolve(success);
+        }
+      });
     });
-    await transporter.sendMail(mailOptions);
+
+    // Enviar el email con retry
+    let attempts = 3;
+    while (attempts > 0) {
+      try {
+        await transporter.sendMail(mailOptions);
+        break;
+      } catch (error) {
+        attempts--;
+        if (attempts === 0) throw error;
+        await new Promise((resolve) => setTimeout(resolve, 1000)); // Esperar 1 segundo antes de reintentar
+      }
+    }
   } catch (error) {
-    console.error("Error al enviar el correo:", error);
-    throw new Error("Error al enviar el correo");
+    console.error("Error detallado al enviar el correo:", error);
+    throw new Error(`Error al enviar el correo: ${error.message}`);
   }
 };
-
 
 const sendEmailIntercentro = async (emailCliente, emailData) => {
   const {
@@ -154,27 +187,41 @@ const sendEmailIntercentro = async (emailCliente, emailData) => {
   };
 
   try {
-    const transporter = nodemailer.createTransport({
-      service: "gmail",
-      auth: {
-        user: userEmail,
-        pass: userPassword,
-      },
+    const transporter = createTransporter();
+
+    // Verificar la conexión antes de enviar
+    await new Promise((resolve, reject) => {
+      transporter.verify(function (error, success) {
+        if (error) {
+          console.log("Error al verificar el transportador:", error);
+          reject(error);
+        } else {
+          resolve(success);
+        }
+      });
     });
-    await transporter.sendMail(mailOptions);
+
+    // Enviar el email con retry
+    let attempts = 3;
+    while (attempts > 0) {
+      try {
+        await transporter.sendMail(mailOptions);
+        break;
+      } catch (error) {
+        attempts--;
+        if (attempts === 0) throw error;
+        await new Promise((resolve) => setTimeout(resolve, 1000)); // Esperar 1 segundo antes de reintentar
+      }
+    }
   } catch (error) {
-    console.error("Error al enviar el correo:", error);
-    throw new Error("Error al enviar el correo");
+    console.error("Error detallado al enviar el correo:", error);
+    throw new Error(`Error al enviar el correo: ${error.message}`);
   }
 };
+
 const sendEmailContratista = async (emailCliente, emailData) => {
-  const {
-    nombre,
-    descripcion,
-    fecha_inicio,
-    fecha_fin,
-    trabajadores,
-  } = emailData;
+  const { nombre, descripcion, fecha_inicio, fecha_fin, trabajadores } =
+    emailData;
 
   const trabajadoresHtml = trabajadores
     .map(
@@ -218,20 +265,37 @@ const sendEmailContratista = async (emailCliente, emailData) => {
   };
 
   try {
-    const transporter = nodemailer.createTransport({
-      service: "gmail",
-      auth: {
-        user: userEmail,
-        pass: userPassword,
-      },
+    const transporter = createTransporter();
+
+    // Verificar la conexión antes de enviar
+    await new Promise((resolve, reject) => {
+      transporter.verify(function (error, success) {
+        if (error) {
+          console.log("Error al verificar el transportador:", error);
+          reject(error);
+        } else {
+          resolve(success);
+        }
+      });
     });
-    await transporter.sendMail(mailOptions);
+
+    // Enviar el email con retry
+    let attempts = 3;
+    while (attempts > 0) {
+      try {
+        await transporter.sendMail(mailOptions);
+        break;
+      } catch (error) {
+        attempts--;
+        if (attempts === 0) throw error;
+        await new Promise((resolve) => setTimeout(resolve, 1000)); // Esperar 1 segundo antes de reintentar
+      }
+    }
   } catch (error) {
-    console.error("Error al enviar el correo:", error);
-    throw new Error("Error al enviar el correo");
+    console.error("Error detallado al enviar el correo:", error);
+    throw new Error(`Error al enviar el correo: ${error.message}`);
   }
 };
-
 
 const sendEmailContratistaIntercentro = async (emailCliente, emailData) => {
   const {
@@ -283,17 +347,35 @@ const sendEmailContratistaIntercentro = async (emailCliente, emailData) => {
     `,
   };
   try {
-    const transporter = nodemailer.createTransport({
-      service: "gmail",
-      auth: {
-        user: userEmail,
-        pass: userPassword,
-      },
+    const transporter = createTransporter();
+
+    // Verificar la conexión antes de enviar
+    await new Promise((resolve, reject) => {
+      transporter.verify(function (error, success) {
+        if (error) {
+          console.log("Error al verificar el transportador:", error);
+          reject(error);
+        } else {
+          resolve(success);
+        }
+      });
     });
-    await transporter.sendMail(mailOptions);
+
+    // Enviar el email con retry
+    let attempts = 3;
+    while (attempts > 0) {
+      try {
+        await transporter.sendMail(mailOptions);
+        break;
+      } catch (error) {
+        attempts--;
+        if (attempts === 0) throw error;
+        await new Promise((resolve) => setTimeout(resolve, 1000)); // Esperar 1 segundo antes de reintentar
+      }
+    }
   } catch (error) {
-    console.error("Error al enviar el correo:", error);
-    throw new Error("Error al enviar el correo");
+    console.error("Error detallado al enviar el correo:", error);
+    throw new Error(`Error al enviar el correo: ${error.message}`);
   }
 };
 

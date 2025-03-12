@@ -1,16 +1,24 @@
 import pool from "../config/db.js";
 
-//Función para crear un chofer
-const crearChofer = async ({ nombre, telefono, email }) => {
+const crearChofer = async ({ nombre, telefono, email, proveedor_id }) => {
   const query = `
-    INSERT INTO choferes (nombre, telefono, email)
-    VALUES ($1, $2, $3) RETURNING *
+    INSERT INTO choferes (nombre, telefono, email, proveedor_id)
+    VALUES ($1, $2, $3, $4)
+    RETURNING *
   `;
-  const values = [nombre, telefono, email];
+  const values = [nombre, telefono, email, proveedor_id];
   const response = await pool.query(query, values);
   return response.rows[0];
 };
-//Función para obtener todos los choferes
+const obtenerChoferesPorProveedor = async (proveedor_id) => {
+  const query = `
+    SELECT *
+    FROM choferes
+    WHERE proveedor_id = $1
+  `;
+  const response = await pool.query(query, [proveedor_id]);
+  return response.rows;
+};
 const obtenerChoferes = async () => {
   const query = `
     SELECT * FROM choferes
@@ -18,7 +26,6 @@ const obtenerChoferes = async () => {
   const response = await pool.query(query);
   return response.rows;
 };
-//Obtener lista de usuarios para el chofer
 const obtenerUsuariosPorTrayectoParaChofer = async (chofer_id) => {
   try {
     const query = `
@@ -57,7 +64,10 @@ const obtenerUsuariosPorTrayectoParaChofer = async (chofer_id) => {
     const response = await pool.query(query, [chofer_id]);
     return response.rows;
   } catch (error) {
-    console.error("Error al obtener usuarios por trayecto para el chofer:", error);
+    console.error(
+      "Error al obtener usuarios por trayecto para el chofer:",
+      error
+    );
     throw new Error("Error al obtener la lista de usuarios por trayecto");
   }
 };
@@ -65,4 +75,5 @@ export const ChoferesModel = {
   crearChofer,
   obtenerChoferes,
   obtenerUsuariosPorTrayectoParaChofer,
+  obtenerChoferesPorProveedor
 };

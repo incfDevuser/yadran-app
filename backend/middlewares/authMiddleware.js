@@ -2,7 +2,8 @@ import jwt from "jsonwebtoken";
 
 const authToken = async (req, res, next) => {
   try {
-    const token = req.cookies.token || req.headers["authorization"]?.split(" ")[1];
+    const token =
+      req.cookies.token || req.headers["authorization"]?.split(" ")[1];
     if (!token) {
       return res.status(401).json({
         message: "Este usuario no tiene un token",
@@ -10,7 +11,7 @@ const authToken = async (req, res, next) => {
     }
     const verified = jwt.verify(token, process.env.JWT_SECRET);
     req.user = verified;
-    console.log("Usuario autenticado", req.user)
+    console.log("Usuario autenticado", req.user);
     next();
   } catch (error) {
     console.error("Error en authToken:", error.message);
@@ -20,7 +21,7 @@ const authToken = async (req, res, next) => {
   }
 };
 
-const isAdmin = (req, res, next) => { 
+const isAdmin = (req, res, next) => {
   try {
     if (req.user.isadmin) {
       next();
@@ -31,7 +32,7 @@ const isAdmin = (req, res, next) => {
       });
     }
   } catch (error) {
-    console.error('Error en isAdmin:', error.message);
+    console.error("Error en isAdmin:", error.message);
     return res.status(401).json({
       message: "Acceso denegado, token inválido",
     });

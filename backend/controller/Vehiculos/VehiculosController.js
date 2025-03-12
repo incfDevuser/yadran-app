@@ -38,10 +38,9 @@ const obtenerVehiculo = async (req, res) => {
   }
 };
 
-//Crear un nuevo vehículo y asignarlo a un proveedor
+// Crear un nuevo vehículo asignado al proveedor autenticado y con chofer asignado
 const crearVehiculo = async (req, res) => {
   const {
-    proveedor_id,
     num_tripulantes,
     tipo_vehiculo,
     tipo_servicio,
@@ -52,7 +51,21 @@ const crearVehiculo = async (req, res) => {
     velocidad_promedio,
     chofer_id,
   } = req.body;
-
+  const { proveedor_id } = req.user;
+  if (
+    !proveedor_id ||
+    num_tripulantes === undefined ||
+    !tipo_vehiculo ||
+    !tipo_servicio ||
+    capacidad_total === undefined ||
+    capacidad_operacional === undefined ||
+    !estado ||
+    documentacion_ok === undefined ||
+    velocidad_promedio === undefined ||
+    !chofer_id
+  ) {
+    return res.status(400).json({ error: "Datos incompletos" });
+  }
   try {
     const vehiculo = {
       proveedor_id,
@@ -80,7 +93,53 @@ const crearVehiculo = async (req, res) => {
 };
 
 // Actualizar un vehículo existente y asignarlo a un proveedor
-const actualizarVehiculo = async (req, res) => {};
+const actualizarVehiculo = async (req, res) => {
+  const { id } = req.params;
+  const {
+    num_tripulantes,
+    tipo_vehiculo,
+    tipo_servicio,
+    capacidad_total,
+    capacidad_operacional,
+    estado,
+    documentacion_ok,
+    velocidad_promedio,
+    chofer_id,
+  } = req.body;
+
+  try {
+    const vehiculo = {
+      id,
+      num_tripulantes,
+      tipo_vehiculo,
+      tipo_servicio,
+      capacidad_total,
+      capacidad_operacional,
+      estado,
+      documentacion_ok,
+      velocidad_promedio,
+      chofer_id,
+    };
+
+    const vehiculoActualizado = await VehiculosModel.actualizarVehiculo(id, vehiculo);
+    
+    if (!vehiculoActualizado) {
+      return res.status(404).json({
+        message: "Vehículo no encontrado",
+      });
+    }
+
+    res.status(200).json({
+      message: "Vehículo actualizado exitosamente",
+      vehiculo: vehiculoActualizado,
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: "Error al actualizar el vehículo",
+      error: error.message,
+    });
+  }
+};
 
 // Eliminar un vehículo
 const eliminarVehiculo = async (req, res) => {
@@ -155,7 +214,7 @@ const obtenerInfoCompletaVehiculo = async (req, res) => {
   }
 };
 const asignarTripulante = async (req, res) => {
-  const { vehiculo_id } = req.params; // Obtener el ID del vehículo desde los params
+  const { vehiculo_id } = req.params;
   const {
     nombre_tripulante,
     rut_tripulante,
@@ -184,6 +243,56 @@ const asignarTripulante = async (req, res) => {
   }
 };
 
+const obtenerVehiculosPorProveedor = async (req, res) => {
+  const { proveedor_id } = req.user;
+  try {
+    const vehiculos = await VehiculosModel.obtenerVehiculosPorProveedor(
+      proveedor_id
+    );
+    res.status(200).json({
+      message: "Vehículos del proveedor obtenidos exitosamente",
+      vehiculos,
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: "Error al obtener los vehículos del proveedor",
+      error: error.message,
+    });
+  }
+};
+
+const obtenerPasajerosPorVehiculo = async (req, res) => {
+  const { vehiculo_id } = req.params;
+  try {
+    const pasajeros = await VehiculosModel.obtenerPasajerosPorVehiculo(vehiculo_id);
+    res.status(200).json({
+      message: "Pasajeros obtenidos exitosamente",
+      pasajeros,
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: "Error al obtener los pasajeros",
+      error: error.message,
+    });
+  }
+};
+
+const obtenerRutasYTrayectosPorVehiculo = async (req, res) => {
+  const { vehiculo_id } = req.params;
+  try {
+    const rutas = await VehiculosModel.obtenerRutasYTrayectosPorVehiculo(vehiculo_id);
+    res.status(200).json({
+      message: "Rutas y trayectos obtenidos exitosamente",
+      rutas,
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: "Error al obtener las rutas y trayectos",
+      error: error.message,
+    });
+  }
+};
+
 export const VehiculosController = {
   obtenerVehiculos,
   obtenerVehiculo,
@@ -193,4 +302,7 @@ export const VehiculosController = {
   obtenerUsuariosEnVehiculo,
   obtenerInfoCompletaVehiculo,
   asignarTripulante,
+  obtenerVehiculosPorProveedor,
+  obtenerPasajerosPorVehiculo,
+  obtenerRutasYTrayectosPorVehiculo, // Añadir el nuevo método al objeto exportado
 };

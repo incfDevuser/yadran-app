@@ -1,9 +1,14 @@
 import express from "express";
 import { SeguimientoController } from "../controller/SegumientoController.js";
-const router = express.Router();
+import { AuthMiddleware } from '../middlewares/authMiddleware.js';
 
-// Ruta para obtener el detalle completo de un viaje
+const router = express.Router();
 router.get("/viajes/:viajeId/detalle", SeguimientoController.obtenerDetalleCompletoViaje);
-// Ruta para obtener el detalle completo de un viaje
 router.get("/intercentro/:intercentroId/detalle", SeguimientoController.obtenerDetalleCompletoIntercentro);
+router.delete(
+  '/usuarios/:id',
+  AuthMiddleware.authToken,
+  SeguimientoController.eliminarUsuarioSeguimiento
+);
+
 export default router;

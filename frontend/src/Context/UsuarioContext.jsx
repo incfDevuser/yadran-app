@@ -20,12 +20,9 @@ export const UsuariosProvider = ({ children }) => {
     const miPerfil = async () => {
       setLoading(true);
       try {
-        const response = await axios.get(
-          `${BaseUrl}/usuarios/miPerfil`,
-          {
-            withCredentials: true,
-          }
-        );
+        const response = await axios.get(`${BaseUrl}/usuarios/miPerfil`, {
+          withCredentials: true,
+        });
         const data = response.data;
         setUsuarios(data);
         setIsAutenticado(true);
@@ -54,7 +51,7 @@ export const UsuariosProvider = ({ children }) => {
   };
   const iniciarSesion = async () => {
     try {
-      window.location.href = "http://localhost:5001/auth/google"
+      window.location.href = "http://localhost:5000/auth/google";
     } catch (error) {
       console.error("Error al iniciar sesión:", error);
       setUsuarios(null);
@@ -62,6 +59,27 @@ export const UsuariosProvider = ({ children }) => {
       setIsAdmin(false);
       throw new Error("Login failed. Please check your credentials.");
     }
+  };
+  const iniciarSesionProveedor = async (email, password) => {
+    try {
+      const response = await axios.post(
+        `${BaseUrl}/usuarios/login-proveedor`,
+        { email, password },
+        {
+          withCredentials: true,
+        }
+      );
+      console.log(response.data);
+      setUsuarios(response.data);
+      setIsAutenticado(true);
+      setRol(response.data.nombre_rol);
+    } catch (error) {
+      console.error("Error al iniciar sesión:", error);
+      setUsuarios(null);
+      setIsAutenticado(false);
+      setIsAdmin(false);
+      throw new Error("Login failed. Please check your credentials");
+    } 
   };
   const cerrarSesion = async () => {
     try {
@@ -131,6 +149,7 @@ export const UsuariosProvider = ({ children }) => {
         cerrarSesion,
         cancelarViaje,
         actualizarUsuario,
+        iniciarSesionProveedor
       }}
     >
       {children}

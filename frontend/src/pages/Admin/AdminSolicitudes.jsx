@@ -230,10 +230,16 @@ const AdminSolicitudes = () => {
                   </p>
                   <p>
                     <strong>Fecha de Nacimiento:</strong>{" "}
-                    {selectedSolicitud.fecha_nacimiento
-                      ? new Date(
-                          selectedSolicitud.fecha_nacimiento
-                        ).toLocaleDateString()
+                    {selectedSolicitud.fecha_nacimiento_solicitante
+                      ? (() => {
+                          const isoDate =
+                            selectedSolicitud.fecha_nacimiento_solicitante.substring(
+                              0,
+                              10
+                            );
+                          const [year, month, day] = isoDate.split("-");
+                          return `${day}-${month}-${year}`;
+                        })()
                       : "N/A"}
                   </p>
                   <p>
@@ -261,10 +267,16 @@ const AdminSolicitudes = () => {
                   </p>
                   <p>
                     <strong>Fecha de Nacimiento:</strong>{" "}
-                    {selectedSolicitud.trabajador.fecha_nacimiento
-                      ? new Date(
-                          selectedSolicitud.trabajador.fecha_nacimiento
-                        ).toLocaleDateString()
+                    {selectedSolicitud.fecha_nacimiento_solicitante
+                      ? (() => {
+                          const isoDate =
+                            selectedSolicitud.fecha_nacimiento_solicitante.substring(
+                              0,
+                              10
+                            );
+                          const [year, month, day] = isoDate.split("-");
+                          return `${day}-${month}-${year}`;
+                        })()
                       : "N/A"}
                   </p>
                   <p>
@@ -297,9 +309,15 @@ const AdminSolicitudes = () => {
                   <p>
                     <strong>Fecha de Nacimiento:</strong>{" "}
                     {selectedSolicitud.fecha_nacimiento_solicitante
-                      ? new Date(
-                          selectedSolicitud.fecha_nacimiento_solicitante
-                        ).toLocaleDateString()
+                      ? (() => {
+                          const isoDate =
+                            selectedSolicitud.fecha_nacimiento_solicitante.substring(
+                              0,
+                              10
+                            );
+                          const [year, month, day] = isoDate.split("-");
+                          return `${day}-${month}-${year}`;
+                        })()
                       : "N/A"}
                   </p>
                 </>

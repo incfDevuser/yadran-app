@@ -11,5 +11,7 @@ router.post("/", ProveedoresController.obtenerProveedorConVehiculos)
 router.post("/create", ProveedoresController.crearProveedor)
 //Ruta para eliminar un proveedor
 router.delete("/:id", ProveedoresController.eliminarProveedor)
+//Ruta para actualizar un proveedor
+router.put("/:id", ProveedoresController.actualizarProveedor)
 
 export default router

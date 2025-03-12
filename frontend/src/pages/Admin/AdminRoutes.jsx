@@ -42,7 +42,6 @@ const AdminRoutes = () => {
     escalas: "",
     tiempo_estimado: 0,
     mov_interno: true,
-    fecha_agendamiento: "",
   };
   const [nuevaRuta, setNuevaRuta] = useState(initialStateRuta);
   const initialStateTrayecto = {
@@ -201,9 +200,6 @@ const AdminRoutes = () => {
                   <td className="py-2 px-4 border-b">
                     {ruta.mov_interno ? "Si" : "No"}
                   </td>
-                  {/* <td className="py-2 px-4 border-b">
-                      {ruta.fecha_agendamiento}
-                    </td> */}
                   <td className="py-2 px-4 border-b">
                     <div className="flex justify-center space-x-2 text-xl">
                       <button
@@ -341,22 +337,6 @@ const AdminRoutes = () => {
                     <option value={false}>No</option>
                   </select>
                 </div>
-
-                {/* Campo de Fecha de Agendamiento */}
-                <div className="mb-4">
-                  <label className="block text-gray-700">
-                    Fecha de Agendamiento
-                  </label>
-                  <input
-                    type="date"
-                    name="fecha_agendamiento"
-                    value={nuevaRuta.fecha_agendamiento}
-                    onChange={handleChange}
-                    className="w-full p-2 border rounded-md"
-                    required
-                  />
-                </div>
-
                 <div className="flex justify-end">
                   <button
                     onClick={closeModalCreate}
@@ -420,19 +400,6 @@ const AdminRoutes = () => {
                     required
                   />
                 </div>
-
-                <div className="mb-4">
-                  <label className="block text-gray-700">Orden</label>
-                  <input
-                    type="number"
-                    name="orden"
-                    value={trayecto.orden}
-                    onChange={handleTrayectoChange}
-                    className="w-full p-2 border rounded-md"
-                    required
-                  />
-                </div>
-
                 <div className="mb-4">
                   <label className="block text-gray-700">
                     Vehículo Asociado

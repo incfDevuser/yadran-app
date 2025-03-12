@@ -149,14 +149,7 @@ const cancelarViajeUsuarioHandler = async (req, res) => {
 //Agendar viaje para trabajadores - hacer nodemailer
 const agendarViajeParaTrabajadores = async (req, res) => {
   const contratista_id = req.user.id;
-  const emailCliente = req.user.email; // Email del contratista
-  const {
-    viaje_id,
-    trabajadores,
-    fecha_inicio,
-    fecha_fin,
-    comentario_contratista,
-  } = req.body;
+  const emailCliente = req.user.email;
 
   if (!emailCliente) {
     return res.status(400).json({
@@ -165,57 +158,49 @@ const agendarViajeParaTrabajadores = async (req, res) => {
   }
 
   try {
-    // Agendar viaje para trabajadores
+    // Primero crear el viaje y las solicitudes
     const response = await ViajesModel.agendarViajeParaTrabajadores({
       contratista_id,
-      viaje_id,
-      trabajadores,
-      fecha_inicio,
-      fecha_fin,
-      comentario_contratista,
+      viaje_id: req.body.viaje_id,
+      trabajadores: req.body.trabajadores,
+      fecha_inicio: req.body.fecha_inicio,
+      fecha_fin: req.body.fecha_fin,
+      comentario_contratista: req.body.comentario_contratista,
     });
 
-    // Obtener detalles del viaje y trabajadores asociados
-    const detallesViaje = await ViajesModel.getDetallesViajeConTrabajadores(
-      viaje_id
-    );
+    // Intentar enviar el email, pero no bloquear la respuesta si falla
+    try {
+      const detallesViaje = await ViajesModel.getDetallesViajeConTrabajadores(req.body.viaje_id);
+      
+      if (detallesViaje && detallesViaje.length > 0) {
+        const emailData = {
+          nombre: detallesViaje[0]?.nombre_viaje,
+          descripcion: detallesViaje[0]?.descripcion_viaje,
+          fecha_inicio: req.body.fecha_inicio,
+          fecha_fin: req.body.fecha_fin,
+          trabajadores: detallesViaje
+            .filter(item => item.trabajador_id)
+            .map(item => ({
+              id: item.trabajador_id,
+              nombre: item.nombre_trabajador,
+              email: item.email_trabajador,
+              estado: item.estado_trabajador || "Pendiente",
+            })),
+        };
 
-    if (!detallesViaje || detallesViaje.length === 0) {
-      return res.status(404).json({
-        message:
-          "No se encontraron detalles del viaje o trabajadores asociados.",
-      });
+        await emailHelper.sendEmailContratista(emailCliente, emailData);
+      }
+    } catch (emailError) {
+      console.error("Error al enviar el correo:", emailError);
+      // No lanzar el error, solo registrarlo
     }
 
-    const viaje = {
-      nombre: detallesViaje[0]?.nombre_viaje,
-      descripcion: detallesViaje[0]?.descripcion_viaje,
-      fecha_inicio,
-      fecha_fin,
-    };
-
-    const trabajadoresInfo = detallesViaje
-      .filter((item) => item.trabajador_id)
-      .map((item) => ({
-        id: item.trabajador_id,
-        nombre: item.nombre_trabajador,
-        email: item.email_trabajador,
-        estado: item.estado_trabajador || "Pendiente",
-      }));
-
-    const emailData = {
-      ...viaje,
-      trabajadores: trabajadoresInfo,
-    };
-
-    // Enviar correo al contratista
-    await emailHelper.sendEmailContratista(emailCliente, emailData);
-
+    // Responder exitosamente incluso si el email falló
     res.status(201).json({
-      message:
-        "Viaje para trabajadores agendado exitosamente y correo enviado.",
+      message: "Viaje para trabajadores agendado exitosamente",
       solicitudes: response.solicitudes,
     });
+    
   } catch (error) {
     console.error("Error al agendar viaje para trabajadores:", error);
     res.status(500).json({
@@ -316,6 +301,21 @@ const aprobarSolicitudViaje = async (req, res) => {
     });
   }
 };
+const eliminarViaje = async (req, res) => {
+  const { id } = req.params;
+  try {
+    await ViajesModel.eliminarViaje(id);
+    res.status(200).json({
+      message: "Viaje eliminado exitosamente"
+    });
+  } catch (error) {
+    console.error("Error al eliminar el viaje:", error);
+    res.status(500).json({
+      message: "Error al eliminar el viaje",
+      error: error.message
+    });
+  }
+};
 
 export const ViajesController = {
   crearViaje,
@@ -327,4 +327,5 @@ export const ViajesController = {
   agendarViajeParaTrabajadores,
   obtenerSolicitudesContratista,
   cancelarViajeUsuarioHandler,
+  eliminarViaje,
 };

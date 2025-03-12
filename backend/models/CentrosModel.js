@@ -37,7 +37,6 @@ const crearCentro = async ({
   fecha_cierre_productivo,
   jefe_centro,
   etapa_ciclo_cultivo,
-  estructura,
   ponton_id,
   ruta_id,
   latitud,
@@ -51,15 +50,14 @@ const crearCentro = async ({
     fecha_cierre_productivo,
     jefe_centro,
     etapa_ciclo_cultivo,
-    estructura, ponton_id, ruta_id, latitud, longitud) 
-    VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) RETURNING *`;
+    ponton_id, ruta_id, latitud, longitud) 
+    VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING *`;
     const values = [
       nombre_centro,
       fecha_apertura_productiva,
       fecha_cierre_productivo,
       jefe_centro,
       etapa_ciclo_cultivo,
-      estructura,
       ponton_id,
       ruta_id,
       latitud,

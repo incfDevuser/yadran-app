@@ -87,16 +87,16 @@ export default defineConfig({
       },
     }),
   ],
-  server: {
-    headers: {
-      "Content-Security-Policy":
-        "default-src 'self'; " +
-        "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://apis.google.com https://accounts.google.com; " +
-        "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; " +
-        "font-src 'self' https://fonts.gstatic.com data:; " +
-        "img-src 'self' data:; " + 
-        "connect-src 'self' data: http://localhost:5000 http://localhost:5001 http://localhost:5173 https://oauth2.googleapis.com https://accounts.google.com https://www.googleapis.com https://fonts.googleapis.com; " +
-        "frame-src 'self' https://accounts.google.com;",
-    },
-  },
+  // server: {
+  //   headers: {
+  //     "Content-Security-Policy":
+  //       "default-src 'self'; " +
+  //       "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://apis.google.com https://accounts.google.com; " +
+  //       "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; " +
+  //       "font-src 'self' https://fonts.gstatic.com data:; " +
+  //       "img-src 'self' data:; " + 
+  //       "connect-src 'self' data: http://localhost:5000 https://localhost:5000 http://localhost:5001 http://localhost:5173 https://oauth2.googleapis.com https://accounts.google.com https://www.googleapis.com https://fonts.googleapis.com; " +
+  //       "frame-src 'self' https://accounts.google.com;",
+  //   },
+  // },
 });

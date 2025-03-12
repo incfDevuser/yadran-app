@@ -9,7 +9,7 @@ const TripulantesModal = ({ show, handleClose, vehiculo }) => {
       <div className="bg-white p-6 rounded-lg shadow-xl w-11/12 max-w-md">
         <div className="flex justify-between items-center border-b pb-4">
           <h2 className="text-xl font-bold text-gray-800 flex items-center gap-2">
-            <FaUserTie className="text-blue-500" /> Tripulantes del Vehículo
+             Tripulantes del Vehículo
           </h2>
           <button
             onClick={handleClose}
@@ -50,7 +50,7 @@ const TripulantesModal = ({ show, handleClose, vehiculo }) => {
         <div className="flex justify-end mt-6">
           <button
             onClick={handleClose}
-            className="bg-blue-500 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded"
+            className="bg-black text-white font-semibold py-2 px-4 rounded"
           >
             Cerrar
           </button>

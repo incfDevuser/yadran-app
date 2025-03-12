@@ -48,6 +48,23 @@ export const ProveedoresProvider = ({ children }) => {
     }
   }, []);
 
+  const actualizarProveedor = useCallback(async (id, datosActualizados) => {
+    try {
+      const response = await axios.put(`${BaseUrl}/proveedores/${id}`, datosActualizados);
+      if (response.status === 200) {
+        setProveedores(prev => 
+          prev.map(proveedor => 
+            proveedor.id === id ? response.data.proveedor : proveedor
+          )
+        );
+        return response.data;
+      }
+    } catch (error) {
+      console.error("Error al actualizar proveedor:", error.message);
+      throw error;
+    }
+  }, []);
+
   useEffect(() => {
     obtenerProveedores();
   }, [obtenerProveedores]);
@@ -61,12 +78,11 @@ export const ProveedoresProvider = ({ children }) => {
         obtenerProveedores,
         agregarProveedor,
         eliminarProveedor,
+        actualizarProveedor,
       }}
     >
       {children}
     </ProveedoresContext.Provider>
   );
 };
-
-// Hook para consumir el contexto
 export const useProveedores = () => useContext(ProveedoresContext);

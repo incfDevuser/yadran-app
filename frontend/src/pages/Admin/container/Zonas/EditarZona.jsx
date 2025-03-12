@@ -9,10 +9,8 @@ const EditarZona = ({ zona, isOpen, onClose }) => {
   const initialState = {
     nombre_zona: "",
     pais: "",
-    region: "",
     jurisdiccion_id: "",
     estado_zona: "",
-    descripcion: "",
   };
 
   const [formData, setFormData] = useState(initialState);
@@ -22,10 +20,8 @@ const EditarZona = ({ zona, isOpen, onClose }) => {
       setFormData({
         nombre_zona: zona.nombre_zona || "",
         pais: zona.pais || "",
-        region: zona.region || "",
         jurisdiccion_id: zona.jurisdiccion_id || "",
         estado_zona: zona.estado_zona || "",
-        descripcion: zona.descripcion || "",
       });
     }
   }, [zona]);
@@ -73,17 +69,6 @@ const EditarZona = ({ zona, isOpen, onClose }) => {
               className="w-full px-3 py-2 border rounded"
             />
           </div>
-          {/* Región */}
-          <div className="mb-4">
-            <label className="block text-gray-700">Región</label>
-            <input
-              type="text"
-              name="region"
-              value={formData.region}
-              onChange={handleInputChange}
-              className="w-full px-3 py-2 border rounded"
-            />
-          </div>
           {/* Jurisdicción */}
           <div className="mb-4">
             <label className="block text-gray-700">Jurisdicción</label>
@@ -108,25 +93,17 @@ const EditarZona = ({ zona, isOpen, onClose }) => {
           </div>
           {/* Estado Zona */}
           <div className="mb-4">
-            <label className="block text-gray-700">Estado Zona</label>
-            <input
-              type="text"
+            <label className="block text-gray-700 mb-2">Estado Zona</label>
+            <select
               name="estado_zona"
               value={formData.estado_zona}
               onChange={handleInputChange}
               className="w-full px-3 py-2 border rounded"
-            />
-          </div>
-          {/* Descripción */}
-          <div className="mb-4">
-            <label className="block text-gray-700">Descripción</label>
-            <input
-              type="text"
-              name="descripcion"
-              value={formData.descripcion}
-              onChange={handleInputChange}
-              className="w-full px-3 py-2 border rounded"
-            />
+            >
+              <option value="">Seleccione un estado</option>
+              <option value="Abierta">Abierta</option>
+              <option value="Cerrada">Cerrada</option>
+            </select>
           </div>
           {/* Botones */}
           <div className="flex justify-end">

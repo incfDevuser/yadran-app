@@ -30,14 +30,13 @@ const crearRuta = async ({
   escalas,
   tiempo_estimado,
   mov_interno,
-  fecha_agendamiento,
 }) => {
   try {
     const query = `
       INSERT INTO rutas (
         nombre_ruta, zona, origen, destino, escalas, 
-        tiempo_estimado, mov_interno, fecha_agendamiento
-      ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *
+        tiempo_estimado, mov_interno
+      ) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *
     `;
     const values = [
       nombre_ruta,
@@ -47,7 +46,6 @@ const crearRuta = async ({
       escalas,
       tiempo_estimado,
       mov_interno,
-      fecha_agendamiento,
     ];
     const response = await pool.query(query, values);
     return response.rows[0];
@@ -67,14 +65,13 @@ const actualizarRuta = async (id, data) => {
       escalas,
       tiempo_estimado,
       mov_interno,
-      fecha_agendamiento,
     } = data;
 
     const query = `
       UPDATE rutas SET
         nombre_ruta = $1, zona = $2, origen = $3, destino = $4, escalas = $5,
-        tiempo_estimado = $6, mov_interno = $7, fecha_agendamiento = $8
-      WHERE id = $9 RETURNING *
+        tiempo_estimado = $6, mov_interno = $7
+      WHERE id = $8 RETURNING *
     `;
     const values = [
       nombre_ruta,
@@ -84,7 +81,6 @@ const actualizarRuta = async (id, data) => {
       escalas,
       tiempo_estimado,
       mov_interno,
-      fecha_agendamiento,
       id,
     ];
 
@@ -119,7 +115,6 @@ const obtenerRutasConTrayectos = async () => {
         r.escalas,
         r.tiempo_estimado, 
         r.mov_interno, 
-        r.fecha_agendamiento,
         t.id AS trayecto_id,
         t.origen AS trayecto_origen,
         t.destino AS trayecto_destino,
@@ -158,7 +153,6 @@ const obtenerRutasConTrayectos = async () => {
           escalas: row.escalas,
           tiempo_estimado: row.tiempo_estimado,
           mov_interno: row.mov_interno,
-          fecha_agendamiento: row.fecha_agendamiento,
           trayectos: [],
         };
       }

@@ -14,7 +14,6 @@ const CreateCentroModal = ({ isOpen, onClose }) => {
     fecha_cierre_productivo: "",
     jefe_centro: "",
     etapa_ciclo_cultivo: "",
-    estructuras: "",
     ponton_id: null,
     ruta_id: null,
     latitud: "",
@@ -23,14 +22,12 @@ const CreateCentroModal = ({ isOpen, onClose }) => {
 
   const [nuevoCentro, setNuevoCentro] = useState(initialState);
 
-  // Reinicia los valores del formulario al cerrar el modal
   useEffect(() => {
     if (!isOpen) {
       setNuevoCentro(initialState);
     }
   }, [isOpen]);
 
-  // Manejar cambios en los inputs
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setNuevoCentro({
@@ -47,7 +44,7 @@ const CreateCentroModal = ({ isOpen, onClose }) => {
         return;
       }
       await crearCentro(nuevoCentro);
-      setNuevoCentro(initialState); // Reinicia el formulario después de crear
+      setNuevoCentro(initialState); 
       onClose();
     } catch (error) {
       console.error("Error al crear el centro", error);
@@ -136,21 +133,6 @@ const CreateCentroModal = ({ isOpen, onClose }) => {
               required
             />
           </div>
-
-          {/* Estructuras */}
-          <div className="mb-4">
-            <label className="block text-gray-700 mb-2">Estructuras</label>
-            <input
-              type="text"
-              name="estructuras"
-              value={nuevoCentro.estructuras}
-              onChange={handleInputChange}
-              className="w-full px-3 py-2 border rounded"
-              placeholder="Descripción de las Estructuras"
-              required
-            />
-          </div>
-
           {/* Latitud */}
           <div className="mb-4">
             <label className="block text-gray-700 mb-2">Latitud</label>

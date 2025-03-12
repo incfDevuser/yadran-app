@@ -77,16 +77,13 @@ create table proveedores(
 	encargado varchar(100) not null,
 	contacto varchar(100) not null,
 	email_encargado varchar(100) not null,
-	telefono_encargado varchar(11) not null,
 	representante_interno varchar(100),
 	estado varchar(100),
 	tipo_servicio varchar(100) not null,
 	ciclo_cultivo varchar(100),
 	tarea_realizar varchar(100),
-	fecha_termino_servicio date,
 	frencuencia_servicio varchar(100),
-	descripcion_servicio varchar(100),
-	cantidad_usuarios_autorizados integer
+	duracion varchar(225),
 ) --Luego la tabla vehiculos
 create table vehiculos(
 	id serial primary key,

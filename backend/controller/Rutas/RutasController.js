@@ -44,8 +44,7 @@ const crearRuta = async (req, res) => {
     destino,
     escalas,
     tiempo_estimado,
-    mov_interno,
-    fecha_agendamiento,
+    mov_interno
   } = req.body;
 
   try {
@@ -56,9 +55,7 @@ const crearRuta = async (req, res) => {
       destino,
       escalas,
       tiempo_estimado,
-      mov_interno,
-      fecha_agendamiento,
-    };
+      mov_interno    };
     const nuevaRuta = await RutasModel.crearRuta(ruta);
     res.status(201).json({
       message: "Ruta creada exitosamente",

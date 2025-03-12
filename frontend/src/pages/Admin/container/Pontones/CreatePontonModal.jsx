@@ -9,22 +9,17 @@ const CreatePontonModal = ({ isOpen, onClose }) => {
   const initialState = {
     nombre_ponton: "",
     concesion_id: null,
-    tipo_ponton: "",
     habitabilidad_general: 0,
     habitabilidad_interna: 0,
     habitabilidad_externa: 0,
   };
 
   const [nuevoPonton, setNuevoPonton] = useState(initialState);
-
-  // Reinicia los valores del formulario al cerrar el modal
   useEffect(() => {
     if (!isOpen) {
       setNuevoPonton(initialState);
     }
   }, [isOpen]);
-
-  // Manejar cambios en los inputs
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setNuevoPonton({
@@ -32,12 +27,10 @@ const CreatePontonModal = ({ isOpen, onClose }) => {
       [name]: value,
     });
   };
-
-  // Crear el pontón
   const handleCreate = async () => {
     try {
       await crearPonton(nuevoPonton);
-      setNuevoPonton(initialState); // Reinicia el formulario después de crear
+      setNuevoPonton(initialState);
       onClose();
     } catch (error) {
       console.error("Error al crear el pontón:", error);
@@ -93,20 +86,6 @@ const CreatePontonModal = ({ isOpen, onClose }) => {
               </select>
             )}
           </div>
-
-          {/* Tipo de pontón */}
-          <div className="mb-4">
-            <label className="block text-gray-700 mb-2">Tipo Pontón</label>
-            <input
-              type="text"
-              name="tipo_ponton"
-              value={nuevoPonton.tipo_ponton}
-              onChange={handleInputChange}
-              className="w-full px-3 py-2 border rounded"
-              placeholder="Tipo de Pontón"
-            />
-          </div>
-
           {/* Habitabilidad General */}
           <div className="mb-4">
             <label className="block text-gray-700 mb-2">

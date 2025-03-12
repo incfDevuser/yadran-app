@@ -8,7 +8,6 @@ const EditarConcesion = ({ concesion, isOpen, onClose }) => {
 
   const initialState = {
     nombre_concesion: "",
-    vigencia: "",
     zona_id: null,
   };
 
@@ -18,7 +17,6 @@ const EditarConcesion = ({ concesion, isOpen, onClose }) => {
     if (concesion) {
       setFormData({
         nombre_concesion: concesion.nombre_concesion || "",
-        vigencia: concesion.vigencia || "",
         zona_id: concesion.zona_id || null,
       });
     }
@@ -63,19 +61,6 @@ const EditarConcesion = ({ concesion, isOpen, onClose }) => {
               onChange={handleInputChange}
               className="w-full px-3 py-2 border rounded"
               placeholder="Nombre de la Concesión"
-              required
-            />
-          </div>
-          {/* Vigencia */}
-          <div className="mb-4">
-            <label className="block text-gray-700 mb-2">Vigencia</label>
-            <input
-              type="date"
-              name="vigencia"
-              value={formData.vigencia}
-              onChange={handleInputChange}
-              className="w-full px-3 py-2 border rounded"
-              placeholder="Vigencia de la Concesión"
               required
             />
           </div>

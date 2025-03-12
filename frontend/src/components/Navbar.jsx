@@ -86,6 +86,16 @@ const Navbar = () => {
                         Mis Trabajadores
                       </Link>
                     )}
+                    {rol === "Proveedor" && (
+                      <>
+                        <Link to="/mis-transportes" className="text-[#7C8DB0]">
+                          Mis Transportes
+                        </Link>
+                        <Link to="/gestion-rutas" className="text-[#7C8DB0]">
+                          Gestion Rutas
+                        </Link>
+                      </>
+                    )}
                     <button
                       className="py-2 px-4 md:py-3 md:px-5 rounded-[5px] text-base text-red-500"
                       onClick={handleCerrarSesion}
@@ -148,6 +158,16 @@ const Navbar = () => {
                 <Link to="/contratista-dashboard" className="text-[#7C8DB0]">
                   Mis Trabajadores
                 </Link>
+              )}
+              {rol === "Proveedor" && (
+                <>
+                  <Link to="/mis-transportes" className="text-[#7C8DB0]">
+                    Mis Transportes
+                  </Link>
+                  <Link to="/gestion-rutas" className="text-[#7C8DB0]">
+                    Gestion Rutas
+                  </Link>
+                </>
               )}
               {rol === "Colaborador Autorizado" && !isAdmin && (
                 <Link className="text-gray-500" to="/validar">
