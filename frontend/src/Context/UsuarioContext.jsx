@@ -79,7 +79,66 @@ export const UsuariosProvider = ({ children }) => {
       setIsAutenticado(false);
       setIsAdmin(false);
       throw new Error("Login failed. Please check your credentials");
-    } 
+    }
+  };
+  const registrarProveedor = async (nuevoProveedor) => {
+    try {
+      const response = await axios.post(
+        `${BaseUrl}/usuarios/register-proveedor`,
+        nuevoProveedor,
+        {
+          withCredentials: true,
+        }
+      );
+      setUsuarios(response.data);
+      setIsAutenticado(true);
+      setRol(response.data.nombre_rol);
+    } catch (error) {}
+  };
+  const iniciarSesionContratista = async (credentials) => {
+    try {
+      const response = await axios.post(
+        `${BaseUrl}/usuarios/login-contratista`,
+        credentials,
+        {
+          withCredentials: true,
+        }
+      );
+      const data = response.data;
+      setUsuarios(data.usuario);
+      setIsAutenticado(true);
+      setRol(data.usuario.nombre_rol);
+      return data;
+    } catch (error) {
+      console.error("Error al iniciar sesión:", error);
+      setUsuarios(null);
+      setIsAutenticado(false);
+      setIsAdmin(false);
+      throw new Error(error.response?.data?.error || "Error al iniciar sesión");
+    }
+  };
+  const registrarContratista = async (nuevoContratista) => {
+    try {
+      const response = await axios.post(
+        `${BaseUrl}/usuarios/register-contratista`,
+        nuevoContratista,
+        {
+          withCredentials: true,
+        }
+      );
+      const data = response.data;
+      setUsuarios(data);
+      setIsAutenticado(true);
+      setRol(data.nombre_rol);
+    } catch (error) {
+      console.error("Error al registrar contratista:", error);
+      setUsuarios(null);
+      setIsAutenticado(false);
+      setIsAdmin(false);
+      throw new Error(
+        error.response?.data?.error || "Error al registrar contratista"
+      );
+    }
   };
   const cerrarSesion = async () => {
     try {
@@ -135,6 +194,28 @@ export const UsuariosProvider = ({ children }) => {
       throw new Error("Hubo un error al actualizar el usuario.");
     }
   };
+  const iniciarSesionChofer = async (credentials) => {
+    try {
+      const response = await axios.post(
+        `${BaseUrl}/usuarios/login-chofer`,
+        credentials,
+        {
+          withCredentials: true,
+        }
+      );
+      const data = response.data;
+      setUsuarios(data.usuario);
+      setIsAutenticado(true);
+      setRol(data.usuario.nombre_rol);
+      return data;
+    } catch (error) {
+      console.error("Error al iniciar sesión:", error);
+      setUsuarios(null);
+      setIsAutenticado(false);
+      throw new Error(error.response?.data?.error || "Error al iniciar sesión");
+    }
+  };
+
   return (
     <UsuariosContext.Provider
       value={{
@@ -149,7 +230,11 @@ export const UsuariosProvider = ({ children }) => {
         cerrarSesion,
         cancelarViaje,
         actualizarUsuario,
-        iniciarSesionProveedor
+        iniciarSesionProveedor,
+        registrarProveedor,
+        iniciarSesionContratista,
+        registrarContratista,
+        iniciarSesionChofer,
       }}
     >
       {children}

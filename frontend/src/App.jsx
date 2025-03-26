@@ -78,15 +78,20 @@ import AdminNotificaciones from "./pages/Admin/AdminNotificaciones";
 import NotificacionesUsuario from "./pages/User/NotificacionesUsuario";
 import { NotificacionesProvider } from "./Context/NotificacionesContext";
 
-//Inicio/registros tradicionales para Contratista y Proveedor
-// import LoginPageContratista from "./pages/Contratista/Pages/LoginPage";
-// import RegisterPage from "./pages/Contratista/Pages/RegisterPage";
-
+//Contratistas
+import LoginContratistaPage from "./pages/Contratista/Pages/LoginContratistaPage";
+import RegisterContratistaPage from "./pages/Contratista/Pages/RegisterContratistaPage";
+//Proveedores
 import LoginPage from "./pages/Proveedores/Pages/LoginPage";
 import RegisterPage from "./pages/Proveedores/Pages/RegisterPage";
 //Obtener los vehiculos por proveedor
 import MisTransportesPage from "./pages/Proveedores/Pages/MisTransportesPage";
 import GestionRutasPage from "./pages/Proveedores/Pages/GestionRutasPage";
+//Choferes
+import LoginChoferPage from "./pages/Choferes/pages/LoginChoferPage";
+import MisTrayectos from "./pages/Choferes/pages/MisTrayectos";
+import ValidarPasajeros from "./pages/Choferes/pages/ValidarPasajeros";
+
 const App = () => {
   return (
     <UsuariosProvider>
@@ -342,6 +347,26 @@ const App = () => {
                   </VehiculosProvider>
                 }
               />
+              {/* Contratistas sesiones tradicional */}
+              <Route
+                path="/login-contratista"
+                element={<LoginContratistaPage />}
+              />
+              <Route
+                path="/register-contratista"
+                element={<RegisterContratistaPage />}
+              />
+              {/* Choferes */}
+              <Route path="/login-chofer" element={<LoginChoferPage />} />
+              <Route
+                path="/mis-trayectos"
+                element={
+                  <ChoferProvider>
+                    <MisTrayectos />
+                  </ChoferProvider>
+                }
+              />
+              <Route path="/validar-pasajeros" element={<ValidarPasajeros />} />
             </Routes>
           </div>
 

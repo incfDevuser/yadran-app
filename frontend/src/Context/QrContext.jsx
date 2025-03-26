@@ -47,8 +47,14 @@ export const QrProvider = ({ children }) => {
       );
     }
   };
+  const validarPasajeroChofer = async () => {
+    try {
+    } catch (error) {}
+  };
   return (
-    <QrContext.Provider value={{ validarTrayecto, validarPonton }}>
+    <QrContext.Provider
+      value={{ validarTrayecto, validarPonton, validarPasajeroChofer }}
+    >
       {children}
     </QrContext.Provider>
   );

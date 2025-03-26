@@ -30,7 +30,7 @@ const obtenerViajes = async () => {
           'etapa_ciclo_cultivo', c.etapa_ciclo_cultivo,
           'latitud', c.latitud,
           'longitud', c.longitud
-        ) AS centro_asociado, -- Construimos un objeto JSON con los datos del centro
+        ) AS centro_asociado,
         json_agg(
           json_build_object(
             'id', t.id,
@@ -38,16 +38,23 @@ const obtenerViajes = async () => {
             'destino', t.destino,
             'duracion_estimada', t.duracion_estimada,
             'vehiculo_id', t.vehiculo_id,
-            'nombre_vehiculo', veh.tipo_vehiculo 
+            'nombre_vehiculo', veh.tipo_vehiculo,
+            'capacidad_operacional', veh.capacidad_operacional,
+            'capacidad_ocupada', (
+              SELECT COUNT(*)
+              FROM vehiculo_usuarios vu
+              WHERE vu.trayecto_id = t.id
+              AND vu.estado = 'Aprobado'
+            )
           )
           ORDER BY t.id ASC
         ) AS trayectos
       FROM viajes v
       JOIN rutas r ON v.ruta_id = r.id
-      LEFT JOIN centro c ON r.id = c.ruta_id -- LEFT JOIN para incluir el centro asociado
+      LEFT JOIN centro c ON r.id = c.ruta_id
       JOIN trayectos t ON v.ruta_id = t.ruta_id
-      LEFT JOIN vehiculos veh ON t.vehiculo_id = veh.id -- LEFT JOIN para incluir trayectos sin vehículo
-      GROUP BY v.id, r.nombre_ruta, c.id -- Incluir c.id para evitar errores de agrupación
+      LEFT JOIN vehiculos veh ON t.vehiculo_id = veh.id
+      GROUP BY v.id, r.nombre_ruta, c.id
       ORDER BY v.id;
     `;
 
@@ -260,8 +267,6 @@ const cancelarViajeUsuarioYTrabajadores = async (solicitudId) => {
         trabajador_id,
       ]);
     }
-
-    // Eliminar la solicitud de la tabla usuarios_viajes
     const deleteSolicitudQuery = `
       DELETE FROM usuarios_viajes
       WHERE id = $1;
@@ -312,8 +317,6 @@ const agendarViajeParaTrabajadores = async ({
         "Algunos trabajadores no pertenecen al contratista o no existen"
       );
     }
-
-    // Crear solicitudes para los trabajadores
     const solicitudes = [];
     for (const trabajador_id of trabajadoresValidos) {
       const solicitudQuery = `

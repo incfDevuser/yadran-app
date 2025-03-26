@@ -96,6 +96,16 @@ const Navbar = () => {
                         </Link>
                       </>
                     )}
+                    {rol === "Chofer" && (
+                      <>
+                        <Link to="/mis-trayectos" className="text-[#7C8DB0]">
+                          Mis Trayectos
+                        </Link>
+                        <Link to="/validar-pasajeros" className="text-[#7C8DB0]">
+                          Validar Pasajeros
+                        </Link>
+                      </>
+                    )}
                     <button
                       className="py-2 px-4 md:py-3 md:px-5 rounded-[5px] text-base text-red-500"
                       onClick={handleCerrarSesion}
@@ -166,6 +176,16 @@ const Navbar = () => {
                   </Link>
                   <Link to="/gestion-rutas" className="text-[#7C8DB0]">
                     Gestion Rutas
+                  </Link>
+                </>
+              )}
+              {rol === "Chofer" && (
+                <>
+                  <Link to="/mis-trayectos" className="text-[#7C8DB0]">
+                    Mis Trayectos
+                  </Link>
+                  <Link to="/validar-pasajeros" className="text-[#7C8DB0]">
+                    Validar Pasajeros
                   </Link>
                 </>
               )}

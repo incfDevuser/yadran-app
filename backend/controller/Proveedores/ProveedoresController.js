@@ -49,9 +49,7 @@ const crearProveedor = async (req, res) => {
     tipo_servicio,
     ciclo_cultivo,
     tarea_realizar,
-    fecha_inicio_servicio,
     duracion,
-    fecha_termino_servicio,
     frecuencia_servicio,
     cantidad_usuarios_autorizados,
   } = req.body;
@@ -69,9 +67,7 @@ const crearProveedor = async (req, res) => {
       tipo_servicio,
       ciclo_cultivo,
       tarea_realizar,
-      fecha_inicio_servicio,
       duracion,
-      fecha_termino_servicio,
       frecuencia_servicio,
       cantidad_usuarios_autorizados,
     });

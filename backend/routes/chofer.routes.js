@@ -8,6 +8,12 @@ router.post("/crear", AuthMiddleware.authToken, ChoferController.crearChoferCont
 //Ruta para obtener choferes por proveedor
 router.get("/mis-choferes", AuthMiddleware.authToken, ChoferController.obtenerChoferesPorProveedor);
 router.get("/", ChoferController.obtenerChoferes);
-router.get("/:chofer_id/trayectos", ChoferController.obtenerUsuariosPorTrayectoParaChofer);
+
+// Rutas protegidas para choferes
+router.get(
+  "/:chofer_id/trayectos", 
+  AuthMiddleware.authToken,
+  ChoferController.obtenerUsuariosPorTrayectoParaChofer
+);
 
 export default router;

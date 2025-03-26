@@ -278,9 +278,9 @@ const obtenerPasajerosPorVehiculo = async (req, res) => {
 };
 
 const obtenerRutasYTrayectosPorVehiculo = async (req, res) => {
-  const { vehiculo_id } = req.params;
+  const { proveedor_id } = req.user;
   try {
-    const rutas = await VehiculosModel.obtenerRutasYTrayectosPorVehiculo(vehiculo_id);
+    const rutas = await VehiculosModel.obtenerRutasYTrayectosPorVehiculo(proveedor_id);
     res.status(200).json({
       message: "Rutas y trayectos obtenidos exitosamente",
       rutas,

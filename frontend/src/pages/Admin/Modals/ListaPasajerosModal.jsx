@@ -11,7 +11,7 @@ const ListaPasajerosModal = memo(({ show, handleClose, pasajeros }) => {
       <div className="bg-white p-6 rounded-lg shadow-xl w-11/12 max-w-4xl">
         <div className="flex justify-between items-center border-b pb-4">
           <h2 className="text-xl font-bold text-gray-800 flex items-center gap-2">
-            <FaUsers className="text-purple-500" /> Lista de Pasajeros
+            Lista de Pasajeros
           </h2>
           <button
             onClick={handleClose}

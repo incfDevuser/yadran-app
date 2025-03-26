@@ -1,11 +1,12 @@
-import React from 'react'
+import React from "react";
+import Register from "../Components/Register";
 
 const RegisterPage = () => {
   return (
-    <div>
-      
+    <div className=" min-h-screen py-12">
+      <Register />
     </div>
-  )
-}
+  );
+};
 
-export default RegisterPage
+export default RegisterPage;

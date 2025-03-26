@@ -417,7 +417,7 @@ const AdminRoutes = () => {
                       <option value="">Selecciona un vehiculo</option>
                       {vehiculos.map((vehiculo) => (
                         <option key={vehiculo.id} value={vehiculo.id}>
-                          {vehiculo.tipo_vehiculo}
+                          {vehiculo.tipo_vehiculo} - Proveedor: {vehiculo.nombre_proveedor}
                         </option>
                       ))}
                     </select>

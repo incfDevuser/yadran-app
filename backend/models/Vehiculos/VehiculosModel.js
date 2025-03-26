@@ -297,7 +297,7 @@ const obtenerPasajerosPorVehiculo = async (vehiculo_id) => {
   }
 };
 
-const obtenerRutasYTrayectosPorVehiculo = async (vehiculo_id) => {
+const obtenerRutasYTrayectosPorVehiculo = async (proveedor_id) => {
   try {
     const query = `
       SELECT 
@@ -331,22 +331,22 @@ const obtenerRutasYTrayectosPorVehiculo = async (vehiculo_id) => {
               FROM vehiculo_usuarios vu
               LEFT JOIN usuarios u ON vu.usuario_id = u.id
               LEFT JOIN trabajadores tr ON vu.trabajador_id = tr.id
-              WHERE vu.trayecto_id = t.id AND vu.vehiculo_id = $1
+              WHERE vu.trayecto_id = t.id AND vu.vehiculo_id = v.id
             )
           )
         ) AS trayectos
       FROM rutas r
       JOIN trayectos t ON t.ruta_id = r.id
-      JOIN vehiculos v ON v.id = $1
+      JOIN vehiculos v ON v.proveedor_id = $1
       LEFT JOIN choferes c ON v.chofer_id = c.id
       JOIN proveedores p ON v.proveedor_id = p.id
       WHERE EXISTS (
         SELECT 1 FROM vehiculo_usuarios vu 
-        WHERE vu.trayecto_id = t.id AND vu.vehiculo_id = $1
+        WHERE vu.trayecto_id = t.id AND vu.vehiculo_id = v.id
       )
       GROUP BY r.id, r.nombre_ruta, v.id, c.nombre, c.email, p.nombre_proveedor;
     `;
-    const response = await pool.query(query, [vehiculo_id]);
+    const response = await pool.query(query, [proveedor_id]);
     return response.rows;
   } catch (error) {
     console.error("Error al obtener las rutas y trayectos del vehículo:", error);

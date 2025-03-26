@@ -32,8 +32,6 @@ const AdminProveedores = () => {
     tipo_servicio: "",
     ciclo_cultivo: "",
     tarea_realizar: "",
-    fecha_inicio_servicio: "",
-    fecha_termino_servicio: "",
     duracion: "",
     frecuencia_servicio: "",
     cantidad_usuarios_autorizados: 0,
@@ -87,8 +85,6 @@ const AdminProveedores = () => {
   const handleEdit = (proveedor) => {
     const proveedorConFechasFormateadas = {
       ...proveedor,
-      fecha_inicio_servicio: proveedor.fecha_inicio_servicio ? proveedor.fecha_inicio_servicio.split('T')[0] : '',
-      fecha_termino_servicio: proveedor.fecha_termino_servicio ? proveedor.fecha_termino_servicio.split('T')[0] : ''
     };
     setProveedorEditar(proveedorConFechasFormateadas);
     setIsEditModalOpen(true);
@@ -391,36 +387,7 @@ const AdminProveedores = () => {
                     />
                   </div>
                 </div>
-                {/* Fechas de servicio */}
-                <div className="flex justify-between gap-2">
-                  <div className="mb-4 w-[300px]">
-                    <label className="block text-gray-700 font-bold mb-2">
-                      Fecha de Inicio:
-                    </label>
-                    <input
-                      type="date"
-                      name="fecha_inicio_servicio"
-                      value={nuevoProveedor.fecha_inicio_servicio}
-                      onChange={handleChange}
-                      className="w-full border border-gray-300 p-2 rounded"
-                      required
-                    />
-                  </div>
-                  <div className="mb-4 w-[300px]">
-                    <label className="block text-gray-700 font-bold mb-2">
-                      Fecha Termino Servicio:
-                    </label>
-                    <input
-                      type="date"
-                      name="fecha_termino_servicio"
-                      value={nuevoProveedor.fecha_termino_servicio}
-                      onChange={handleChange}
-                      className="w-full border border-gray-300 p-2 rounded"
-                      required
-                    />
-                  </div>
-                </div>
-
+               
                 <div className="flex justify-end">
                   <button
                     onClick={closeModalCreate}
@@ -475,14 +442,6 @@ const AdminProveedores = () => {
               <p>
                 <strong>Duracion de Servicio:</strong>{" "}
                 {selectedProveedor.duracion}
-              </p>
-              <p>
-                <strong>Inicio de Servicio:</strong>{" "}
-                {selectedProveedor.fecha_inicio_servicio}
-              </p>
-              <p>
-                <strong>Fin de Servicio:</strong>{" "}
-                {selectedProveedor.fecha_termino_servicio}
               </p>
               {/* Mapeo de vehículos */}
               <div className="flex flex-col mt-6">
@@ -777,35 +736,7 @@ const AdminProveedores = () => {
                   </div>
                 </div>
                 {/* Fechas de servicio */}
-                <div className="flex justify-between gap-2">
-                  <div className="mb-4 w-[300px]">
-                    <label className="block text-gray-700 font-bold mb-2">
-                      Fecha de Inicio:
-                    </label>
-                    <input
-                      type="date"
-                      name="fecha_inicio_servicio"
-                      value={proveedorEditar.fecha_inicio_servicio}
-                      onChange={handleEditChange}
-                      className="w-full border border-gray-300 p-2 rounded"
-                      required
-                    />
-                  </div>
-                  <div className="mb-4 w-[300px]">
-                    <label className="block text-gray-700 font-bold mb-2">
-                      Fecha Termino Servicio:
-                    </label>
-                    <input
-                      type="date"
-                      name="fecha_termino_servicio"
-                      value={proveedorEditar.fecha_termino_servicio}
-                      onChange={handleEditChange}
-                      className="w-full border border-gray-300 p-2 rounded"
-                      required
-                    />
-                  </div>
-                </div>
-
+                
                 <div className="flex justify-end">
                   <button
                     onClick={closeEditModal}

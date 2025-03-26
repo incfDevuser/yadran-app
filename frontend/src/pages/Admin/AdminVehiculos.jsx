@@ -18,6 +18,7 @@ const AdminVehiculos = () => {
     loading: loadingProveedores,
     obtenerProveedores,
   } = useProveedores();
+  const [filtroProveedor, setFiltroProveedor] = useState("");
   //Estados para abrir y cerral el modal
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isCreateModelOpen, setIsCreateModelOpen] = useState(false);
@@ -80,6 +81,11 @@ const AdminVehiculos = () => {
       console.error("Hubo un error al crear el vehículo: ", error);
     }
   };
+
+  const vehiculosFiltrados = vehiculos.filter((vehiculo) =>
+    vehiculo.nombre_proveedor.toLowerCase().includes(filtroProveedor.toLowerCase())
+  );
+
   return (
     <div>
       <div className="flex w-full h-full mt-11">
@@ -322,6 +328,17 @@ const AdminVehiculos = () => {
           )}
 
           <div className="mt-8">
+            {/* Add this filter input before the table */}
+            <div className="mb-4">
+              <input
+                type="text"
+                placeholder="Filtrar por nombre de proveedor..."
+                value={filtroProveedor}
+                onChange={(e) => setFiltroProveedor(e.target.value)}
+                className="w-full md:w-1/3 p-2 border border-gray-300 rounded"
+              />
+            </div>
+            
             <table className="min-w-full bg-white border border-gray-300">
               {/* NOMBRES DE LAS TABLAS */}
               <thead>
@@ -339,7 +356,7 @@ const AdminVehiculos = () => {
               </thead>
               {/* BODY DE LAS TABLAS */}
               <tbody className="text-center">
-                {vehiculos.map((vehiculo) => (
+                {vehiculosFiltrados.map((vehiculo) => (
                   <tr key={vehiculo.id}>
                     <td className="py-2 px-4 border-b">
                       {vehiculo.num_tripulantes}

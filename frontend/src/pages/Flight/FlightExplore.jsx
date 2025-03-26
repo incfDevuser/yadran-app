@@ -68,6 +68,13 @@ const FlightExplore = () => {
       );
     });
 
+  const viajeDisponible = (viaje) => {
+    // Verifica si algún trayecto está lleno
+    return !viaje.trayectos.some(
+      trayecto => trayecto.capacidad_ocupada >= trayecto.capacidad_operacional
+    );
+  };
+
   return (
     <div className="px-8 w-full flex flex-col">
       <div className="mt-16 text-center">
@@ -123,10 +130,14 @@ const FlightExplore = () => {
                 ? clima.weather[0].description
                 : null;
 
+            const estaDisponible = viajeDisponible(viaje);
+
             return (
               <div
                 key={viaje.id}
-                className="p-6 border rounded-xl shadow-lg bg-white hover:shadow-2xl transition-shadow duration-300 flex flex-col justify-between"
+                className={`p-6 border rounded-xl shadow-lg bg-white hover:shadow-2xl transition-shadow duration-300 flex flex-col justify-between ${
+                  !estaDisponible ? 'opacity-75' : ''
+                }`}
               >
                 <div className="mb-6">
                   <h2 className="text-2xl font-semibold text-gray-800">
@@ -191,14 +202,24 @@ const FlightExplore = () => {
                     <FiCalendar className="mr-2" />
                     Itinerario
                   </button>
-                  <Link
-                    to={`/confirmacion-vuelo/${viaje.id}`}
-                    state={{ viaje }}
-                    className="bg-green-600 text-white py-2 px-4 rounded-lg hover:bg-green-700 transition-colors duration-300 flex items-center justify-center w-1/2"
-                  >
-                    <FiArrowRight className="mr-2" />
-                    Agendar
-                  </Link>
+                  {estaDisponible ? (
+                    <Link
+                      to={`/confirmacion-vuelo/${viaje.id}`}
+                      state={{ viaje }}
+                      className="bg-green-600 text-white py-2 px-4 rounded-lg hover:bg-green-700 transition-colors duration-300 flex items-center justify-center w-1/2"
+                    >
+                      <FiArrowRight className="mr-2" />
+                      Agendar
+                    </Link>
+                  ) : (
+                    <button
+                      disabled
+                      className="bg-gray-400 text-white py-2 px-4 rounded-lg flex items-center justify-center w-1/2 cursor-not-allowed"
+                    >
+                      <FiX className="mr-2" />
+                      Sin Cupos
+                    </button>
+                  )}
                 </div>
               </div>
             );
@@ -240,6 +261,8 @@ const FlightExplore = () => {
                       origin={trayecto.origen}
                       destination={trayecto.destino}
                       vehiculo={trayecto.nombre_vehiculo}
+                      capacidadOperacional={trayecto.capacidad_operacional}
+                      capacidadOcupada={trayecto.capacidad_ocupada}
                     />
                   )
                 })}

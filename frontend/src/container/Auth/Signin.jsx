@@ -114,7 +114,7 @@ const Signin = ({ signin, setSignin }) => {
           <div className="flex gap-2">
             <button
               className="w-full flex gap-2 items-center justify-center bg-[#605DEC] text-white rounded p-3"
-              onClick={() => navigate("/login-proveedor")}
+              onClick={() => navigate("/login-contratista")}
             >
               <p className="text-[16px] leading-6">
                 Iniciar sesión como contratista
@@ -123,11 +123,24 @@ const Signin = ({ signin, setSignin }) => {
 
             <button
               className="w-full flex gap-2 items-center justify-center border-[1px] border-[#605DEC] rounded p-3"
-              onClick={() => navigate("/register-proveedor")}
+              onClick={() => navigate("/register-contratista")}
             >
               <p className="text-[#605CDE] text-[16px] leading-6">
                 Registrarse como contratista
               </p>
+            </button>
+          </div>
+        </div>
+        <div className="flex flex-col gap-2">
+          <p className="text-center text-black font-thin">Si eres un Chofer</p>
+          <div className="flex gap-2">
+            <button
+              className="w-full flex gap-2 items-center justify-center bg-[#605DEC] text-white rounded p-3"
+              onClick={() => navigate("/login-chofer")}
+            >
+              <p className="text-[16px] leading-6">
+                Iniciar sesión como Chofer
+              </p> 
             </button>
           </div>
         </div>

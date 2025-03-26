@@ -41,4 +41,7 @@ router.get("/:vehiculo_id/pasajeros", VehiculosController.obtenerPasajerosPorVeh
 //Obtener rutas y trayectos por vehículo
 router.get("/:vehiculo_id/rutas", VehiculosController.obtenerRutasYTrayectosPorVehiculo);
 
+//Obtener rutas y trayectos por proveedor
+router.get("/rutas/proveedor", AuthMiddleware.authToken, VehiculosController.obtenerRutasYTrayectosPorVehiculo);
+
 export default router;

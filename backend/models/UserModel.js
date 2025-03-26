@@ -138,61 +138,6 @@ const eliminarUsuario = async (id) => {
     throw new Error("Hubo un error con la operación eliminarUsuario");
   }
 };
-
-// const register = async ({
-//   nombre,
-//   rut,
-//   genero,
-//   telefono,
-//   email,
-//   fecha_nacimiento,
-//   ciudad_origen,
-//   empresa,
-//   cargo,
-//   numero_contacto,
-//   password,
-//   rol_id = 4,
-// }) => {
-//   try {
-//     const query = `
-//       INSERT INTO usuarios (
-//         nombre,
-//         rut,
-//         genero,
-//         telefono,
-//         email,
-//         fecha_nacimiento,
-//         ciudad_origen,
-//         empresa,
-//         cargo,
-//         numero_contacto,
-//         password,
-//         rol_id
-//       )
-//       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
-//       RETURNING *;
-//     `;
-//     const values = [
-//       nombre,
-//       rut,
-//       genero,
-//       telefono,
-//       email,
-//       fecha_nacimiento,
-//       ciudad_origen,
-//       empresa,
-//       cargo,
-//       numero_contacto,
-//       password,
-//       rol_id,
-//     ];
-//     const response = await pool.query(query, values);
-//     return response.rows[0];
-//   } catch (error) {
-//     console.error(error);
-//     throw new Error("Hubo un error con la operación register");
-//   }
-// };
 const registerProveedores = async ({
   nombre,
   rut,
@@ -289,7 +234,60 @@ const registerProveedores = async ({
     throw new Error("Hubo un error con la operación register");
   }
 };
-
+const registerContratista = async ({
+  nombre,
+  rut,
+  genero,
+  telefono,
+  email,
+  fecha_nacimiento,
+  ciudad_origen,
+  empresa,
+  cargo,
+  numero_contacto,
+  password,
+  rol_id = 4,
+}) => {
+  try {
+    const query = `
+        INSERT INTO usuarios (
+          nombre,
+          rut,
+          genero,
+          telefono,
+          email,
+          fecha_nacimiento,
+          ciudad_origen,
+          empresa,
+          cargo,
+          numero_contacto,
+          password,
+          rol_id
+        )
+        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
+        RETURNING *;
+      `;
+    const values = [
+      nombre,
+      rut,
+      genero,
+      telefono,
+      email,
+      fecha_nacimiento,
+      ciudad_origen,
+      empresa,
+      cargo,
+      numero_contacto,
+      password,
+      rol_id,
+    ];
+    const response = await pool.query(query, values);
+    return response.rows[0];
+  } catch (error) {
+    console.error(error);
+    throw new Error("Hubo un error con la operación register");
+  }
+};
 const findUser = async (email) => {
   try {
     const query = `
@@ -319,6 +317,18 @@ const findUser = async (email) => {
     console.error("Error en FINDUSER:", error.message);
     throw new Error("Hubo un error con la operación FINDUSER");
   }
+};
+
+const findChofer = async (email) => {
+  const query = `
+    SELECT u.*, c.id as chofer_id, r.nombre_rol as nombre_rol 
+    FROM usuarios u 
+    INNER JOIN choferes c ON u.chofer_id = c.id
+    INNER JOIN roles r ON u.rol_id = r.id
+    WHERE u.email = $1
+  `;
+  const result = await pool.query(query, [email]);
+  return result.rows[0];
 };
 
 const actualizarUsuario = async (id, camposActualizados) => {
@@ -356,7 +366,9 @@ export const UserModel = {
   obtenerUsuario,
   eliminarUsuario,
   findUser,
+  findChofer,
   obtenerUsuarioConViajes,
   actualizarUsuario,
   registerProveedores,
+  registerContratista
 };

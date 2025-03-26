@@ -83,7 +83,7 @@ const MisTransportesPage = () => {
           </div>
           <button
             onClick={() => setShowCrearVehiculoModal(true)}
-            className="flex items-center gap-2 px-6 py-3 bg-purple-600 text-white rounded-md hover:bg-purple-700 transition-all duration-200"
+            className="flex items-center gap-2 px-6 py-3 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-all duration-200"
           >
             <FaPlus className="text-sm" /> Agregar Vehículo
           </button>
@@ -129,7 +129,7 @@ const MisTransportesPage = () => {
           </div>
           <button
             onClick={() => setShowCrearChoferModal(true)}
-            className="flex items-center gap-2 px-6 py-3 bg-purple-600 text-white rounded-md hover:bg-purple-700 transition-all duration-200 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-opacity-50"
+            className="flex items-center gap-2 px-6 py-3 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-all duration-200 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-opacity-50"
           >
             <FaPlus className="text-sm" /> Agregar Chofer
           </button>

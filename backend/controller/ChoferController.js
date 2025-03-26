@@ -1,28 +1,43 @@
 import { ChoferesModel } from "../models/ChoferModel.js";
+import { generarContraseña } from "../utils/passwordGenerator.js";
+import bcrypt from "bcryptjs";
 
 const crearChoferController = async (req, res) => {
   const { nombre, telefono, email } = req.body;
-  const { proveedor_id } = req.user;  
-  console.log(proveedor_id)
+  const { proveedor_id } = req.user;
+
   if (!nombre || !telefono || !email || !proveedor_id) {
     return res.status(400).json({ error: "Datos incompletos" });
   }
+
   try {
+    const password_inicial = generarContraseña(nombre);
+    const hashPassword = await bcrypt.hash(password_inicial, 10);
+    
     const choferCreado = await ChoferesModel.crearChofer({
       nombre,
       telefono,
       email,
       proveedor_id,
+      password: hashPassword,
+      password_inicial 
     });
+
     return res.status(201).json({
-      message: "Chofer creado exitosamente",
-      chofer: choferCreado,
+      message: "Chofer y usuario creados exitosamente",
+      chofer: {
+        ...choferCreado,
+      }
     });
   } catch (error) {
-    console.error("Error al crear chofer:", error);
-    return res.status(500).json({ error: "Error al crear chofer" });
+    console.error("Error al crear chofer y usuario:", error);
+    return res.status(500).json({
+      error: "Error al crear chofer y usuario",
+      details: error.message,
+    });
   }
 };
+
 const obtenerChoferesPorProveedor = async (req, res) => {
   const { proveedor_id } = req.user;
   try {

@@ -146,6 +146,21 @@ export const VehiculosProvider = ({ children }) => {
     }
   }, []);
 
+  const obtenerRutasYTrayectosPorVehiculo = useCallback(async () => {
+    setLoading(true);
+    try {
+      const response = await axios.get(`${BaseUrl}/vehiculos/rutas/proveedor`, {
+        withCredentials: true,
+      });
+      return response.data.rutas;
+    } catch (error) {
+      console.error("Error al obtener rutas y trayectos:", error);
+      throw error;
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
   useEffect(() => {
     obtenerVehiculos();
   }, [obtenerVehiculos]);
@@ -164,6 +179,7 @@ export const VehiculosProvider = ({ children }) => {
         asignarTripulante,
         obtenerPasajerosPorVehiculo,
         actualizarVehiculo,
+        obtenerRutasYTrayectosPorVehiculo,
       }}
     >
       {children}

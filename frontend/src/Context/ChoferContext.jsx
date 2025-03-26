@@ -55,6 +55,22 @@ export const ChoferProvider = ({ children }) => {
     }
   };
 
+  const obtenerTrayectosDelChofer = async (chofer_id) => {
+    setLoading(true);
+    setError(null);
+    try {
+      const response = await axios.get(`${BaseUrl}/choferes/${chofer_id}/trayectos`, {
+        withCredentials: true
+      });
+      return response.data.vehiculoInfo;
+    } catch (err) {
+      setError(`Error al obtener los trayectos: ${err.message}`);
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
     obtenerChoferes();
   }, []);
@@ -69,6 +85,7 @@ export const ChoferProvider = ({ children }) => {
         obtenerChoferes,
         crearChofer,
         obtenerChoferesProveedor,
+        obtenerTrayectosDelChofer,
       }}
     >
       {children}
