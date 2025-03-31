@@ -169,6 +169,41 @@ const FlightExplore = () => {
                         Etapa del Ciclo:{" "}
                         {centro.etapa_ciclo_cultivo || "No disponible"}
                       </p>
+                      {/* Información del Pontón */}
+                      {centro.ponton && (
+                        <div className="mt-2 bg-gray-50 p-3 rounded-lg">
+                          <h4 className="text-md font-semibold text-gray-700">
+                            {centro.ponton.nombre}
+                          </h4>
+                          <div className="w-full mt-2">
+                            <div className="flex justify-between text-sm mb-1">
+                              <span>Ocupación: {centro.ponton.ocupacion_actual}/{centro.ponton.habitabilidad_general}</span>
+                              <span className={
+                                centro.ponton.ocupacion_actual >= centro.ponton.habitabilidad_general 
+                                  ? "text-red-600 font-bold" 
+                                  : "text-green-600"
+                              }>
+                                {centro.ponton.ocupacion_actual >= centro.ponton.habitabilidad_general 
+                                  ? "Lleno" 
+                                  : `${centro.ponton.habitabilidad_general - centro.ponton.ocupacion_actual} espacios disponibles`
+                                }
+                              </span>
+                            </div>
+                            <div className="w-full bg-gray-200 rounded-full h-2">
+                              <div 
+                                className={`h-2 rounded-full ${
+                                  (centro.ponton.ocupacion_actual / centro.ponton.habitabilidad_general) * 100 === 100 
+                                    ? 'bg-red-600' 
+                                    : (centro.ponton.ocupacion_actual / centro.ponton.habitabilidad_general) * 100 > 80 
+                                    ? 'bg-yellow-500' 
+                                    : 'bg-green-600'
+                                }`}
+                                style={{ width: `${(centro.ponton.ocupacion_actual / centro.ponton.habitabilidad_general) * 100}%` }}
+                              />
+                            </div>
+                          </div>
+                        </div>
+                      )}
                     </div>
                   )}
 

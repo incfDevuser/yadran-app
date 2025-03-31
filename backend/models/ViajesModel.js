@@ -29,7 +29,20 @@ const obtenerViajes = async () => {
           'jefe_centro', c.jefe_centro,
           'etapa_ciclo_cultivo', c.etapa_ciclo_cultivo,
           'latitud', c.latitud,
-          'longitud', c.longitud
+          'longitud', c.longitud,
+          'ponton', json_build_object(
+            'id', p.id,
+            'nombre', p.nombre_ponton,
+            'habitabilidad_general', p.habitabilidad_general,
+            'habitabilidad_interna', p.habitabilidad_interna,
+            'habitabilidad_externa', p.habitabilidad_externa,
+            'ocupacion_actual', (
+              SELECT COUNT(*)
+              FROM usuarios_pontones up
+              WHERE up.ponton_id = p.id
+              AND up.estado IN ('Aprobado', 'Confirmado')
+            )
+          )
         ) AS centro_asociado,
         json_agg(
           json_build_object(
@@ -52,9 +65,10 @@ const obtenerViajes = async () => {
       FROM viajes v
       JOIN rutas r ON v.ruta_id = r.id
       LEFT JOIN centro c ON r.id = c.ruta_id
+      LEFT JOIN ponton p ON c.ponton_id = p.id
       JOIN trayectos t ON v.ruta_id = t.ruta_id
       LEFT JOIN vehiculos veh ON t.vehiculo_id = veh.id
-      GROUP BY v.id, r.nombre_ruta, c.id
+      GROUP BY v.id, r.nombre_ruta, c.id, p.id
       ORDER BY v.id;
     `;
 
@@ -145,7 +159,8 @@ const solicitarViajeParaUsuario = async ({
       const queryUsuariosEnPonton = `
         SELECT COUNT(*) AS total_usuarios
         FROM usuarios_pontones
-        WHERE ponton_id = $1;
+        WHERE ponton_id = $1
+        AND estado IN ('Aprobado', 'Confirmado');
       `;
       const responseUsuariosEnPonton = await client.query(
         queryUsuariosEnPonton,
@@ -695,6 +710,26 @@ const aprobarSolicitudViaje = async (solicitudId) => {
         );
     `;
     await client.query(updateVehiculoUsuariosQuery, [
+      usuario_id,
+      trabajador_id,
+      viaje_id,
+    ]);
+
+    // Paso 4: Actualizar el estado en la tabla `usuarios_pontones`
+    const updateUsuariosPontonesQuery = `
+      UPDATE usuarios_pontones
+      SET estado = 'Aprobado'
+      WHERE (usuario_id = $1 OR trabajador_id = $2)
+      AND ponton_id IN (
+        SELECT p.id
+        FROM ponton p
+        JOIN centro c ON c.ponton_id = p.id
+        JOIN rutas r ON r.id = c.ruta_id
+        JOIN viajes v ON v.ruta_id = r.id
+        WHERE v.id = $3
+      );
+    `;
+    await client.query(updateUsuariosPontonesQuery, [
       usuario_id,
       trabajador_id,
       viaje_id,

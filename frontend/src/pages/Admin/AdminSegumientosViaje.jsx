@@ -333,7 +333,7 @@ const AdminSegumientosViaje = () => {
                           </div>
                           <div
                             className={`px-3 py-1 text-sm font-semibold rounded-full ${
-                              usuario.estado_usuario === "pendiente"
+                              usuario.estado_usuario === "Pendiente"
                                 ? "bg-red-100 text-red-600" 
                                 : "bg-green-100 text-green-600" 
                             }`}
